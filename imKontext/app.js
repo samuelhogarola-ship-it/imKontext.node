@@ -3,18 +3,17 @@
    Supabase: textos dinámicos + flujo 3 pasos
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── SUPABASE CONFIG ─────────────────────────────────────────── */
-const SUPABASE_URL  = 'https://fvhxbbhxucwawypfzikf.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2aHhiYmh4dWN3YXd5cGZ6aWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzEzMzEsImV4cCI6MjA5MDgwNzMzMX0.LBSbe0SGXM5mGB9Ym6ljLUyI1Tug7yP9YNFlROE6kRE';
-
-async function sbFetch(path) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: {
-      'apikey': SUPABASE_ANON,
-      'Authorization': `Bearer ${SUPABASE_ANON}`,
-    }
-  });
-  if (!res.ok) throw new Error(`Supabase error ${res.status}`);
+/* ── API CONFIG ──────────────────────────────────────────────── */
+async function apiFetch(path) {
+  const res = await fetch(path);
+  if (!res.ok) {
+    let details = "";
+    try {
+      const body = await res.json();
+      details = body.details || body.error || "";
+    } catch {}
+    throw new Error(details || `API error ${res.status}`);
+  }
   return res.json();
 }
 
@@ -87,25 +86,7 @@ async function goToTextos() {
   $('txsel-error').style.display   = 'none';
 
   try {
-    // 1. Get all texts
-    const texts = await sbFetch(
-      'texts?select=id,title,slug,text_content,topic,access_status,published_at&order=published_at.desc.nullslast,id.desc'
-    );
-
-    // 2. Get all levels per text
-    const versions = await sbFetch('text_versions?select=text_id,level');
-
-    // Build map: text_id → [levels]
-    const levMap = {};
-    versions.forEach(v => {
-      if (!levMap[v.text_id]) levMap[v.text_id] = new Set();
-      levMap[v.text_id].add(v.level);
-    });
-
-    allTexts = texts.map(t => ({
-      ...t,
-      levels: levMap[t.id] ? Array.from(levMap[t.id]).sort() : []
-    }));
+    allTexts = await apiFetch('/api/texts');
 
     renderTextGrid(allTexts);
   } catch (err) {
@@ -120,8 +101,14 @@ function renderTextGrid(list) {
   $('txsel-error').style.display   = 'none';
 
   const grid = $('txsel-grid');
-  grid.style.display = 'grid';
+  grid.style.display = 'flex';
   grid.innerHTML = '';
+
+  // Resetear disabled en los chips de nivel al volver a la lista
+  document.querySelectorAll('.txsel-lvl-chip').forEach(b => {
+    b.classList.remove('disabled');
+    b.classList.toggle('active', b.dataset.level === selectedLevel);
+  });
 
   if (list.length === 0) {
     grid.innerHTML = '<div class="txsel-empty">No se encontraron textos.</div>';
@@ -129,24 +116,41 @@ function renderTextGrid(list) {
   }
 
   list.forEach((text, i) => {
-    const card = document.createElement('button');
-    card.className = 'tx-card';
-    card.setAttribute('role', 'listitem');
-    card.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
+    const row = document.createElement('button');
+    row.className = 'tx-row';
+    row.setAttribute('role', 'listitem');
+    row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
 
-    const lvlBadges = text.levels.map(l =>
+    const lvlBadges = (text.levels || []).map(l =>
       `<span class="tx-lvl-badge tx-lvl-badge--${l}">${l}</span>`
     ).join('');
 
-    card.innerHTML = `
-      <span class="tx-card-num">#${String(i + 1).padStart(2, '0')}</span>
-      <span class="tx-card-title">${escapeHtml(text.title)}</span>
-      <div class="tx-card-levels">${lvlBadges}</div>
-      <span class="tx-card-arrow">→</span>
+    const dateStr = text.published_at
+      ? new Date(text.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '';
+
+    const topicStr = text.topic
+      ? `<span class="tx-row-topic">${escapeHtml(text.topic)}</span>`
+      : '';
+
+    const freeTag = text.access_status === 'free'
+      ? `<span class="tx-row-free">FREE</span>`
+      : '';
+
+    row.innerHTML = `
+      <span class="tx-row-num">#${String(i + 1).padStart(2, '0')}</span>
+      <span class="tx-row-title">${escapeHtml(text.title)}</span>
+      <div class="tx-row-meta">
+        ${topicStr}
+        ${freeTag}
+        <div class="tx-row-levels">${lvlBadges}</div>
+        <span class="tx-row-date">${dateStr}</span>
+      </div>
+      <span class="tx-row-arrow">→</span>
     `;
 
-    card.addEventListener('click', () => selectText(text));
-    grid.appendChild(card);
+    row.addEventListener('click', () => selectText(text));
+    grid.appendChild(row);
   });
 }
 
@@ -163,11 +167,38 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   screens.landing.style.display = '';
 });
 
+// Nav: "Página principal" → vuelve a la landing
+document.getElementById('nav-pagina-principal').addEventListener('click', e => {
+  e.preventDefault();
+  $('main-app').style.display = 'none';
+  document.getElementById('screen-landing').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Nav: "Dashboard" — placeholder hasta que exista la ruta
+document.getElementById('nav-dashboard').addEventListener('click', e => {
+  e.preventDefault();
+  alert('El dashboard estará disponible próximamente.');
+});
+
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2b — DETALLE DE TEXTO
 ══════════════════════════════════════════════════════════════ */
 function selectText(text) {
   selectedText = text;
+
+  const available = (text.levels || []).map(l => l.toLowerCase());
+  if (available.length && !available.includes(selectedLevel)) {
+    selectedLevel = available[0];
+  }
+
+  document.querySelectorAll('.txsel-lvl-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.level === selectedLevel);
+    b.classList.toggle('disabled', available.length > 0 && !available.includes(b.dataset.level));
+  });
+  document.querySelectorAll('#level-selector .config-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.level === selectedLevel);
+  });
 
   // Update header
   $('content-title').textContent = text.title || 'Texto';
@@ -247,6 +278,14 @@ function updateModoHint() {
 }
 
 // Words slider
+document.querySelectorAll('.txsel-lvl-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.txsel-lvl-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedLevel = btn.dataset.level;
+  });
+});
+
 const slider = $('slider-palabras');
 slider.addEventListener('input', () => {
   numPalabras = parseInt(slider.value);
@@ -256,13 +295,13 @@ slider.addEventListener('input', () => {
 async function updateSliderMax() {
   if (!selectedText) return;
   try {
-    const versions = await sbFetch(
-      `text_versions?text_id=eq.${selectedText.id}&level=eq.${selectedLevel.toUpperCase()}&select=id`
+    const versions = await apiFetch(
+      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
     );
     const vId = versions[0]?.id;
     if (!vId) return;
-    const vocab = await sbFetch(
-      `text_version_vocabulary?text_version_id=eq.${vId}&select=vocabulario_id`
+    const vocab = await apiFetch(
+      `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
     const max = vocab.length || 10;
     slider.max = max;
@@ -333,23 +372,23 @@ async function startPractice() {
 
   try {
     // 1. Get text version for selected level
-    const versions = await sbFetch(
-      `text_versions?text_id=eq.${selectedText.id}&level=eq.${selectedLevel.toUpperCase()}&select=id`
+    const versions = await apiFetch(
+      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
     );
     if (!versions.length) throw new Error('No hay versión para este nivel.');
     const vId = versions[0].id;
 
     // 2. Get vocabulary IDs for this version
-    const links = await sbFetch(
-      `text_version_vocabulary?text_version_id=eq.${vId}&select=vocabulario_id`
+    const links = await apiFetch(
+      `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
     const vocabIds = links.map(l => l.vocabulario_id);
 
     if (!vocabIds.length) throw new Error('No hay vocabulario para este texto y nivel.');
 
     // 3. Get vocabulary details
-    const vocab = await sbFetch(
-      `vocabulario?id=in.(${vocabIds.join(',')})&select=id,german,spanish,article,word_type,example_sentence_de`
+    const vocab = await apiFetch(
+      `/api/vocabulario?ids=${encodeURIComponent(vocabIds.join(','))}`
     );
 
     currentVocab = vocab;
@@ -685,7 +724,7 @@ function renderTextMeta(text) {
 }
 
 function renderTextBody(text) {
-  const raw = String(text.text_content || '').trim();
+  const raw = String(text.text_content || text.previewContent || '').trim();
 
   if (!raw) {
     return `

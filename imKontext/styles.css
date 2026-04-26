@@ -205,7 +205,7 @@ input, select { font-family: inherit; }
 .app-header {
   background: white;
   border-bottom: 1px solid var(--border);
-  padding: .75rem 1.25rem;
+  padding: .6rem 1.25rem 0;
   position: sticky; top: 0; z-index: 50;
 }
 .brand {
@@ -222,6 +222,27 @@ input, select { font-family: inherit; }
   padding: .3rem .8rem; border-radius: 20px;
   white-space: nowrap;
 }
+
+.app-nav {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: center; gap: .1rem;
+  flex-wrap: wrap;
+  padding: .45rem 0 .5rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: .5rem;
+}
+.app-nav-link {
+  font-size: .72rem; font-weight: 500;
+  color: var(--muted);
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap;
+}
+.app-nav-link:hover { color: var(--ink); background: var(--vl-blue-lt); }
+.app-nav-link--active { color: var(--vl-blue); font-weight: 600; }
+.app-nav-sep { font-size: .65rem; color: var(--border); user-select: none; }
 
 /* ── CARD (main content wrapper) ────────────────────────────── */
 .card {
@@ -915,4 +936,111 @@ input, select { font-family: inherit; }
 /* Wide: 3-col grid */
 @media (min-width: 860px) {
   .txsel-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.txsel-list {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  margin-bottom: 1.5rem;
+}
+.tx-row {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--vl-blue);
+  border-radius: var(--radius);
+  padding: .85rem 1.1rem;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  outline: none;
+  width: 100%;
+  text-align: left;
+}
+.tx-row:hover, .tx-row:focus-visible {
+  border-color: var(--vl-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateX(3px);
+}
+.tx-row:active { transform: translateX(0); }
+.tx-row-num {
+  flex-shrink: 0;
+  font-size: .65rem; font-weight: 700; color: var(--muted);
+  letter-spacing: .06em;
+  min-width: 2rem;
+}
+.tx-row-title {
+  font-family: var(--font-display);
+  font-size: .98rem; font-weight: 600; line-height: 1.3;
+  color: var(--ink);
+  flex: 1;
+}
+.tx-row-meta {
+  display: flex; align-items: center; gap: .5rem; flex-shrink: 0;
+}
+.tx-row-levels {
+  display: flex; gap: .3rem; flex-wrap: nowrap;
+}
+.tx-row-date {
+  font-size: .65rem; color: var(--muted); white-space: nowrap;
+  display: none;
+}
+@media (min-width: 600px) {
+  .tx-row-date { display: block; }
+}
+.tx-row-arrow {
+  font-size: .9rem; color: var(--muted);
+  transition: transform var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+.tx-row:hover .tx-row-arrow { transform: translateX(4px); color: var(--vl-blue); }
+.tx-row-topic {
+  font-size: .6rem; font-weight: 500; color: var(--muted);
+  background: var(--cream-dark);
+  padding: .1rem .45rem; border-radius: 20px;
+  text-transform: capitalize; white-space: nowrap;
+  display: none;
+}
+@media (min-width: 700px) { .tx-row-topic { display: inline; } }
+.tx-row-free {
+  font-size: .58rem; font-weight: 700; letter-spacing: .05em;
+  color: white; background: var(--a2-clr);
+  padding: .1rem .45rem; border-radius: 20px;
+}
+@media (max-width: 520px) {
+  .app-nav { gap: 0; }
+  .app-nav-sep { display: none; }
+  .app-nav-link { font-size: .66rem; padding: .12rem .35rem; }
+}
+
+.txsel-lvl-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin: 0 0 1rem;
+}
+.txsel-lvl-chip {
+  padding: .38rem .8rem;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: white;
+  color: var(--ink-light);
+  font-size: .78rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+.txsel-lvl-chip:hover {
+  border-color: var(--vl-blue);
+  color: var(--vl-blue);
+}
+.txsel-lvl-chip.active {
+  background: var(--vl-blue);
+  border-color: var(--vl-blue);
+  color: white;
+}
+.txsel-lvl-chip.disabled {
+  opacity: .4;
+  border-style: dashed;
 }

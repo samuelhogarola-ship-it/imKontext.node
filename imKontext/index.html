@@ -105,6 +105,17 @@
       </div>
       <div class="streak-pill" id="streak-pill">Racha x<span id="streak-count">0</span></div>
     </div>
+    <nav class="app-nav" aria-label="Navegación principal">
+      <a class="app-nav-link" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer">Samuel Coach de alemán</a>
+      <span class="app-nav-sep">·</span>
+      <a class="app-nav-link" href="https://www.vokabellab.com" target="_blank" rel="noopener noreferrer">Vokabel Lab</a>
+      <span class="app-nav-sep">·</span>
+      <a class="app-nav-link" href="https://derdiedas.vokabellab.com" target="_blank" rel="noopener noreferrer">der die das</a>
+      <span class="app-nav-sep">·</span>
+      <a class="app-nav-link app-nav-link--active" href="#" id="nav-pagina-principal">Página principal</a>
+      <span class="app-nav-sep">·</span>
+      <a class="app-nav-link" href="#" id="nav-dashboard">Dashboard</a>
+    </nav>
   </header>
 
   <div class="card" id="main-card">
@@ -138,33 +149,48 @@
         <p class="txsel-subtitle">Selecciona el artículo sobre el que quieres practicar hoy.</p>
       </div>
 
-      <!-- Search bar -->
-      <div class="txsel-search-wrap">
-        <svg class="txsel-search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-        <input
-          type="search"
-          id="txsel-search"
-          class="txsel-search"
-          placeholder="Buscar texto..."
-          autocomplete="off"
-          aria-label="Buscar texto"
-        >
+      <div class="txsel-lvl-selector" aria-label="Nivel preferido para la selección de texto">
+        <button class="txsel-lvl-chip" type="button" data-level="a2">A2</button>
+        <button class="txsel-lvl-chip active" type="button" data-level="b1">B1</button>
+        <button class="txsel-lvl-chip" type="button" data-level="b2">B2</button>
+        <button class="txsel-lvl-chip" type="button" data-level="c1">C1</button>
       </div>
 
-      <!-- Text grid — loaded from Supabase -->
-      <div class="txsel-loading" id="txsel-loading" aria-live="polite">
-        <div class="txsel-spinner"></div>
-        <span>Cargando textos…</span>
-      </div>
-      <div class="txsel-error" id="txsel-error" style="display:none">
-        No se pudieron cargar los textos. Comprueba tu conexión e inténtalo de nuevo.
-      </div>
-      <div class="txsel-grid" id="txsel-grid" style="display:none" role="list"></div>
+      <div class="txsel-layout">
+        <aside class="txsel-sidebar">
+          <div class="txsel-search-panel">
+            <p class="txsel-search-label">Buscar texto</p>
+            <div class="txsel-search-wrap">
+              <svg class="txsel-search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+              <input
+                type="search"
+                id="txsel-search"
+                class="txsel-search"
+                placeholder="Buscar texto..."
+                autocomplete="off"
+                aria-label="Buscar texto"
+              >
+            </div>
+            <p class="txsel-search-help">Filtra por título mientras exploras los textos disponibles.</p>
+          </div>
 
-      <button class="btn-back section-back" id="btn-volver-landing-from-textos">← Volver</button>
+          <button class="btn-back section-back txsel-back" id="btn-volver-landing-from-textos">← Volver</button>
+        </aside>
+
+        <div class="txsel-main">
+          <div class="txsel-loading" id="txsel-loading" aria-live="polite">
+            <div class="txsel-spinner"></div>
+            <span>Cargando textos…</span>
+          </div>
+          <div class="txsel-error" id="txsel-error" style="display:none">
+            No se pudieron cargar los textos. Comprueba tu conexión e inténtalo de nuevo.
+          </div>
+          <div class="txsel-list" id="txsel-grid" style="display:none" role="list"></div>
+        </div>
+      </div>
     </div>
 
     <!-- ══════════════════════════════════════════════
