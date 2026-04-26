@@ -1,0 +1,30 @@
+.DS_Store
+
+# Local tooling and caches
+.local/
+tmp/
+output/
+
+# Node and package manager artifacts
+node_modules/
+backend/.local-node/
+backend/node.tar.gz
+
+# Environment files
+.env
+.env.local
+backend/.env
+
+# Generated or transient backend artifacts
+backend/convertir/
+backend/procesados/
+backend/epub-output.txt
+backend/scripts/__pycache__/
+
+# Local experiments not part of the main app backup
+proyecto-base/
+imKontext/chat gpt contexto/
+EPUBS/
+/*.epub
+/imKontext 4Themen 4Niveaus.txt
+/imKontext_4Themen_4Niveaus.txt

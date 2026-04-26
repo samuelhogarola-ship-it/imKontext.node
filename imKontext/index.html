@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APP Vokabel Lab imKontext</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=19">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 1 — LANDING
+═══════════════════════════════════════════════════ -->
+<div id="screen-landing">
+
+  <div class="ln-deco-layer" aria-hidden="true">
+    <div class="ln-rule ln-rule--top"></div>
+    <div class="ln-rule ln-rule--top2"></div>
+    <div class="ln-drop-cap">D</div>
+    <div class="ln-dots"></div>
+    <div class="ln-halftone"></div>
+  </div>
+
+  <div class="ln-nc ln-nc--tl" aria-hidden="true">
+    <div class="ln-nc-source"><span class="ln-nc-logo ln-nc-logo--spiegel">SPIEGEL</span></div>
+    <p class="ln-nc-headline">„Bundesregierung beschließt neues Klimaschutzgesetz"</p>
+    <p class="ln-nc-sub">Politik · Deutschland</p>
+  </div>
+  <div class="ln-nc ln-nc--tr" aria-hidden="true">
+    <div class="ln-nc-source"><span class="ln-nc-logo ln-nc-logo--zeit">DIE ZEIT</span></div>
+    <p class="ln-nc-headline">„Wie KI die Arbeitswelt verändert"</p>
+    <p class="ln-nc-sub">Wirtschaft · Analyse</p>
+  </div>
+  <div class="ln-nc ln-nc--bl" aria-hidden="true">
+    <div class="ln-nc-source"><span class="ln-nc-logo ln-nc-logo--faz">F.A.Z.</span></div>
+    <p class="ln-nc-headline">„Wirtschaft wächst stärker als erwartet"</p>
+    <p class="ln-nc-sub">Finanzen · Frankfurt</p>
+  </div>
+  <div class="ln-nc ln-nc--br" aria-hidden="true">
+    <div class="ln-nc-source"><span class="ln-nc-logo ln-nc-logo--tagesschau">tagesschau</span></div>
+    <p class="ln-nc-headline">„Wahlen in Bayern: Erste Hochrechnungen"</p>
+    <p class="ln-nc-sub">Nachrichten · Bayern</p>
+  </div>
+
+  <header class="ln-masthead" role="banner">
+    <div class="ln-masthead-top-rule"></div>
+    <div class="ln-masthead-preline">Ausgabe Nr. 1</div>
+    <div class="ln-masthead-inner">
+      <div class="ln-masthead-side"><span class="ln-masthead-edition">Ausgabe Nr. 1</span></div>
+      <div class="ln-masthead-title">
+        <span class="ln-masthead-name"><span class="ln-mh-im">im</span><span class="ln-mh-kontext">Kontext</span></span>
+        <span class="ln-masthead-sub">· Vokabel Lab ·</span>
+      </div>
+      <div class="ln-masthead-side ln-masthead-side--right"><span class="ln-masthead-edition">Deutsch lernen</span></div>
+    </div>
+    <div class="ln-masthead-bottom-rule"></div>
+  </header>
+
+  <div class="ln-center">
+    <a class="ln-logo-link" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a Vokabel Lab imKontext">
+      <img class="ln-logo-img" src="./landing.logo2.png?v=1" alt="Vokabel Lab imKontext">
+    </a>
+    <div class="ln-portada">
+      <div class="ln-portada-kicker">Willkommen!</div>
+      <div class="ln-portada-rule"></div>
+      <h1 class="ln-portada-headline">Aprende alemán con noticias reales</h1>
+      <div class="ln-portada-rule"></div>
+      <p class="ln-portada-deck">Practica vocabulario real con textos de actualidad.<br>El método de <strong>Vokabel Lab imKontext</strong>.</p>
+      <div class="ln-tag-row" aria-hidden="true">
+        <span class="ln-tag">A2</span><span class="ln-tag-dot">·</span>
+        <span class="ln-tag">B1</span><span class="ln-tag-dot">·</span>
+        <span class="ln-tag">B2</span><span class="ln-tag-dot">·</span>
+        <span class="ln-tag">C1</span>
+      </div>
+      <button class="ln-btn-entrar" id="btn-entrar">
+        <span class="ln-btn-text">Auf geht's!</span>
+        <span class="ln-btn-fire">🔥</span>
+        <span class="ln-btn-arrow">→</span>
+      </button>
+      <p class="ln-footer-line">Flashcards · Test · Lückentext · Ordenar · Artículo</p>
+    </div>
+  </div>
+
+  <div class="ln-bottom-bar">
+    <span>Deutsch aktuell</span>
+    <span class="ln-sep">·</span>
+    <span>imKontext Methode</span>
+    <span class="ln-sep">·</span>
+    <span>samuelcoachdealeman.com</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════════ -->
+<div id="main-app">
+  <header id="app-header" class="app-header">
+    <div class="brand">
+      <a class="brand-logo-link" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a Vokabel Lab imKontext">
+        <img class="brand-logo-img" src="./logo.png?v=3" alt="Vokabel Lab imKontext">
+      </a>
+      <div>
+        <p class="eyebrow">Vokabel Lab imKontext</p>
+      </div>
+      <div class="streak-pill" id="streak-pill">Racha x<span id="streak-count">0</span></div>
+    </div>
+  </header>
+
+  <div class="card" id="main-card">
+
+    <!-- ── LOADING ── -->
+    <div id="loading">
+      <span class="loading-flag">🇩🇪</span>
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+      </div>
+      <div class="loading-words">
+        <div class="loading-word"><span class="de">der Bahnhof</span><span class="es">la estación de tren</span></div>
+        <div class="loading-word"><span class="de">die Straßenbahn</span><span class="es">el tranvía</span></div>
+        <div class="loading-word"><span class="de">das Rathaus</span><span class="es">el ayuntamiento</span></div>
+        <div class="loading-word"><span class="de">die Ampel</span><span class="es">el semáforo</span></div>
+      </div>
+      <p class="loading-text">Preparando tus ejercicios...</p>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- ══════════════════════════════════════════════
+         PANTALLA 2 — SELECCIÓN DE TEXTO
+    ══════════════════════════════════════════════ -->
+    <div id="screen-textos">
+      <div class="txsel-header">
+        <div class="txsel-kicker">Paso 1 de 3</div>
+        <h2 class="txsel-title">Elige un texto</h2>
+        <p class="txsel-subtitle">Selecciona el artículo sobre el que quieres practicar hoy.</p>
+      </div>
+
+      <!-- Search bar -->
+      <div class="txsel-search-wrap">
+        <svg class="txsel-search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="search"
+          id="txsel-search"
+          class="txsel-search"
+          placeholder="Buscar texto..."
+          autocomplete="off"
+          aria-label="Buscar texto"
+        >
+      </div>
+
+      <!-- Text grid — loaded from Supabase -->
+      <div class="txsel-loading" id="txsel-loading" aria-live="polite">
+        <div class="txsel-spinner"></div>
+        <span>Cargando textos…</span>
+      </div>
+      <div class="txsel-error" id="txsel-error" style="display:none">
+        No se pudieron cargar los textos. Comprueba tu conexión e inténtalo de nuevo.
+      </div>
+      <div class="txsel-grid" id="txsel-grid" style="display:none" role="list"></div>
+
+      <button class="btn-back section-back" id="btn-volver-landing-from-textos">← Volver</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         PANTALLA 2b — DETALLE DE TEXTO (antes de empezar)
+    ══════════════════════════════════════════════ -->
+    <div id="screen-content" style="display:none">
+      <div class="txdet-header">
+        <button class="txdet-back-btn" id="btn-volver-textos" aria-label="Volver a la lista de textos">
+          ← Textos
+        </button>
+        <div class="txdet-kicker">Paso 2 de 3 — Antes de empezar</div>
+        <h2 class="txdet-title" id="content-title">Texto</h2>
+      </div>
+
+      <div class="content-card">
+        <span class="content-kicker">Lee el texto primero</span>
+        <p id="content-description" class="txdet-desc">Este texto se carga directamente desde Supabase. Léelo con calma y vuelve cuando estés listo para los ejercicios.</p>
+        <div class="txdet-meta" id="content-meta"></div>
+        <article class="txdet-article" id="content-body" aria-live="polite"></article>
+        <div class="content-actions">
+          <button class="btn-main-solo" id="btn-ir-actividad">¿Ya lo has leído? Pues al lío →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         PANTALLA 3 — CONFIGURACIÓN DE ACTIVIDAD
+    ══════════════════════════════════════════════ -->
+    <div id="screen-activity" style="display:none">
+      <div class="act-header">
+        <button class="txdet-back-btn" id="btn-volver-contenido-from-activity" aria-label="Volver al texto">
+          ← Texto
+        </button>
+        <div class="txdet-kicker">Paso 3 de 3 — Configura tu práctica</div>
+        <h2 class="act-title" id="act-text-title">Configura tu práctica</h2>
+      </div>
+
+      <div class="activity-layout">
+        <div class="activity-main">
+          <div id="progreso-guardado-banner" class="progreso-guardado">
+            📚 Tienes progreso guardado: <strong id="prog-guardado-txt"></strong> — ¿Continuar?
+          </div>
+
+          <div class="level-status" id="level-status"></div>
+
+          <div class="config-group">
+            <div class="config-head">
+              <h3>Nivel</h3>
+              <p>Los ejercicios se adaptarán al nivel de dificultad elegido.</p>
+            </div>
+            <div class="config-selector" id="level-selector">
+              <button class="config-chip" type="button" data-level="a2">A2</button>
+              <button class="config-chip active" type="button" data-level="b1">B1</button>
+              <button class="config-chip" type="button" data-level="b2">B2</button>
+              <button class="config-chip" type="button" data-level="c1">C1</button>
+            </div>
+          </div>
+
+          <div class="palabras-selector">
+            <label>
+              ¿Cuántas palabras quieres practicar hoy?
+              <span id="num-palabras-display">10</span>
+            </label>
+            <div class="slider-wrap">
+              <span class="slider-min">5</span>
+              <input type="range" id="slider-palabras" min="5" max="44" value="10" step="1">
+              <span class="slider-max" id="slider-max-label">44</span>
+            </div>
+          </div>
+
+          <div class="config-group">
+            <div class="config-head">
+              <h3>Tipo de actividad</h3>
+              <p>Elige una o deja en blanco para practicar con todos los formatos.</p>
+            </div>
+            <div class="config-selector" id="practice-selector">
+              <button class="config-chip" type="button" data-modo="ordenar">Ordenar frases</button>
+              <button class="config-chip" type="button" data-modo="test">Test</button>
+              <button class="config-chip" type="button" data-modo="flashcards">Flashcards</button>
+              <button class="config-chip" type="button" data-modo="articulo">Artículo</button>
+              <button class="config-chip" type="button" data-modo="lueckentext">Lückentext</button>
+            </div>
+          </div>
+          <div class="modo-hint" id="practice-hint">Si no eliges ninguna actividad, practicarás con todos los formatos.</div>
+
+          <button class="btn-main-solo" id="btn-empezar">Empezar práctica 🚀</button>
+        </div>
+
+        <aside class="weekly-progress-panel" aria-label="Progreso semanal">
+          <div class="weekly-progress-head">
+            <div>
+              <p class="weekly-progress-kicker">Seguimiento</p>
+              <h3 id="weekly-progress-title">Progreso B1</h3>
+            </div>
+          </div>
+          <p class="weekly-progress-percent-text" id="weekly-progress-pct">0% completado</p>
+          <div class="weekly-progress-bar" aria-hidden="true">
+            <div class="weekly-progress-fill" id="weekly-progress-fill"></div>
+          </div>
+          <p class="weekly-progress-main" id="weekly-progress-main">0 / 0 palabras practicadas</p>
+          <p class="weekly-progress-sub" id="weekly-progress-sub">0 palabras en este nivel</p>
+          <button class="btn-reset-progress" id="btn-reset-progress" type="button">Reiniciar progreso</button>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ── EJERCICIO ── -->
+    <div id="screen-ejercicio" style="display:none">
+      <div class="progreso">
+        <span class="progreso-num" id="prog-actual">1</span>
+        <div class="progreso-dots" id="progreso-dots" aria-label="Progreso de preguntas"></div>
+        <div class="progreso-bar"><div class="progreso-fill" id="prog-fill"></div></div>
+        <span class="progreso-num" id="prog-total">10</span>
+      </div>
+      <div class="tipo-badge" id="tipo-badge"></div>
+      <div class="pregunta" id="pregunta-texto"></div>
+      <div class="pregunta-sub" id="pregunta-sub"></div>
+      <button class="translation-toggle" id="btn-toggle-traduccion" type="button">Ver traducción</button>
+      <div class="translation-panel" id="translation-panel"></div>
+      <div class="respuesta-feedback" id="respuesta-feedback"></div>
+      <div class="next-countdown" id="next-countdown"></div>
+      <div class="opciones" id="opciones-wrap"></div>
+      <div id="flashcard-wrap" style="display:none">
+        <div class="flashcard" id="flashcard-card">
+          <div class="flashcard-face flashcard-front" id="flashcard-front"></div>
+          <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
+        </div>
+        <div class="flashcard-actions">
+          <button class="btn-back flashcard-btn" id="btn-flashcard-no">No la sé</button>
+          <button class="btn-main flashcard-btn" id="btn-flashcard-si">Sí</button>
+        </div>
+      </div>
+      <div class="input-wrap" id="input-wrap" style="display:none">
+        <input type="text" id="input-traduccion" placeholder="Escribe la traducción..." autocomplete="off">
+      </div>
+      <div id="ordenar-wrap" style="display:none">
+        <p class="orden-label">Banco de palabras — clica para añadir</p>
+        <div class="palabras-banco" id="banco-palabras"></div>
+        <p class="orden-label">Tu frase</p>
+        <div class="orden-construccion" id="orden-construccion"></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back" id="btn-atras">← Atrás</button>
+        <button class="btn-main" id="btn-siguiente" disabled>Siguiente →</button>
+      </div>
+      <button class="btn-terminar" id="btn-terminar">Terminar test</button>
+    </div>
+
+    <!-- ── RESULTADO ── -->
+    <div id="screen-resultado" style="display:none">
+      <p style="color:var(--muted);font-size:1rem">Puntuación final</p>
+      <div class="puntuacion-grande" id="punt-grande"></div>
+      <p class="puntuacion-label" id="punt-label"></p>
+      <div class="result-stats" id="result-stats"></div>
+      <div class="resumen-lista" id="resumen-lista"></div>
+      <div class="result-actions">
+        <button class="btn-continue" id="btn-continuar" style="display:none"></button>
+        <button class="btn-secondary" id="btn-repasar-errores" type="button" style="display:none">Repasar errores</button>
+        <button class="btn-main-solo" id="btn-reiniciar">Volver a intentarlo</button>
+        <button class="btn-secondary" id="btn-volver-menu" type="button">Volver al menú principal</button>
+        <button class="btn-back" id="btn-salir-test" type="button">Finalizar / salir</button>
+      </div>
+    </div>
+
+  </div><!-- /main-card -->
+</div><!-- /main-app -->
+
+<script src="./app.js?v=7"></script>
+</body>
+</html>
