@@ -105,7 +105,6 @@ function renderTextGrid(list) {
   grid.style.display = 'flex';
   grid.innerHTML = '';
 
-  // Resetear disabled en los chips de nivel al volver a la lista
   document.querySelectorAll('.txsel-lvl-chip').forEach(b => {
     b.classList.remove('disabled');
     b.disabled = false;
@@ -117,43 +116,108 @@ function renderTextGrid(list) {
     return;
   }
 
-  list.forEach((text, i) => {
-    const row = document.createElement('button');
-    row.className = 'tx-row';
-    row.setAttribute('role', 'listitem');
-    row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
-
-    const lvlBadges = (text.levels || []).map(l =>
-      `<span class="tx-lvl-badge tx-lvl-badge--${l}">${l}</span>`
-    ).join('');
-
-    const dateStr = text.published_at
-      ? new Date(text.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '';
-
-    const topicStr = text.topic
-      ? `<span class="tx-row-topic">${escapeHtml(text.topic)}</span>`
-      : '';
-
-    const freeTag = text.access_status === 'free'
-      ? `<span class="tx-row-free">FREE</span>`
-      : '';
-
-    row.innerHTML = `
-      <span class="tx-row-num">#${String(i + 1).padStart(2, '0')}</span>
-      <span class="tx-row-title">${escapeHtml(text.title)}</span>
-      <div class="tx-row-meta">
-        ${topicStr}
-        ${freeTag}
-        <div class="tx-row-levels">${lvlBadges}</div>
-        <span class="tx-row-date">${dateStr}</span>
-      </div>
-      <span class="tx-row-arrow">→</span>
-    `;
-
-    row.addEventListener('click', () => selectText(text));
-    grid.appendChild(row);
+  const sorted = [...list].sort((a, b) => {
+    const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
+    const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
+    return bTime - aTime;
   });
+
+  const featured = sorted.find(text => text.access_status === 'free') || null;
+  const rest = featured ? sorted.filter(text => text.id !== featured.id) : sorted;
+
+  if (featured) {
+    const featuredWrap = document.createElement('section');
+    featuredWrap.className = 'tx-featured';
+    featuredWrap.innerHTML = `
+      <div class="tx-featured-head">
+        <p class="tx-featured-kicker">Tema principal de la semana</p>
+        <span class="tx-row-free">FREE</span>
+      </div>
+      <button class="tx-featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+        <div class="tx-featured-copy">
+          <p class="tx-featured-topic">${escapeHtml(featured.topic || 'Tema destacado')}</p>
+          <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
+          <p class="tx-featured-desc">Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.</p>
+          <div class="tx-featured-meta">
+            <div class="tx-row-levels">${renderLevelBadges(featured.levels)}</div>
+            <span class="tx-row-date">${formatShortDate(featured.published_at)}</span>
+          </div>
+        </div>
+        <span class="tx-featured-arrow">→</span>
+      </button>
+    `;
+    featuredWrap.querySelector('.tx-featured-card').addEventListener('click', () => selectText(featured));
+    grid.appendChild(featuredWrap);
+  }
+
+  const grouped = {};
+  rest.forEach(text => {
+    const key = (text.topic || 'Otros').trim() || 'Otros';
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(text);
+  });
+
+  Object.entries(grouped).forEach(([topic, texts]) => {
+    const section = document.createElement('section');
+    section.className = 'tx-topic-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'tx-topic-heading';
+    heading.innerHTML = `
+      <h3 class="tx-topic-title">${escapeHtml(topic)}</h3>
+      <span class="tx-topic-count">${texts.length} texto${texts.length === 1 ? '' : 's'}</span>
+    `;
+    section.appendChild(heading);
+
+    const listEl = document.createElement('div');
+    listEl.className = 'tx-topic-list';
+    texts.forEach((item, index) => {
+      listEl.appendChild(createTextRow(item, index + 1));
+    });
+
+    section.appendChild(listEl);
+    grid.appendChild(section);
+  });
+}
+
+function createTextRow(text, position) {
+  const row = document.createElement('button');
+  row.className = 'tx-row';
+  row.setAttribute('type', 'button');
+  row.setAttribute('role', 'listitem');
+  row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
+
+  const topicStr = text.topic
+    ? `<span class="tx-row-topic">${escapeHtml(text.topic)}</span>`
+    : '';
+
+  const freeTag = text.access_status === 'free'
+    ? `<span class="tx-row-free">FREE</span>`
+    : '';
+
+  row.innerHTML = `
+    <span class="tx-row-num">#${String(position).padStart(2, '0')}</span>
+    <span class="tx-row-title">${escapeHtml(text.title)}</span>
+    <div class="tx-row-meta">
+      ${topicStr}
+      ${freeTag}
+      <div class="tx-row-levels">${renderLevelBadges(text.levels)}</div>
+      <span class="tx-row-date">${formatShortDate(text.published_at)}</span>
+    </div>
+    <span class="tx-row-arrow">→</span>
+  `;
+
+  row.addEventListener('click', () => selectText(text));
+  return row;
+}
+
+function renderLevelBadges(levels = []) {
+  return levels.map(level => `<span class="tx-lvl-badge tx-lvl-badge--${level}">${level}</span>`).join('');
+}
+
+function formatShortDate(value) {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 // Live search
