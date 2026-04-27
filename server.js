@@ -17,7 +17,18 @@ const SUPABASE_ANON =
 
 app.disable("x-powered-by");
 
+function hasSupabaseConfig() {
+  return Boolean(SUPABASE_URL && SUPABASE_ANON);
+}
+
 async function supabaseFetch(pathname) {
+  if (!hasSupabaseConfig()) {
+    const error = new Error("Supabase no está configurado");
+    error.details =
+      "Faltan SUPABASE_URL y/o SUPABASE_ANON_KEY en el entorno del servidor.";
+    throw error;
+  }
+
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${pathname}`, {
     headers: {
       apikey: SUPABASE_ANON,
@@ -41,7 +52,7 @@ app.get("/api/health", (req, res) => {
     app: "imKontext.node",
     frontend: "imKontext",
     port: Number(PORT),
-    supabaseConfigured: Boolean(SUPABASE_URL && SUPABASE_ANON)
+    supabaseConfigured: hasSupabaseConfig()
   });
 });
 
