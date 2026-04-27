@@ -20,6 +20,7 @@ async function apiFetch(path) {
 /* ── STATE ───────────────────────────────────────────────────── */
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
+let selectedTextVersion = null; // exact text_version for the selected text + level
 let selectedLevel  = 'b1';
 let selectedModo   = null;
 let currentVocab   = [];
@@ -107,6 +108,7 @@ function renderTextGrid(list) {
   // Resetear disabled en los chips de nivel al volver a la lista
   document.querySelectorAll('.txsel-lvl-chip').forEach(b => {
     b.classList.remove('disabled');
+    b.disabled = false;
     b.classList.toggle('active', b.dataset.level === selectedLevel);
   });
 
@@ -184,32 +186,25 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2b — DETALLE DE TEXTO
 ══════════════════════════════════════════════════════════════ */
-function selectText(text) {
+async function selectText(text) {
   selectedText = text;
 
-  const available = (text.levels || []).map(l => l.toLowerCase());
+  const available = getAvailableLevels(text);
   if (available.length && !available.includes(selectedLevel)) {
     selectedLevel = available[0];
   }
 
-  document.querySelectorAll('.txsel-lvl-chip').forEach(b => {
-    b.classList.toggle('active', b.dataset.level === selectedLevel);
-    b.classList.toggle('disabled', available.length > 0 && !available.includes(b.dataset.level));
-  });
-  document.querySelectorAll('#level-selector .config-chip').forEach(b => {
-    b.classList.toggle('active', b.dataset.level === selectedLevel);
-  });
+  syncLevelControls(available);
 
-  // Update header
   $('content-title').textContent = text.title || 'Texto';
   $('content-description').textContent =
     `Lee "${text.title}" directamente desde Supabase y vuelve cuando estés listo para practicar el vocabulario.`;
   $('content-meta').innerHTML = renderTextMeta(text);
-  $('content-body').innerHTML = renderTextBody(text);
+  $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
 
-  // Also update activity title for step 3
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
+  await refreshSelectedTextVersion();
   showScreen('content');
 }
 
@@ -217,18 +212,20 @@ $('btn-volver-textos').addEventListener('click', () => {
   goToTextos();
 });
 
-$('btn-ir-actividad').addEventListener('click', () => {
-  loadActivityScreen();
+$('btn-ir-actividad').addEventListener('click', async () => {
+  await loadActivityScreen();
   showScreen('activity');
 });
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 3 — CONFIGURAR ACTIVIDAD
 ══════════════════════════════════════════════════════════════ */
-function loadActivityScreen() {
+async function loadActivityScreen() {
   if (!selectedText) return;
+  await refreshSelectedTextVersion({ updateContent: false });
   updateProgressPanel();
   checkSavedProgress();
+  await updateSliderMax();
 }
 
 $('btn-volver-contenido-from-activity').addEventListener('click', () => {
@@ -237,12 +234,14 @@ $('btn-volver-contenido-from-activity').addEventListener('click', () => {
 
 // Level chips
 document.querySelectorAll('#level-selector .config-chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#level-selector .config-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  btn.addEventListener('click', async () => {
+    if (btn.classList.contains('disabled')) return;
     selectedLevel = btn.dataset.level;
+    syncLevelControls(getAvailableLevels(selectedText));
+    await refreshSelectedTextVersion({ updateContent: false });
     updateProgressPanel();
-    updateSliderMax();
+    checkSavedProgress();
+    await updateSliderMax();
   });
 });
 
@@ -279,12 +278,70 @@ function updateModoHint() {
 
 // Words slider
 document.querySelectorAll('.txsel-lvl-chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.txsel-lvl-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  btn.addEventListener('click', async () => {
+    if (btn.classList.contains('disabled')) return;
     selectedLevel = btn.dataset.level;
+    syncLevelControls(getAvailableLevels(selectedText));
+    if (selectedText && screens.content.style.display !== 'none') {
+      await refreshSelectedTextVersion();
+    }
   });
 });
+
+function getAvailableLevels(text) {
+  return ((text?.levels || []).map(level => String(level).toLowerCase()));
+}
+
+function syncLevelControls(availableLevels = []) {
+  const hasAvailableLevels = availableLevels.length > 0;
+
+  document.querySelectorAll('.txsel-lvl-chip').forEach(btn => {
+    const isAvailable = !hasAvailableLevels || availableLevels.includes(btn.dataset.level);
+    btn.classList.toggle('active', btn.dataset.level === selectedLevel);
+    btn.classList.toggle('disabled', hasAvailableLevels && !isAvailable);
+    btn.disabled = hasAvailableLevels && !isAvailable;
+  });
+
+  document.querySelectorAll('#level-selector .config-chip').forEach(btn => {
+    const isAvailable = !hasAvailableLevels || availableLevels.includes(btn.dataset.level);
+    btn.classList.toggle('active', btn.dataset.level === selectedLevel);
+    btn.classList.toggle('disabled', hasAvailableLevels && !isAvailable);
+    btn.disabled = hasAvailableLevels && !isAvailable;
+  });
+}
+
+async function refreshSelectedTextVersion(options = {}) {
+  const { updateContent = true } = options;
+
+  if (!selectedText) return null;
+
+  const available = getAvailableLevels(selectedText);
+  if (available.length && !available.includes(selectedLevel)) {
+    selectedLevel = available[0];
+  }
+
+  syncLevelControls(available);
+
+  try {
+    const versions = await apiFetch(
+      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
+    );
+    selectedTextVersion = versions[0] || null;
+  } catch (error) {
+    selectedTextVersion = null;
+    throw error;
+  }
+
+  if (updateContent) {
+    $('content-body').innerHTML = renderTextBody({
+      ...selectedText,
+      text_content: selectedTextVersion?.content || ''
+    });
+  }
+
+  updateLevelStatus();
+  return selectedTextVersion;
+}
 
 const slider = $('slider-palabras');
 slider.addEventListener('input', () => {
@@ -295,26 +352,70 @@ slider.addEventListener('input', () => {
 async function updateSliderMax() {
   if (!selectedText) return;
   try {
-    const versions = await apiFetch(
-      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
-    );
-    const vId = versions[0]?.id;
-    if (!vId) return;
+    const version = selectedTextVersion && String(selectedTextVersion.level || '').toLowerCase() === selectedLevel
+      ? selectedTextVersion
+      : await refreshSelectedTextVersion({ updateContent: false });
+    const vId = version?.id;
+    if (!vId) {
+      slider.max = 5;
+      slider.value = 5;
+      numPalabras = 5;
+      $('slider-max-label').textContent = '0';
+      $('num-palabras-display').textContent = '5';
+      updateLevelStatus(0);
+      return;
+    }
     const vocab = await apiFetch(
       `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
-    const max = vocab.length || 10;
-    slider.max = max;
+    const max = vocab.length || 0;
+    const safeMax = Math.max(max, 5);
+    slider.max = safeMax;
     $('slider-max-label').textContent = max;
-    if (numPalabras > max) {
-      numPalabras = max;
-      slider.value = max;
-      $('num-palabras-display').textContent = max;
+    if (numPalabras > safeMax) {
+      numPalabras = safeMax;
+      slider.value = safeMax;
+      $('num-palabras-display').textContent = safeMax;
     }
-  } catch {}
+    updateLevelStatus(max);
+    $('btn-empezar').disabled = max === 0;
+  } catch {
+    $('btn-empezar').disabled = true;
+  }
 }
 
 /* ── Progress panel ─────────────────────────────────────────── */
+function updateLevelStatus(vocabCount) {
+  const status = $('level-status');
+  if (!selectedText) {
+    status.textContent = '';
+    return;
+  }
+
+  const levelLabel = selectedLevel.toUpperCase();
+  const available = getAvailableLevels(selectedText);
+  if (available.length && !available.includes(selectedLevel)) {
+    status.textContent = `El nivel ${levelLabel} no está disponible para este texto.`;
+    $('btn-empezar').disabled = true;
+    return;
+  }
+
+  if (!selectedTextVersion) {
+    status.textContent = `No se ha encontrado una versión ${levelLabel} para este texto.`;
+    $('btn-empezar').disabled = true;
+    return;
+  }
+
+  if (typeof vocabCount === 'number') {
+    status.textContent = vocabCount > 0
+      ? `Nivel ${levelLabel} listo: ${vocabCount} palabras disponibles para practicar.`
+      : `Nivel ${levelLabel} cargado, pero todavía sin vocabulario asociado.`;
+    return;
+  }
+
+  status.textContent = `Nivel ${levelLabel} seleccionado. Cargando vocabulario disponible…`;
+}
+
 function updateProgressPanel() {
   if (!selectedText) return;
   const key = `progress_${selectedText.id}_${selectedLevel}`;
@@ -372,11 +473,11 @@ async function startPractice() {
 
   try {
     // 1. Get text version for selected level
-    const versions = await apiFetch(
-      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
-    );
-    if (!versions.length) throw new Error('No hay versión para este nivel.');
-    const vId = versions[0].id;
+    const version = selectedTextVersion && String(selectedTextVersion.level || '').toLowerCase() === selectedLevel
+      ? selectedTextVersion
+      : await refreshSelectedTextVersion({ updateContent: false });
+    if (!version?.id) throw new Error('No hay versión para este nivel.');
+    const vId = version.id;
 
     // 2. Get vocabulary IDs for this version
     const links = await apiFetch(

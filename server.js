@@ -107,7 +107,7 @@ app.get("/api/text-version", async (req, res) => {
 
   try {
     const versions = await supabaseFetch(
-      `text_versions?text_id=eq.${encodeURIComponent(textId)}&level=eq.${encodeURIComponent(level)}&select=id`
+      `text_versions?text_id=eq.${encodeURIComponent(textId)}&level=eq.${encodeURIComponent(level)}&select=id,text_id,level,content`
     );
     res.json(versions);
   } catch (error) {
