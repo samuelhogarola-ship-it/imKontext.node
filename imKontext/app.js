@@ -18,6 +18,7 @@ async function apiFetch(path) {
 }
 
 /* ── STATE ───────────────────────────────────────────────────── */
+const isPremium    = false; // cambiar a true cuando exista acceso premium real
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
@@ -63,21 +64,31 @@ function showScreen(name) {
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 1 → LANDING
 ══════════════════════════════════════════════════════════════ */
-$('btn-entrar').addEventListener('click', () => {
+$('btn-entrar').addEventListener('click', async () => {
   $('main-app').style.display = 'block';
   screens.landing.style.display = 'none';
-  goToTextos();
+
+  if (isPremium) {
+    await goToTextos(false);
+    return;
+  }
+
+  await goToTextos(true);
 });
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2 — SELECCIÓN DE TEXTOS
 ══════════════════════════════════════════════════════════════ */
-async function goToTextos() {
+async function goToTextos(autoOpenFeatured = false) {
   showScreen('textos');
 
   // If already loaded, just render
   if (allTexts.length > 0) {
     renderTextGrid(allTexts);
+    if (autoOpenFeatured) {
+      const featured = getFeaturedText(allTexts);
+      if (featured) await selectText(featured);
+    }
     return;
   }
 
@@ -90,6 +101,10 @@ async function goToTextos() {
     allTexts = await apiFetch('/api/texts');
 
     renderTextGrid(allTexts);
+    if (autoOpenFeatured) {
+      const featured = getFeaturedText(allTexts);
+      if (featured) await selectText(featured);
+    }
   } catch (err) {
     console.error(err);
     $('txsel-loading').style.display = 'none';
@@ -116,13 +131,9 @@ function renderTextGrid(list) {
     return;
   }
 
-  const sorted = [...list].sort((a, b) => {
-    const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
-    const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
-    return bTime - aTime;
-  });
+  const sorted = sortTextsByDate(list);
 
-  const featured = sorted.find(text => text.access_status === 'free') || null;
+  const featured = getFeaturedText(sorted);
   const rest = featured ? sorted.filter(text => text.id !== featured.id) : sorted;
 
   if (featured) {
@@ -131,7 +142,7 @@ function renderTextGrid(list) {
     featuredWrap.innerHTML = `
       <div class="tx-featured-head">
         <p class="tx-featured-kicker">Tema principal de la semana</p>
-        <span class="tx-row-free">FREE</span>
+        <span class="tx-access-tag tx-access-tag--free">FREE</span>
       </div>
       <button class="tx-featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-copy">
@@ -182,7 +193,8 @@ function renderTextGrid(list) {
 
 function createTextRow(text, position) {
   const row = document.createElement('button');
-  row.className = 'tx-row';
+  const isLocked = !canAccessText(text);
+  row.className = `tx-row${isLocked ? ' tx-row--locked' : ''}`;
   row.setAttribute('type', 'button');
   row.setAttribute('role', 'listitem');
   row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
@@ -191,24 +203,34 @@ function createTextRow(text, position) {
     ? `<span class="tx-row-topic">${escapeHtml(text.topic)}</span>`
     : '';
 
-  const freeTag = text.access_status === 'free'
-    ? `<span class="tx-row-free">FREE</span>`
-    : '';
-
   row.innerHTML = `
     <span class="tx-row-num">#${String(position).padStart(2, '0')}</span>
     <span class="tx-row-title">${escapeHtml(text.title)}</span>
     <div class="tx-row-meta">
       ${topicStr}
-      ${freeTag}
+      ${renderAccessTag(text)}
       <div class="tx-row-levels">${renderLevelBadges(text.levels)}</div>
       <span class="tx-row-date">${formatShortDate(text.published_at)}</span>
     </div>
-    <span class="tx-row-arrow">→</span>
+    <span class="tx-row-arrow">${isLocked ? '🔒' : '→'}</span>
   `;
 
   row.addEventListener('click', () => selectText(text));
   return row;
+}
+
+function canAccessText(text) {
+  return isPremium || text.access_status !== 'premium';
+}
+
+function renderAccessTag(text) {
+  if (text.access_status === 'premium') {
+    return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
+  }
+  if (text.access_status === 'free') {
+    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
+  }
+  return '';
 }
 
 function renderLevelBadges(levels = []) {
@@ -218,6 +240,18 @@ function renderLevelBadges(levels = []) {
 function formatShortDate(value) {
   if (!value) return '';
   return new Date(value).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function sortTextsByDate(list) {
+  return [...list].sort((a, b) => {
+    const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
+    const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
+    return bTime - aTime;
+  });
+}
+
+function getFeaturedText(list) {
+  return sortTextsByDate(list).find(text => text.access_status === 'free') || null;
 }
 
 // Live search
@@ -255,6 +289,11 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
    PANTALLA 2b — DETALLE DE TEXTO
 ══════════════════════════════════════════════════════════════ */
 async function selectText(text) {
+  if (!canAccessText(text)) {
+    alert('Este texto es PREMIUM. Cuando tengamos login, aquí entraremos con acceso premium.');
+    return;
+  }
+
   selectedText = text;
 
   const available = getAvailableLevels(text);

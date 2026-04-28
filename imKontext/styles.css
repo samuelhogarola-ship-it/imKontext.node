@@ -1282,10 +1282,25 @@ input, select { font-family: inherit; }
   display: none;
 }
 @media (min-width: 700px) { .tx-row-topic { display: inline; } }
-.tx-row-free {
-  font-size: .58rem; font-weight: 700; letter-spacing: .05em;
-  color: white; background: var(--a2-clr);
-  padding: .1rem .45rem; border-radius: 20px;
+.tx-access-tag {
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: white;
+  padding: .1rem .45rem;
+  border-radius: 20px;
+}
+.tx-access-tag--free {
+  background: var(--a2-clr);
+}
+.tx-access-tag--premium {
+  background: #24180f;
+}
+.tx-row--locked {
+  opacity: .82;
+}
+.tx-row--locked .tx-row-title {
+  color: #5e554d;
 }
 @media (max-width: 520px) {
   .app-nav { gap: 0; }
