@@ -96,10 +96,10 @@ input, select { font-family: inherit; }
   padding: .7rem .9rem;
   box-shadow: var(--shadow);
 }
-.ln-nc--tl { top: 90px; left: 1.5vw; }
-.ln-nc--tr { top: 90px; right: 1.5vw; }
-.ln-nc--bl { bottom: 80px; left: 1.5vw; }
-.ln-nc--br { bottom: 80px; right: 1.5vw; }
+.ln-nc--tl { top: 108px; left: 1.5vw; }
+.ln-nc--tr { top: 108px; right: 1.5vw; }
+.ln-nc--bl { bottom: 96px; left: 1.5vw; }
+.ln-nc--br { bottom: 96px; right: 1.5vw; }
 .ln-nc-source { margin-bottom: .3rem; }
 .ln-nc-logo { font-weight: 700; font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
 .ln-nc-logo--spiegel { color: #d7000f; }
@@ -143,33 +143,33 @@ input, select { font-family: inherit; }
 /* Center content */
 .ln-center {
   position: relative; z-index: 2;
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 2.25rem 1.5rem 3rem;
+  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  padding: 1.75rem 1.5rem 3rem;
   width: 100%;
 }
 .ln-hero {
-  width: min(1120px, 100%);
-  display: grid;
-  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
-  align-items: start;
-  gap: clamp(1.5rem, 4vw, 4rem);
+  width: min(860px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
 }
 .ln-logo-link {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: .75rem;
+  padding-top: 0;
 }
 .ln-logo-img {
-  width: min(100%, 420px);
-  max-width: 420px;
+  width: min(100%, 520px);
+  max-width: 520px;
   filter: drop-shadow(0 18px 26px rgba(26,24,20,.16));
 }
 
 .ln-portada {
   text-align: center;
-  width: 100%;
-  background: rgba(255,255,255,.92);
+  width: min(860px, 100%);
+  background: rgba(255,255,255,.94);
   border-top: 4px solid var(--ink);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 20px 50px rgba(26,24,20,.10);
@@ -241,13 +241,6 @@ input, select { font-family: inherit; }
 }
 
 @media (max-width: 920px) {
-  .ln-hero {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .ln-logo-link {
-    padding-top: 0;
-  }
   .ln-logo-img {
     width: min(86vw, 360px);
   }
@@ -321,9 +314,11 @@ input, select { font-family: inherit; }
 }
 
 .app-nav-logo img {
-  height: 34px;
+  height: 76px;
   width: auto;
   border-radius: 8px;
+  object-fit: contain;
+  display: block;
 }
 
 .app-nav-logo span {
