@@ -233,12 +233,16 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   screens.landing.style.display = '';
 });
 
-// Nav: "Página principal" → vuelve a la landing
-document.getElementById('nav-pagina-principal').addEventListener('click', e => {
-  e.preventDefault();
-  $('main-app').style.display = 'none';
-  document.getElementById('screen-landing').style.display = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+// Nav: volver a la landing desde logo o enlace activo
+['nav-pagina-principal', 'nav-imkontext-link'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    $('main-app').style.display = 'none';
+    document.getElementById('screen-landing').style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 });
 
 // Nav: "Dashboard" — placeholder hasta que exista la ruta
