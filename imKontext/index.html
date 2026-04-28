@@ -63,6 +63,10 @@
         <img class="ln-logo-img" src="./landing.logo2.png?v=1" alt="Vokabel Lab imKontext">
       </a>
       <div class="ln-portada">
+        <div class="ln-edition-bar" aria-label="Edición semanal">
+          <span class="ln-edition-label">Número de la semana</span>
+          <span class="ln-edition-issue">Ed. 17 · Abril 2026</span>
+        </div>
         <div class="ln-portada-kicker">Willkommen!</div>
         <div class="ln-portada-rule"></div>
         <h1 class="ln-portada-headline">Aprende alemán con noticias reales</h1>
@@ -115,7 +119,6 @@
           <span class="app-nav-sep">|</span>
           <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
         </div>
-        <div class="streak-pill" id="streak-pill">Racha x<span id="streak-count">0</span></div>
       </div>
     </nav>
   </header>
@@ -148,7 +151,7 @@
       <div class="txsel-header">
         <div class="txsel-kicker">Paso 1 de 3</div>
         <h2 class="txsel-title">Elige un texto</h2>
-        <p class="txsel-subtitle">Selecciona el artículo sobre el que quieres practicar hoy.</p>
+        <p class="txsel-subtitle">Selecciona el artículo sobre el que quieres practicar hoy. Si el tema se te queda corto, cambia el nivel antes de entrar.</p>
       </div>
 
       <div class="txsel-lvl-selector" aria-label="Nivel preferido para la selección de texto">
@@ -210,6 +213,15 @@
       <div class="content-card">
         <span class="content-kicker">Lee el texto primero</span>
         <p id="content-description" class="txdet-desc">Este texto se carga directamente desde Supabase. Léelo con calma y vuelve cuando estés listo para los ejercicios.</p>
+        <div class="content-level-switch">
+          <p class="content-level-label">¿Demasiado fácil? Cambia de nivel aquí:</p>
+          <div class="content-level-chips" aria-label="Cambiar nivel del texto">
+            <button class="content-lvl-chip" type="button" data-level="a2">A2</button>
+            <button class="content-lvl-chip active" type="button" data-level="b1">B1</button>
+            <button class="content-lvl-chip" type="button" data-level="b2">B2</button>
+            <button class="content-lvl-chip" type="button" data-level="c1">C1</button>
+          </div>
+        </div>
         <div class="txdet-meta" id="content-meta"></div>
         <article class="txdet-article" id="content-body" aria-live="polite"></article>
         <div class="content-actions">

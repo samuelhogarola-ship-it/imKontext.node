@@ -28,7 +28,6 @@ let currentVocab   = [];
 let queue          = [];
 let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
-let streak         = 0;
 let numPalabras    = 10;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
@@ -67,13 +66,7 @@ function showScreen(name) {
 $('btn-entrar').addEventListener('click', async () => {
   $('main-app').style.display = 'block';
   screens.landing.style.display = 'none';
-
-  if (isPremium) {
-    await goToTextos(false);
-    return;
-  }
-
-  await goToTextos(true);
+  await goToTextos(false);
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -85,10 +78,6 @@ async function goToTextos(autoOpenFeatured = false) {
   // If already loaded, just render
   if (allTexts.length > 0) {
     renderTextGrid(allTexts);
-    if (autoOpenFeatured) {
-      const featured = getFeaturedText(allTexts);
-      if (featured) await selectText(featured);
-    }
     return;
   }
 
@@ -101,10 +90,6 @@ async function goToTextos(autoOpenFeatured = false) {
     allTexts = await apiFetch('/api/texts');
 
     renderTextGrid(allTexts);
-    if (autoOpenFeatured) {
-      const featured = getFeaturedText(allTexts);
-      if (featured) await selectText(featured);
-    }
   } catch (err) {
     console.error(err);
     $('txsel-loading').style.display = 'none';
@@ -146,6 +131,10 @@ function renderTextGrid(list) {
       </div>
       <button class="tx-featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-copy">
+          <div class="tx-featured-edition">
+            <span class="tx-featured-edition-label">Número de la semana</span>
+            <span class="tx-featured-edition-issue">${formatShortDate(featured.published_at) || 'Edición abierta'}</span>
+          </div>
           <p class="tx-featured-topic">${escapeHtml(featured.topic || 'Tema destacado')}</p>
           <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
           <p class="tx-featured-desc">Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.</p>
@@ -395,6 +384,17 @@ document.querySelectorAll('.txsel-lvl-chip').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.content-lvl-chip').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (btn.classList.contains('disabled')) return;
+    selectedLevel = btn.dataset.level;
+    syncLevelControls(getAvailableLevels(selectedText));
+    if (selectedText) {
+      await refreshSelectedTextVersion();
+    }
+  });
+});
+
 function getAvailableLevels(text) {
   return ((text?.levels || []).map(level => String(level).toLowerCase()));
 }
@@ -410,6 +410,13 @@ function syncLevelControls(availableLevels = []) {
   });
 
   document.querySelectorAll('#level-selector .config-chip').forEach(btn => {
+    const isAvailable = !hasAvailableLevels || availableLevels.includes(btn.dataset.level);
+    btn.classList.toggle('active', btn.dataset.level === selectedLevel);
+    btn.classList.toggle('disabled', hasAvailableLevels && !isAvailable);
+    btn.disabled = hasAvailableLevels && !isAvailable;
+  });
+
+  document.querySelectorAll('.content-lvl-chip').forEach(btn => {
     const isAvailable = !hasAvailableLevels || availableLevels.includes(btn.dataset.level);
     btn.classList.toggle('active', btn.dataset.level === selectedLevel);
     btn.classList.toggle('disabled', hasAvailableLevels && !isAvailable);
@@ -865,12 +872,8 @@ function disableOptions() {
 function recordScore(correct, word) {
   if (correct) {
     score.correct++;
-    streak++;
-    $('streak-count').textContent = streak;
   } else {
     score.wrong++;
-    streak = 0;
-    $('streak-count').textContent = 0;
   }
 }
 
