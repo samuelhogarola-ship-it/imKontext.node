@@ -477,6 +477,8 @@ async function updateSliderMax() {
       $('slider-max-label').textContent = '0';
       $('num-palabras-display').textContent = '5';
       updateLevelStatus(0);
+      $('btn-empezar').disabled = true;
+      $('btn-empezar').textContent = 'Actividades no disponibles';
       return;
     }
     const vocab = await apiFetch(
@@ -493,8 +495,10 @@ async function updateSliderMax() {
     }
     updateLevelStatus(max);
     $('btn-empezar').disabled = max === 0;
+    $('btn-empezar').textContent = max === 0 ? 'Actividades no disponibles' : 'Empezar práctica 🚀';
   } catch {
     $('btn-empezar').disabled = true;
+    $('btn-empezar').textContent = 'Actividades no disponibles';
   }
 }
 
@@ -523,7 +527,7 @@ function updateLevelStatus(vocabCount) {
   if (typeof vocabCount === 'number') {
     status.textContent = vocabCount > 0
       ? `Nivel ${levelLabel} listo: ${vocabCount} palabras disponibles para practicar.`
-      : `Nivel ${levelLabel} cargado, pero todavía sin vocabulario asociado.`;
+      : `Nivel ${levelLabel} cargado, pero este texto todavía no tiene actividades enlazadas en Supabase. Elige otro texto por ahora.`;
     return;
   }
 
