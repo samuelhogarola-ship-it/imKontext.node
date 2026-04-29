@@ -1,247 +1,725 @@
-# Practice Engine Audit
-**Vokabel Lab vs imKontext — análisis comparativo para extracción futura**
+# Practice Engine Audit — Documento definitivo
+
+## Objetivo
+
+Comparar la lógica de ejercicios de:
+
+1. **VokabelLab**
+2. **imKontext**
+3. **Der Die Das** como objetivo futuro
+
+El objetivo no es fusionar código todavía, sino definir una base clara para extraer un núcleo común reutilizable.
 
 ---
 
-## 1. Inventario de funciones
+# 1. Resumen ejecutivo
 
-| Función / responsabilidad | Vokabel Lab (`practice.js`) | imKontext (`practice.js`) | Equivalentes |
-|---|---|---|---|
-| Iniciar sesión | `startSession(themas, types, title, sub)` | `startPractice()` | Sí, propósito idéntico |
-| Reiniciar sesión | `restartSession(mode)` | `btn-reiniciar.onclick` (inline en `showResultado`) | Sí |
-| Shuffle | `shuffle(arr)` — Fisher-Yates in-place | `shuffle(arr)` — sort-random | Sí, lógica equivalente |
-| Normalizar respuesta | `normalize(s)` — fold acentos, minúsculas | No existe | Sólo VL |
-| Construir ejercicio | `renderWrite()` / `renderCard()` / `renderMC()` | `buildExercise()` → switch por modo | Parcial |
-| Modo escritura / lückentext | `renderWrite()` + `checkWrite()` | `buildLueckentext()` + `checkLuecken()` | Parecidos |
-| Modo tarjetas | `renderCard()` + `flipCard()` + `markCard()` | `buildFlashcard()` | Parecidos |
-| Modo test MC | `renderMC()` + `selectMC()` + `nextMC()` | `buildTest()` + `markAnswer()` + `autoNext()` | Parecidos |
-| Modo artículo | No existe | `buildArticulo()` | Sólo imK |
-| Modo ordenar frase | No existe | `buildOrdenar()` + `checkOrdenar()` | Sólo imK |
-| Avanzar a siguiente | `nextWrite()` / `nextMC()` / `markCard()` | `nextWord()` | Sí |
-| Retroceder | No existe | `btn-atras` → `currentIdx--` | Sólo imK |
-| Selección de modo activo | `switchTab(tab)` — tabs independientes | `getModo(idx)` — rotación + override | Diferente |
-| Estadísticas en tiempo real | `updateStats()` — sidebar siempre visible | Solo en pantalla resultado (`showResultado`) | Diferente |
-| Pantalla resultado | No existe (sidebar reemplaza) | `showResultado()` | Sólo imK |
-| Distractores MC | `otherEs` desde `words` global | `getRandomWrong(word, 3)` desde `currentVocab` | Equivalentes |
-| Desactivar opciones | `opts.forEach(b => b.disabled = true)` (inline) | `disableOptions()` | Equivalentes |
-| Registrar puntuación | `s.seen++; s.hits++; s.racha++` inline | `recordScore(correct, word)` | Equivalentes |
-| Auto-avance con countdown | No existe | `autoNext()` — setInterval 3 s | Sólo imK |
-| Guardar progreso en LS | No (solo summary global) | `progress_${textId}_${level}` | Diferente |
-| Guardar cola pendiente | No | `queue_${textId}_${level}` | Sólo imK |
-| Tabla de palabras | `buildWordTable()` — tab "list" | No existe | Sólo VL |
+Las dos apps ya comparten una estructura conceptual parecida:
 
----
+- cola de palabras
+- palabra activa
+- validación de respuesta
+- puntuación
+- racha
+- avance
+- feedback
+- persistencia parcial
 
-## 2. Modelo de datos por palabra
+Pero difieren en:
 
-| Campo semántico | Vokabel Lab | imKontext |
-|---|---|---|
-| Palabra alemana | `w.de` | `w.german` |
-| Traducción española | `w.es` | `w.spanish` |
-| Tipo gramatical | `w.type` | `w.word_type` |
-| Agrupación temática | `w.thema` (número 1-29) | Ninguno (el texto ES el contexto) |
-| Artículo | No existe | `w.article` (`der`/`die`/`das`) |
-| Frase de ejemplo | No existe | `w.example_sentence_de` |
-| ID | `w.id` (implícito) | `w.id` |
-| Nivel lingüístico | No existe | `selectedLevel` (A2/B1/B2/C1) — en texto, no en palabra |
+- modelo de datos
+- flujo previo a la práctica
+- UI
+- persistencia
+- complejidad de modos
+- dependencia de Supabase
+
+Por tanto, la estrategia correcta es:
+
+1. documentar
+2. extraer helpers puros
+3. crear core común
+4. adaptar primero VokabelLab
+5. adaptar después imKontext
+6. reutilizar para Der Die Das
 
 ---
 
-## 3. Estado de sesión
+# 2. Estado actual por app
 
-| Variable | Vokabel Lab | imKontext |
-|---|---|---|
-| Lista de palabras activas | `session[]` (global) | `queue[]` (global) |
-| Índice actual | `modeState[mode].idx` | `currentIdx` |
-| Puntuación | `modeState[mode].{ hits, seen, racha }` — por modo | `score.{ correct, wrong }` — global |
-| Modo activo | `activeMode` (`write`/`cards`/`mc`) | `selectedModo` (puede ser null = rotación) |
-| Vocabulario completo | `words[]` — toda la BD cargada | `currentVocab[]` — solo las del texto activo |
-| Flip tarjeta | `isFlipped` | Inline con `fc.classList.toggle('flipped')` |
-| Temas seleccionados | `savedThemas`, `selThemas` | N/A |
+## VokabelLab
 
----
+### Archivos principales
 
-## 4. Modos de ejercicio comparados
+- `index.html`
+- `app.js`
+- `practice.js`
+- `styles.css`
 
-| Modo | Vokabel Lab | imKontext | Diferencias clave |
-|---|---|---|---|
-| Escritura libre | `write` — escribe la traducción al español | `lueckentext` — escribe la palabra alemana en un hueco | Dirección inversa; VL usa `normalize`, imK compara exact lowercase |
-| Tarjeta volteada | `cards` — flip manual, luego ✓/✗ | `flashcards` — flip manual, luego ✓/✗ | Estructuralmente idénticos; campos diferentes |
-| Test opción múltiple | `mc` — 4 opciones (1 correcta + 3 de `words`) | `test` — 4 opciones (1 correcta + 3 de `currentVocab`) | Misma mecánica; pool de distractores distinto |
-| Artículo | No existe | `articulo` — der/die/das | Solo imK |
-| Ordenar frase | No existe | `ordenar` — tokens arrastrables | Solo imK |
+### `app.js`
 
----
+Responsabilidades:
 
-## 5. Scoring
+- home
+- navegación
+- carga de vocabulario
+- filtros simples/avanzados
+- resumen de catálogo
+- stats persistentes en home
 
-| Aspecto | Vokabel Lab | imKontext |
-|---|---|---|
-| Granularidad | Por modo (`write.hits`, `cards.hits`, `mc.hits`) | Global (`score.correct`, `score.wrong`) |
-| Racha | Sí, `racha` por modo | No |
-| % en tiempo real | Sí, sidebar siempre visible | Solo en pantalla resultado |
-| Persistencia en LS | No (se pierde al recargar) | Sí, `progress_${textId}_${level}.done` acumula |
-| Pantalla final | No (sidebar es el resultado) | Sí, `showResultado()` con porcentaje |
+Funciones relevantes:
 
----
+- `buildHome()`
+- `readPracticeStats()`
+- `goScreen()`
+- `buildSimple()`
+- `buildAdvanced()`
+- `startAdvanced()`
 
-## 6. localStorage
+### `practice.js`
 
-| Clave | Vokabel Lab | imKontext |
-|---|---|---|
-| Resumen global | `vokabel-summary` → `{ totalWords, totalThemas, totalTypes, lastUpdated }` | No |
-| Progreso por texto+nivel | No | `progress_${textId}_${level}` → `{ total, done }` |
-| Cola guardada | No | `queue_${textId}_${level}` → array de palabras pendientes |
+Responsabilidades:
 
----
+- motor de práctica
+- sesión
+- modos de ejercicio
+- scoring
+- racha
+- stats persistentes
+- reset de score
 
-## 7. Navegación entre pantallas
+Funciones relevantes:
 
-| Aspecto | Vokabel Lab | imKontext |
-|---|---|---|
-| Sistema | `goScreen(id)` — toggle de display en 4 screens | `showScreen(name)` — toggle en 6 screens |
-| Flujo | Home → Simple (temas) → Practice  ó  Home → Advanced (filtros) → Practice | Landing → Textos → Contenido → Actividad → Ejercicio → Resultado |
-| Dentro del ejercicio | Tabs (`write`/`cards`/`mc`/`list`) — cambio libre | Secuencial (`currentIdx++`), sin tabs |
-| Retroceder en ejercicio | No | Sí (`btn-atras`) |
-| Auto-avance | No | Sí, countdown de 3 s en `test` y `articulo` |
+- `startSession()`
+- `restartSession()`
+- `resetScore()`
+- `updateStats()`
+- `updatePracticeStats()`
 
----
+#### Modo Write
 
-## 8. Dependencias globales de cada `practice.js`
+- `renderWrite()`
+- `checkWrite()`
+- `nextWrite()`
 
-### Vokabel Lab `practice.js` lee de `app.js`:
-| Variable / función | Tipo |
-|---|---|
-| `words` | Array — toda la BD |
-| `session` | Array — palabras de la sesión (escribe y lee) |
-| `modeState` | Objeto — estado por modo (escribe y lee) |
-| `activeMode` | String |
-| `isFlipped` | Boolean |
-| `savedThemas`, `savedTypes` | Sets |
-| `goScreen()` | Función de navegación |
+#### Modo Flashcards
 
-### imKontext `practice.js` lee de `app.js`:
-| Variable / función | Tipo |
-|---|---|
-| `selectedText` | Objeto — texto activo |
-| `selectedLevel` | String |
-| `selectedTextVersion` | Objeto |
-| `numPalabras` | Number — tamaño de sesión |
-| `currentVocab` | Array (escribe y lee) |
-| `queue` | Array (escribe y lee) |
-| `currentIdx` | Number (escribe y lee) |
-| `score` | Objeto (escribe y lee) |
-| `selectedModo` | String |
-| `slider` | Referencia DOM |
-| `$()` | Helper de `getElementById` |
-| `apiFetch()` | Función de red |
-| `showScreen()` | Función de navegación |
-| `goToTextos()` | Función de navegación |
-| `refreshSelectedTextVersion()` | Función de API |
+- `renderCard()`
+- `flipCard()`
+- `markCard()`
 
----
+#### Modo Test
 
-## 9. Qué puede ser común (candidatos a `practice-core.js`)
+- `renderMC()`
+- `selectMC()`
+- `nextMC()`
 
-| Candidato | Confianza | Notas |
-|---|---|---|
-| `shuffle(arr)` | Alta | VL usa Fisher-Yates (mejor); imK usa sort-random (sesgo). Unificar con FY. |
-| `getRandomWrong(word, n, pool)` | Alta | Misma lógica; solo cambia el nombre del campo ID y el nombre del pool. |
-| `recordScore(correct)` | Alta | VL la hace inline; imK tiene función dedicada. Fácil de extraer. |
-| `disableOptions(container)` | Alta | Idéntica en propósito; trivial de parametrizar. |
-| `normalize(s)` | Media | Solo VL la usa, pero imK debería adoptarla para `lueckentext`. |
-| Estado de sesión base | Media | `{ queue/session, idx, score/hits }` — los campos cambian pero la estructura es la misma. |
-| `autoNext(onDone, ms)` | Media | Solo imK; VL podría adoptarlo o no. |
-| Estructura de `buildExercise` | Baja | El switch de modos es diferente (tabs vs secuencial); el patrón es similar pero el contrato no. |
-| Navegación next/prev | Baja | VL no tiene prev; los contratos de avance son distintos. Requiere adapter. |
+#### Lista
 
----
+- `buildWordTable()`
 
-## 10. Qué debe seguir adaptado por app
+### Modelo de datos
 
-| Aspecto | Razón |
-|---|---|
-| Nombres de campos (`de`/`es` vs `german`/`spanish`) | Vienen del schema de Supabase; cambiarlos requiere migración de BD o mapeo |
-| Fetch de vocabulario | VL carga toda la BD en memoria; imK carga solo el vocabulario del texto activo con 3 endpoints distintos |
-| Modos exclusivos de imKontext (`articulo`, `ordenar`) | No aplican en VL (no hay artículos ni frases de ejemplo en ese schema) |
-| Modo `write` de VL | No aplica directamente en imK (imK usa `lueckentext` con la frase de contexto) |
-| Sistema de niveles (A2/B1/B2/C1) | Solo imK; VL usa thema numérico |
-| Premium/free y textos semanales | Solo imK |
-| Sidebar de stats en tiempo real | Solo VL |
-| Pantalla resultado (`showResultado`) | Solo imK |
-| Tabs dentro de la sesión | Solo VL |
-| Carga lazy de `practice.js` | VL lo inyecta dinámicamente; imK lo carga estáticamente |
-| Estilos y DOM IDs | Completamente distintos en ambas apps |
-
----
-
-## 11. Riesgos de la extracción
-
-| Riesgo | Severidad | Mitigación |
-|---|---|---|
-| Romper la carga lazy de VL si se cambia el contrato del namespace `Lab` | Alta | No tocar `Lab.modules.practiceLoaded` durante la extracción |
-| Diferencia sutil en `shuffle` (sort-random tiene sesgo en arrays grandes) | Media | Reemplazar ambas por Fisher-Yates en el core; verificar que el orden de aparición no cambie UX |
-| `normalize` ausente en imK puede causar falsos negativos en `lueckentext` (p.ej. "müde" vs "mude") | Media | Añadir `normalize` a imK en un PR separado antes de compartir la función |
-| Estado global mutable compartido entre modos en VL | Media | El core no debe mutar estado directamente; usar callbacks o retornar nuevos estados |
-| IDs de DOM distintos (VL: `w-input`, imK: `input-traduccion`) | Alta | El core no puede manipular DOM; el adapter es dueño del DOM |
-| ES modules vs scripts globales | Alta | No convertir a módulos por ahora; mantener patrón de globals hasta decidir bundler |
-| `autoNext` con `setInterval` puede dispararse después de navegar fuera | Media | Guardar referencia al interval y limpiarlo en cada `buildExercise` |
-
----
-
-## 12. Propuesta de arquitectura futura
-
+```js
+{
+  de,
+  es,
+  thema,
+  type
+}
 ```
+
+### localStorage
+
+```txt
+vokabel-summary
+vokabel-practice-stats
+```
+
+`vokabel-practice-stats` guarda:
+
+```js
+{
+  practiced,
+  correct,
+  wrong,
+  bestStreak,
+  currentStreak
+}
+```
+
+---
+
+## imKontext
+
+### Archivos principales
+
+- `index.html`
+- `app.js`
+- `practice.js`
+- `styles.css`
+- `server.js`
+
+### `app.js`
+
+Responsabilidades:
+
+- API frontend
+- navegación
+- selección de textos
+- lectura previa
+- niveles
+- modo de práctica
+- slider de palabras
+- progreso por texto/nivel
+
+Funciones relevantes:
+
+- `apiFetch()`
+- `showScreen()`
+- `goToTextos()`
+- `selectText()`
+- `refreshSelectedTextVersion()`
+- `loadActivityScreen()`
+- `updateSliderMax()`
+- `updateProgressPanel()`
+- `checkSavedProgress()`
+
+### Endpoints backend
+
+```txt
+/api/texts
+/api/text-version
+/api/text-version-vocabulary
+/api/vocabulario
+```
+
+### `practice.js`
+
+Responsabilidades:
+
+- inicio de práctica
+- cola de vocabulario
+- motor de ejercicios
+- feedback
+- resultado
+- avance
+
+Funciones relevantes:
+
+- `startPractice()`
+- `buildExercise()`
+- `getModo()`
+- `buildTest()`
+- `buildFlashcard()`
+- `buildOrdenar()`
+- `checkOrdenar()`
+- `buildArticulo()`
+- `buildLueckentext()`
+- `checkLuecken()`
+- `markAnswer()`
+- `recordScore()`
+- `autoNext()`
+- `nextWord()`
+- `getRandomWrong()`
+- `shuffle()`
+- `showResultado()`
+
+### Modos
+
+- test
+- flashcards
+- ordenar
+- artículo
+- lückentext
+
+### Modelo de datos
+
+```js
+{
+  german,
+  spanish,
+  article,
+  word_type,
+  example_sentence_de
+}
+```
+
+### localStorage
+
+```txt
+progress_${textId}_${level}
+queue_${textId}_${level}
+```
+
+---
+
+## Der Die Das
+
+Todavía no debe adaptarse, pero es el destino natural del futuro núcleo de flashcards.
+
+### Modelo probable
+
+```js
+{
+  article,
+  noun,
+  plural,
+  translation
+}
+```
+
+### Potencial reutilizable
+
+- flashcards
+- marcar sabido/no sabido
+- artículo correcto
+- racha
+- repetición
+- stats persistentes
+
+---
+
+# 3. Tabla comparativa de funciones
+
+| Área | VokabelLab | imKontext | Decisión |
+|---|---|---|---|
+| Bootstrap | `Lab.config`, `goScreen`, `loadWords` | `showScreen`, `goToTextos`, `selectText` | App-specific |
+| Inicio sesión | `startSession(themas, types, title, sub)` | `startPractice()` | Adapter |
+| Cola | `session = shuffle(words.filter(...))` | `queue = shuffled.slice(0, n)` | Core común |
+| Modo activo | `switchTab(tab)` | `getModo(idx)` | Adapter + core ligero |
+| Shuffle | Fisher-Yates | sort random | Core común |
+| Distractores | inline en `renderMC()` | `getRandomWrong()` | Core común |
+| Validación texto | `normalize()` + `checkWrite()` | `checkLuecken()` | Core común con adapter |
+| Flashcard | `renderCard()`, `flipCard()`, `markCard()` | `buildFlashcard()`, `recordScore()` | Flashcard-core |
+| Multiple choice | `selectMC()` | `markAnswer()` | Core común + adapter DOM |
+| Ordenar | no existe | `buildOrdenar()` | imKontext-specific |
+| Artículo | no existe | `buildArticulo()` | imKontext / DerDieDas |
+| Resultado | estados por modo | `showResultado()` | Adapter |
+| Stats persistentes | global | por texto/nivel | No unificar aún |
+
+---
+
+# 4. Comparativa de modelos de datos
+
+| Campo lógico | VokabelLab | imKontext | Der Die Das |
+|---|---|---|---|
+| palabra alemana | `de` | `german` | `noun` |
+| traducción | `es` | `spanish` | `translation` |
+| artículo | no base | `article` | `article` |
+| tipo | `type` | `word_type` | categoría propia |
+| tema | `thema` | `selectedText/topic` | unidad o grupo |
+| ejemplo | no base | `example_sentence_de` | opcional |
+| plural | no base | opcional | `plural` |
+
+Conclusión:
+
+El core no debe depender de nombres concretos.
+Debe recibir datos normalizados desde un adapter.
+
+---
+
+# 5. Qué puede ser común
+
+## `shared/practice-core.js`
+
+Debe contener:
+
+- `createSession()`
+- `getCurrentItem()`
+- `nextItem()`
+- `previousItem()`
+- `isComplete()`
+- `recordAnswer()`
+- `resetScore()`
+- `getProgressPercent()`
+- `shuffle()`
+- `normalizeAnswer()`
+- `isExactMatch()`
+- `matchesAnyAcceptedAnswer()`
+- `getRandomDistractors()`
+
+No debe contener:
+
+- DOM
+- Supabase
+- rutas
+- estilos
+- botones
+- pantallas
+- localStorage directo
+
+---
+
+## `shared/flashcard-core.js`
+
+Debe contener:
+
+- estado flip
+- `flip()`
+- `markKnown()`
+- `markUnknown()`
+- avance automático
+- racha
+- preparación para repetición futura
+
+Debe servir para:
+
+- VokabelLab
+- imKontext
+- Der Die Das
+
+---
+
+# 6. Qué debe seguir específico
+
+## VokabelLab
+
+- filtros por Thema
+- filtros por tipo
+- tabs Write/Cards/Test/List
+- sidebar de sesión
+- stats globales en home
+- localStorage `vokabel-practice-stats`
+
+## imKontext
+
+- Supabase
+- texto semanal/free/premium
+- lectura previa
+- niveles A2/B1/B2/C1
+- slider de palabras
+- ordenar frases
+- lückentext contextual
+- progreso por texto/nivel
+
+## Der Die Das
+
+- colores der/die/das
+- artículo como centro del ejercicio
+- plural
+- género
+- mecánica específica de artículos
+
+---
+
+# 7. Arquitectura propuesta
+
+```txt
 shared/
-  practice-core.js          ← motor sin DOM, sin campos específicos
-    shuffle(arr)             ← Fisher-Yates
-    getRandomWrong(word, n, pool, idField)
-    normalize(s)             ← fold de acentos
-    createSession(words, n)  ← shuffle + slice
-    recordScore(state, correct)
-    createSessionState()     ← { queue, idx, score }
+├── practice-core.js
+├── flashcard-core.js
+└── answer-utils.js
 
 vokabellab/
-  practice-adapter.js       ← reemplaza practice.js actual
-    mapea w.de → campo "alemán"
-    mapea w.es → campo "español"
-    mantiene modeState, tabs, sidebar
-    llama a core.shuffle, core.recordScore, etc.
+└── practice-adapter.js
 
 imkontext/
-  practice-adapter.js       ← reemplaza practice.js actual
-    mapea w.german, w.spanish, w.article, etc.
-    mantiene queue, currentIdx, score, autoNext
-    conecta con selectedText/selectedLevel/Supabase
-    llama a core.shuffle, core.recordScore, etc.
+└── practice-adapter.js
+
+derdiedas/
+└── flashcard-adapter.js
 ```
 
-El core **no toca el DOM**. Cada adapter es dueño total de su DOM y sus IDs.
+---
+
+# 8. Contrato futuro del adapter
+
+Cada app debe transformar sus datos al formato interno:
+
+```js
+{
+  id,
+  prompt,
+  answer,
+  alternatives,
+  article,
+  type,
+  group,
+  example,
+  difficulty,
+  raw
+}
+```
 
 ---
 
-## 13. Orden recomendado de PRs
+# 9. Riesgos
 
-| # | PR | Contenido | Riesgo | Tamaño |
-|---|---|---|---|---|
-| 1 | Este PR | `docs/practice-engine-audit.md` | Ninguno | XS |
-| 2 | Unificar `shuffle` en imKontext | Reemplazar sort-random por Fisher-Yates en `imKontext/practice.js` | Muy bajo | XS |
-| 3 | Añadir `normalize` a imKontext | Incorporar fold de acentos en `checkLuecken` | Bajo | XS |
-| 4 | Crear `shared/practice-core.js` | Solo `shuffle`, `normalize`, `getRandomWrong`, `recordScore`, `createSession` — sin DOM | Bajo | S |
-| 5 | Conectar imKontext al core | Reemplazar las funciones equivalentes en `imKontext/practice.js` por llamadas al core | Medio | S |
-| 6 | Conectar Vokabel Lab al core | Idem para `VokabelLab.node/practice.js` | Medio | S |
-| 7 | (Futuro) Adapters con DOM desacoplado | Refactor mayor; solo cuando ambas apps estén estables | Alto | L |
+## Alto riesgo
+
+- mezclar persistencia global y por texto
+- convertir a módulos ES6 ahora
+- intentar un renderer universal
+- tocar Supabase durante el refactor
+- mover demasiado código de golpe
+- romper scripts clásicos cargados con `script src`
+
+## Bajo riesgo
+
+- extraer `shuffle`
+- extraer `normalize`
+- extraer scoring puro
+- extraer cálculo de porcentaje
+- crear adapter sin cambiar comportamiento
 
 ---
 
-## 14. Qué NO tocar aún
+# 10. Orden recomendado de PRs
 
-- Schema de Supabase (ninguna tabla, ningún campo)
-- DOM IDs y estructura HTML de ninguna de las dos apps
-- Estilos / CSS
-- Rutas de servidor (`/api/*`)
-- Sistema de autenticación / premium
-- Carga lazy de `practice.js` en Vokabel Lab (`ensurePracticeRuntime`)
-- `Lab` namespace en Vokabel Lab
-- Lógica de textos, niveles y lectura en imKontext
-- `localStorage` keys existentes (cambiarlas rompe el progreso guardado de usuarios)
+## PR 1 — Documento
+
+Crear este informe en:
+
+```txt
+docs/practice-engine-audit.md
+```
+
+No tocar código funcional.
+
+## PR 2 — Helpers puros
+
+Crear:
+
+```txt
+shared/answer-utils.js
+shared/practice-core.js
+```
+
+Mover solo:
+
+- shuffle
+- normalize
+- porcentaje
+- scoring puro
+- distractores
+
+No cambiar comportamiento.
+
+## PR 3 — Flashcard core
+
+Crear:
+
+```txt
+shared/flashcard-core.js
+```
+
+Usarlo primero en VokabelLab.
+
+## PR 4 — VokabelLab adapter
+
+Adaptar VokabelLab al core común.
+
+## PR 5 — Der Die Das adapter
+
+Aplicar el `flashcard-core` a Der Die Das.
+
+## PR 6 — imKontext adapter
+
+Adaptar imKontext después.
+
+---
+
+# 11. Instrucción para Claude
+
+```txt
+Create docs/practice-engine-audit.md using this document.
+
+Do not change app behavior.
+Do not refactor runtime code yet.
+Do not touch Supabase.
+Do not touch CSS.
+Do not convert scripts to ES modules.
+Do not merge the engines yet.
+
+This PR must be documentation only.
+
+After this PR, we will create a second PR to extract pure helpers into shared/practice-core.js and shared/answer-utils.js.
+```
+
+---
+
+# 12. Conclusión
+
+El motor compartido sí tiene sentido, pero no debe hacerse de golpe.
+
+La mejor ruta es:
+
+1. documento único
+2. helpers puros
+3. flashcard-core
+4. adaptar Der Die Das
+5. adaptar VokabelLab
+6. adaptar imKontext
+
+El mayor beneficio inmediato está en:
+
+```txt
+shared/flashcard-core.js
+```
+
+porque servirá para las tres apps con menos riesgo que intentar fusionar todo el practice engine desde el principio.
+
+
+---
+
+# 13. Patrón común obligatorio (data → core → UI)
+
+Este patrón debe aplicarse a las 3 apps.
+
+```txt
+Data layer
+→ normalization layer
+→ shared practice core
+→ app UI layer
+```
+
+## A. Data layer (app-specific)
+
+Aquí vive todo lo específico de cada producto.
+
+### VokabelLab
+- carga vocabulario simple
+- filtros por Thema
+- filtros por tipo
+
+### imKontext
+- Supabase
+- textos
+- text_versions
+- text_version_vocabulary
+- example_sentence_de
+- lectura previa
+- niveles
+
+### Der Die Das
+- artículos
+- plural
+- género
+- sets específicos
+
+**Regla:**
+El core nunca debe hacer fetch directo.
+
+Especialmente:
+
+```txt
+shared core ❌ Supabase
+shared core ❌ API routes
+shared core ❌ SQL logic
+```
+
+---
+
+## B. Normalization layer (adapter obligatorio)
+
+Cada app debe transformar su modelo al mismo contrato:
+
+```js
+{
+  id,
+  prompt,
+  answer,
+  alternatives,
+  article,
+  type,
+  group,
+  example,
+  difficulty,
+  raw
+}
+```
+
+Ejemplo:
+
+### VokabelLab
+
+```js
+{
+  prompt: de,
+  answer: es,
+  type: type,
+  group: thema
+}
+```
+
+### imKontext
+
+```js
+{
+  prompt: german,
+  answer: spanish,
+  article: article,
+  type: word_type,
+  group: textId,
+  example: example_sentence_de
+}
+```
+
+---
+
+## C. Shared practice core
+
+Debe encargarse únicamente de:
+
+- session lifecycle
+- queue
+- shuffle
+- scoring
+- streak
+- next/previous
+- validation
+- distractors
+- progress %
+
+---
+
+## D. UI layer (app-specific)
+
+Cada app mantiene:
+
+- pantallas
+- estilos
+- navegación
+- botones
+- UX específica
+
+---
+
+# 14. Patrón común de distractores
+
+Esto sí debe ser universal.
+
+Orden de prioridad:
+
+1. mismo tipo de palabra
+2. mismo tema/texto
+3. dificultad similar
+4. misma categoría semántica si existe
+5. evitar duplicados
+6. evitar respuestas absurdas
+7. fallback global
+
+```txt
+Haus → casa
+
+Buenos:
+piso
+edificio
+habitación
+
+Malos:
+correr
+ayer
+rápido
+```
+
+## Regla
+
+El core genera distractores.
+
+El adapter solo entrega metadata:
+- type
+- group
+- difficulty
+- semantic tags (si existen)
