@@ -883,6 +883,17 @@ input, select { font-family: inherit; }
 }
 .pregunta-sub { font-size: .88rem; color: var(--muted); margin-bottom: .75rem; }
 
+/* Lückentext blank highlight */
+.luecken-blank {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 3px solid var(--vl-blue);
+  color: var(--vl-blue);
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 0 .2em;
+}
+
 .translation-toggle {
   font-size: .78rem; color: var(--vl-blue);
   text-decoration: underline; text-underline-offset: 3px;
