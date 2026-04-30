@@ -225,6 +225,7 @@ function checkOrdenar(original) {
     $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${original}"`;
     $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
     recordScore(correct, queue[currentIdx]);
+    setNextHandler(() => nextWord());
     $('btn-siguiente').disabled = false;
   }
 }
@@ -351,6 +352,15 @@ function recordScore(correct, word) {
   }
 }
 
+/* Replaces btn-siguiente with a fresh clone to wipe any prior listeners,
+   then attaches exactly one click handler. */
+function setNextHandler(fn) {
+  const btn    = $('btn-siguiente');
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+  newBtn.addEventListener('click', fn);
+}
+
 function autoNext() {
   let t = EXERCISE_CONFIG.autoNextDelay;
   const countdown = $('next-countdown');
@@ -366,7 +376,7 @@ function autoNext() {
     }
   }, 1000);
   $('btn-siguiente').disabled = false;
-  $('btn-siguiente').onclick  = () => { clearInterval(iv); nextWord(); };
+  setNextHandler(() => { clearInterval(iv); nextWord(); });
 }
 
 function nextWord() {
@@ -388,7 +398,8 @@ $('btn-atras').addEventListener('click', () => {
   if (currentIdx > 0) { currentIdx--; buildExercise(); }
 });
 
-$('btn-siguiente').addEventListener('click', () => { nextWord(); });
+// btn-siguiente has NO global listener — it is wired exclusively by setNextHandler()
+// inside autoNext() and by individual exercise builders that call setNextHandler directly.
 
 $('btn-terminar').addEventListener('click', () => { showResultado(); });
 
