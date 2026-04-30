@@ -3,8 +3,11 @@
    Exercise engine. Depends on globals set by app.js:
      $, selectedText, selectedLevel, selectedTextVersion,
      numPalabras, currentVocab, queue, currentIdx, score,
-     slider, apiFetch, showScreen, goToTextos,
-     refreshSelectedTextVersion
+     wrongWords, selectedModos, slider, apiFetch, showScreen,
+     goToTextos, refreshSelectedTextVersion
+   Also depends on common.js:
+     EXERCISE_CONFIG, saveSessionErrors, getPersistedErrors,
+     clearPersistedErrors
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── START PRACTICE ──────────────────────────────────────────── */
@@ -17,36 +20,37 @@ async function startPractice() {
   $('btn-empezar').textContent = 'Cargando…';
 
   try {
-    // 1. Get text version for selected level
     const version = selectedTextVersion && String(selectedTextVersion.level || '').toLowerCase() === selectedLevel
       ? selectedTextVersion
       : await refreshSelectedTextVersion({ updateContent: false });
     if (!version?.id) throw new Error('No hay versión para este nivel.');
     const vId = version.id;
 
-    // 2. Get vocabulary IDs for this version
     const links = await apiFetch(
       `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
     const vocabIds = links.map(l => l.vocabulario_id);
-
     if (!vocabIds.length) throw new Error('No hay vocabulario para este texto y nivel.');
 
-    // 3. Get vocabulary details
     const vocab = await apiFetch(
       `/api/vocabulario?ids=${encodeURIComponent(vocabIds.join(','))}`
     );
-
     currentVocab = vocab;
 
-    // Shuffle and slice
+    // Build queue: persisted errors first, then fresh words up to numPalabras
     const shuffled = [...vocab].sort(() => Math.random() - .5);
     const n = Math.min(numPalabras, shuffled.length);
-    queue = shuffled.slice(0, n);
+    const errorWords = getPersistedErrors(shuffled);
+    const freshWords = shuffled.filter(w => !persistedErrorIds.includes(w.id));
+    const errorSlice = errorWords.slice(0, n);
+    const freshSlice = freshWords.slice(0, Math.max(0, n - errorSlice.length));
+    queue = [...errorSlice, ...freshSlice];
+    clearPersistedErrors();
+
     currentIdx = 0;
     score = { correct: 0, wrong: 0 };
+    wrongWords = [];
 
-    // Save max for progress
     const pKey = `progress_${selectedText.id}_${selectedLevel}`;
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
     localStorage.setItem(pKey, JSON.stringify({
@@ -54,7 +58,6 @@ async function startPractice() {
       done: existing?.done || 0,
     }));
 
-    // Slider max update
     slider.max = vocab.length;
     $('slider-max-label').textContent = vocab.length;
 
@@ -76,7 +79,8 @@ async function startPractice() {
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
 
 function getModo(idx) {
-  if (selectedModo) return selectedModo;
+  if (selectedModos && selectedModos.length === 1) return selectedModos[0];
+  if (selectedModos && selectedModos.length > 1) return selectedModos[idx % selectedModos.length];
   return MODOS[idx % MODOS.length];
 }
 
@@ -89,12 +93,10 @@ function buildExercise() {
   const modo  = getModo(currentIdx);
   const total = queue.length;
 
-  // Progress bar
   $('prog-actual').textContent = currentIdx + 1;
   $('prog-total').textContent  = total;
   $('prog-fill').style.width   = `${((currentIdx) / total) * 100}%`;
 
-  // Dots
   const dotsWrap = $('progreso-dots');
   dotsWrap.innerHTML = '';
   queue.forEach((_, i) => {
@@ -103,14 +105,12 @@ function buildExercise() {
     dotsWrap.appendChild(d);
   });
 
-  // Badge
   const labels = {
     test: '🎯 Test', flashcards: '🃏 Flashcard',
     ordenar: '🔀 Ordenar', articulo: '📖 Artículo', lueckentext: '✏️ Lückentext'
   };
   $('tipo-badge').textContent = labels[modo] || modo;
 
-  // Hide all input types
   $('opciones-wrap').innerHTML = '';
   $('opciones-wrap').style.display = 'none';
   $('flashcard-wrap').style.display = 'none';
@@ -120,16 +120,18 @@ function buildExercise() {
   $('respuesta-feedback').className   = 'respuesta-feedback';
   $('next-countdown').textContent     = '';
   $('translation-panel').classList.remove('visible');
+  $('translation-panel').textContent  = '';
   $('btn-toggle-traduccion').style.display = 'none';
+  $('btn-toggle-traduccion').textContent   = 'Ver traducción';
   $('btn-siguiente').disabled = true;
   $('btn-siguiente').style.display = 'inline-flex';
 
   switch (modo) {
-    case 'test':       buildTest(word);       break;
-    case 'flashcards': buildFlashcard(word);  break;
-    case 'ordenar':    buildOrdenar(word);    break;
-    case 'articulo':   buildArticulo(word);   break;
-    case 'lueckentext':buildLueckentext(word);break;
+    case 'test':        buildTest(word);        break;
+    case 'flashcards':  buildFlashcard(word);   break;
+    case 'ordenar':     buildOrdenar(word);     break;
+    case 'articulo':    buildArticulo(word);    break;
+    case 'lueckentext': buildLueckentext(word); break;
   }
 }
 
@@ -206,7 +208,6 @@ function buildOrdenar(word) {
     banco.appendChild(pill);
   });
 
-  // allow clicking back from construction zone
   constr.addEventListener('click', e => {
     if (e.target.classList.contains('palabra-token')) {
       banco.appendChild(e.target);
@@ -216,13 +217,13 @@ function buildOrdenar(word) {
 }
 
 function checkOrdenar(original) {
-  const constr   = $('orden-construccion');
-  const built    = Array.from(constr.querySelectorAll('.palabra-token')).map(p => p.textContent).join(' ');
-  const allUsed  = $('banco-palabras').querySelectorAll('.palabra-token').length === 0;
+  const constr  = $('orden-construccion');
+  const built   = Array.from(constr.querySelectorAll('.palabra-token')).map(p => p.textContent).join(' ');
+  const allUsed = $('banco-palabras').querySelectorAll('.palabra-token').length === 0;
   if (allUsed) {
     const correct = built.trim() === original.trim();
-    $('respuesta-feedback').textContent  = correct ? '✓ ¡Correcto!' : `✗ Era: "${original}"`;
-    $('respuesta-feedback').className    = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
+    $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${original}"`;
+    $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
     recordScore(correct, queue[currentIdx]);
     $('btn-siguiente').disabled = false;
   }
@@ -254,42 +255,81 @@ function buildArticulo(word) {
 
 /* ── LÜCKENTEXT ──────────────────────────────────────────────── */
 function buildLueckentext(word) {
-  const sentence = word.example_sentence_de || `${word.german} bedeutet ${word.spanish}.`;
-  const blanked  = sentence.replace(word.german, '______');
+  // Build sentence with blank
+  const sentence = word.example_sentence_de || '';
+  const blanked  = blankifyWord(sentence, word.german);
 
-  $('pregunta-texto').textContent = blanked;
-  $('pregunta-sub').textContent   = `(${word.spanish})`;
-  $('input-wrap').style.display   = 'block';
+  if (blanked) {
+    // Highlight the blank within the sentence
+    $('pregunta-texto').innerHTML = escapeHtml(blanked).replace(
+      '______',
+      '<span class="luecken-blank">______</span>'
+    );
+  } else {
+    // Fallback: sentence shown separately, blank as generic prompt
+    const prefix = sentence ? `${escapeHtml(sentence)}<br><br>` : '';
+    $('pregunta-texto').innerHTML = `${prefix}¿Cómo se dice „${escapeHtml(word.spanish)}" auf Deutsch? <span class="luecken-blank">______</span>`;
+  }
+  $('pregunta-sub').textContent = '';
 
-  const input = $('input-traduccion');
-  input.value = '';
-  input.focus();
+  // Collapsible Tipp (Spanish translation, hidden by default)
+  $('btn-toggle-traduccion').style.display = 'block';
+  $('btn-toggle-traduccion').textContent   = '💡 Tipp';
+  $('translation-panel').textContent       = word.spanish;
 
-  input.onkeydown = e => {
-    if (e.key === 'Enter') checkLuecken(word);
-  };
+  // 4 multiple-choice options (German words)
+  const wrong3 = getRandomWrong(word, 3);
+  const opts   = shuffle([word.german, ...wrong3.map(w => w.german)]);
 
-  $('btn-siguiente').disabled = false;
-  $('btn-siguiente').onclick  = () => {
-    checkLuecken(word);
-    nextWord();
-  };
+  const wrap = $('opciones-wrap');
+  wrap.style.display = 'flex';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opcion';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      const correct = opt === word.german;
+      markAnswer(btn, correct, word, correct ? null : word.german);
+      disableOptions();
+      autoNext();
+    });
+    wrap.appendChild(btn);
+  });
 }
 
-function checkLuecken(word) {
-  const val     = $('input-traduccion').value.trim().toLowerCase();
-  const correct = val === word.german.toLowerCase();
-  $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${word.german}"`;
-  $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
-  recordScore(correct, word);
+/* Returns sentence with the German word replaced by ______, or null if not found. */
+function blankifyWord(sentence, german) {
+  if (!sentence) return null;
+
+  function escRx(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  const tryReplace = (term) => {
+    const re = new RegExp(`\\b${escRx(term)}\\b`, 'i');
+    return re.test(sentence) ? sentence.replace(re, '______') : null;
+  };
+
+  let result = tryReplace(german);
+  if (result) return result;
+
+  // Try without leading article (der/die/das/den/dem/des/ein/eine/einen/einem/einer)
+  const noArticle = german.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/i, '');
+  if (noArticle !== german) {
+    result = tryReplace(noArticle);
+    if (result) return result;
+  }
+
+  return null;
 }
 
 /* ── HELPERS ─────────────────────────────────────────────────── */
 function markAnswer(btn, correct, word, correctLabel) {
   btn.classList.add(correct ? 'correct-ans' : 'wrong-ans');
   if (!correct && correctLabel) {
-    const allBtns = $('opciones-wrap').querySelectorAll('.opcion');
-    allBtns.forEach(b => { if (b.textContent === correctLabel) b.classList.add('correct-ans'); });
+    $('opciones-wrap').querySelectorAll('.opcion').forEach(b => {
+      if (b.textContent === correctLabel) b.classList.add('correct-ans');
+    });
   }
   recordScore(correct, word);
   $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${correctLabel || ''}"`;
@@ -305,11 +345,14 @@ function recordScore(correct, word) {
     score.correct++;
   } else {
     score.wrong++;
+    if (word && !wrongWords.find(w => w.id === word.id)) {
+      wrongWords.push(word);
+    }
   }
 }
 
 function autoNext() {
-  let t = 3;
+  let t = EXERCISE_CONFIG.autoNextDelay;
   const countdown = $('next-countdown');
   countdown.textContent = `Siguiente en ${t}…`;
   const iv = setInterval(() => {
@@ -353,6 +396,9 @@ $('btn-terminar').addEventListener('click', () => { showResultado(); });
    RESULTADO
 ══════════════════════════════════════════════════════════════ */
 function showResultado() {
+  // Persist errors before leaving the exercise screen
+  saveSessionErrors(wrongWords);
+
   showScreen('resultado');
 
   const total = score.correct + score.wrong;
@@ -367,6 +413,15 @@ function showResultado() {
     <div class="stat-item"><span class="stat-val">${queue.length}</span><span class="stat-lbl">Palabras</span></div>
   `;
 
+  // Show "Repasar solo errores" only when there are errors
+  const btnRepasar = $('btn-repasar-errores');
+  if (wrongWords.length > 0) {
+    btnRepasar.style.display = 'block';
+    btnRepasar.textContent   = `Repasar solo errores (${wrongWords.length})`;
+  } else {
+    btnRepasar.style.display = 'none';
+  }
+
   // Save progress
   if (selectedText) {
     const pKey = `progress_${selectedText.id}_${selectedLevel}`;
@@ -380,13 +435,27 @@ function showResultado() {
   $('btn-reiniciar').onclick = () => {
     currentIdx = 0;
     score = { correct: 0, wrong: 0 };
+    wrongWords = [];
     queue = [...queue].sort(() => Math.random() - .5);
     showScreen('ejercicio');
     buildExercise();
   };
 }
 
+$('btn-repasar-errores').addEventListener('click', () => {
+  if (!wrongWords.length) return;
+  queue = [...wrongWords];
+  wrongWords = [];
+  score = { correct: 0, wrong: 0 };
+  currentIdx = 0;
+  clearPersistedErrors(); // errors will be re-saved if wrong again
+  showScreen('ejercicio');
+  buildExercise();
+});
+
 $('btn-volver-menu').addEventListener('click', () => {
+  // Keep errors available for the next session
+  saveSessionErrors(wrongWords);
   showScreen('activity');
 });
 
@@ -394,15 +463,15 @@ $('btn-salir-test').addEventListener('click', () => {
   goToTextos();
 });
 
-$('btn-repasar-errores').addEventListener('click', () => {
-  // would need to track wrong words — placeholder
-  showScreen('ejercicio');
-  buildExercise();
-});
-
-/* ── TRANSLATION TOGGLE ──────────────────────────────────────── */
+/* ── TRANSLATION / TIPP TOGGLE ───────────────────────────────── */
 $('btn-toggle-traduccion').addEventListener('click', () => {
-  $('translation-panel').classList.toggle('visible');
-  $('btn-toggle-traduccion').textContent =
-    $('translation-panel').classList.contains('visible') ? 'Ocultar' : 'Ver traducción';
+  const panel = $('translation-panel');
+  const btn   = $('btn-toggle-traduccion');
+  panel.classList.toggle('visible');
+  const isLuecken = btn.textContent.startsWith('💡');
+  if (isLuecken) {
+    btn.textContent = panel.classList.contains('visible') ? 'Ocultar tipp' : '💡 Tipp';
+  } else {
+    btn.textContent = panel.classList.contains('visible') ? 'Ocultar' : 'Ver traducción';
+  }
 });

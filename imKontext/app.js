@@ -24,11 +24,12 @@ let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
 let selectedLevel  = 'b1';
-let selectedModo   = null;
+let selectedModos  = [];  // array — supports multi-select
 let currentVocab   = [];
 let queue          = [];
 let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
+let wrongWords     = [];  // words answered incorrectly in current session
 let numPalabras    = 10;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
@@ -342,16 +343,16 @@ document.querySelectorAll('#level-selector .config-chip').forEach(btn => {
   });
 });
 
-// Mode chips (toggle)
+// Mode chips (multi-select toggle)
 document.querySelectorAll('#practice-selector .config-chip').forEach(btn => {
   btn.addEventListener('click', () => {
+    const modo = btn.dataset.modo;
     if (btn.classList.contains('active')) {
       btn.classList.remove('active');
-      selectedModo = null;
+      selectedModos = selectedModos.filter(m => m !== modo);
     } else {
-      document.querySelectorAll('#practice-selector .config-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      selectedModo = btn.dataset.modo;
+      selectedModos = [...selectedModos, modo];
     }
     updateModoHint();
   });
@@ -359,17 +360,26 @@ document.querySelectorAll('#practice-selector .config-chip').forEach(btn => {
 
 function updateModoHint() {
   const hint = $('practice-hint');
-  if (!selectedModo) {
-    hint.textContent = 'Si no eliges ninguna actividad, practicarás con todos los formatos.';
-  } else {
-    const labels = {
-      ordenar: 'Ordenarás frases en el orden correcto.',
-      test: 'Elegirás la traducción correcta entre 4 opciones.',
-      flashcards: 'Verás la palabra y decidirás si la sabes o no.',
-      articulo: 'Escribirás el artículo correcto (der/die/das).',
-      lueckentext: 'Completarás huecos en frases.',
+  const labels = {
+    ordenar:     'Ordenar frases',
+    test:        'Test de vocabulario',
+    flashcards:  'Flashcards',
+    articulo:    'Artículos (der/die/das)',
+    lueckentext: 'Lückentext',
+  };
+  if (!selectedModos.length) {
+    hint.textContent = 'Sin filtro: practicarás con todos los formatos.';
+  } else if (selectedModos.length === 1) {
+    const descriptions = {
+      ordenar:     'Ordenarás frases en el orden correcto.',
+      test:        'Elegirás la traducción correcta entre 4 opciones.',
+      flashcards:  'Verás la palabra y decidirás si la sabes o no.',
+      articulo:    'Elegirás el artículo correcto (der/die/das).',
+      lueckentext: 'Completarás huecos en frases con 4 opciones.',
     };
-    hint.textContent = labels[selectedModo] || '';
+    hint.textContent = descriptions[selectedModos[0]] || '';
+  } else {
+    hint.textContent = `Alternando: ${selectedModos.map(m => labels[m] || m).join(' → ')}.`;
   }
 }
 
