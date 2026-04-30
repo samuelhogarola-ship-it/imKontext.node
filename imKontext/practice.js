@@ -41,7 +41,7 @@ async function startPractice() {
     const shuffled = [...vocab].sort(() => Math.random() - .5);
     const n = Math.min(numPalabras, shuffled.length);
     const errorWords = getPersistedErrors(shuffled);
-    const freshWords = shuffled.filter(w => !persistedErrorIds.includes(w.id));
+    const freshWords = shuffled.filter(w => !isPersistedErrorId(w.id));
     const errorSlice = errorWords.slice(0, n);
     const freshSlice = freshWords.slice(0, Math.max(0, n - errorSlice.length));
     queue = [...errorSlice, ...freshSlice];

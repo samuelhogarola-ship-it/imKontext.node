@@ -37,13 +37,20 @@ const DASHBOARD_CONFIG = {
 
 let persistedErrorIds = [];
 
+/* Accessors — practice.js must use these instead of the raw array. */
+function getPersistedErrorIds()    { return [...persistedErrorIds]; }
+function hasPersistedErrors()      { return persistedErrorIds.length > 0; }
+function isPersistedErrorId(id)    { return persistedErrorIds.includes(id); }
+
 function saveSessionErrors(wrongWords) {
-  persistedErrorIds = (wrongWords || []).map(w => w.id);
+  persistedErrorIds = [...new Set(
+    (wrongWords || []).map(w => w?.id).filter(Boolean)
+  )];
 }
 
 function getPersistedErrors(vocab) {
-  if (!persistedErrorIds.length) return [];
-  return vocab.filter(v => persistedErrorIds.includes(v.id));
+  if (!hasPersistedErrors()) return [];
+  return vocab.filter(v => isPersistedErrorId(v.id));
 }
 
 function clearPersistedErrors() {
