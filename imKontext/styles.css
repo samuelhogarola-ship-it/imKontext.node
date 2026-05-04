@@ -884,18 +884,39 @@ input, select { font-family: inherit; }
 .pregunta-sub { font-size: .88rem; color: var(--muted); margin-bottom: .75rem; }
 
 .translation-toggle {
-  font-size: .78rem; color: var(--vl-blue);
-  text-decoration: underline; text-underline-offset: 3px;
-  margin-bottom: .4rem; display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 0.3rem 0.9rem 0.3rem 0.7rem;
+  font-size: .8rem;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: border-color 0.18s, color 0.18s, background 0.18s;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
 }
+.translation-toggle:hover {
+  border-color: var(--vl-blue);
+  color: var(--vl-blue);
+  background: color-mix(in srgb, var(--vl-blue) 6%, transparent);
+}
+.translation-toggle svg { flex-shrink: 0; }
+
 .translation-panel {
   font-size: .88rem; color: var(--ink-light);
   background: var(--cream); border-radius: var(--radius-sm);
   padding: .6rem .9rem; margin-bottom: .75rem;
   display: none;
   border-left: 3px solid var(--vl-blue);
+  animation: fadeSlideDown 0.2s ease forwards;
 }
-.translation-panel.visible { display: block; }
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .respuesta-feedback {
   min-height: 1.6rem; font-size: .9rem; font-weight: 500;
@@ -905,7 +926,44 @@ input, select { font-family: inherit; }
 .respuesta-feedback.correct { background: #f0faf3; color: var(--a2-clr); }
 .respuesta-feedback.wrong   { background: #fef2f2; color: var(--c1-clr); }
 
-.next-countdown { font-size: .78rem; color: var(--muted); margin-bottom: .4rem; }
+.next-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0.6rem 0;
+  font-size: .85rem;
+}
+.cd-label { font-size: .8rem; color: var(--muted); }
+.cd-circle {
+  position: relative;
+  width: 38px; height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cd-svg {
+  width: 38px; height: 38px;
+  transform: rotate(-90deg);
+  position: absolute;
+  top: 0; left: 0;
+}
+.cd-track { fill: none; stroke: var(--border); stroke-width: 3.2; }
+.cd-ring {
+  fill: none;
+  stroke: var(--vl-blue);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.85s linear;
+}
+.cd-num {
+  position: relative;
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--vl-blue);
+  line-height: 1;
+}
+#btn-atras:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .opciones {
   display: flex; flex-direction: column; gap: .5rem;

@@ -29,6 +29,7 @@ let queue          = [];
 let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
 let numPalabras    = 10;
+let _cdTimer       = null;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -644,6 +645,53 @@ async function startPractice() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   COUNTDOWN + TRANSLATION HELPERS
+══════════════════════════════════════════════════════════════ */
+function clearCountdown() {
+  if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
+  const el = $('next-countdown');
+  if (el) { el.innerHTML = ''; el.style.display = 'none'; }
+}
+
+function startCountdown(callback, seg = 5) {
+  clearCountdown();
+  const el = $('next-countdown');
+  if (!el) { callback(); return; }
+  el.style.display = 'flex';
+  let rem = seg;
+
+  const render = () => {
+    const pct = (rem / seg) * 100;
+    el.innerHTML = `
+      <span class="cd-label">Siguiente en</span>
+      <span class="cd-circle">
+        <svg viewBox="0 0 36 36" class="cd-svg">
+          <circle class="cd-track" cx="18" cy="18" r="15.9"/>
+          <circle class="cd-ring" cx="18" cy="18" r="15.9"
+            stroke-dasharray="${pct} 100" stroke-dashoffset="0"/>
+        </svg>
+        <span class="cd-num">${rem}</span>
+      </span>`;
+  };
+  render();
+
+  _cdTimer = setInterval(() => {
+    rem--;
+    if (rem <= 0) { clearCountdown(); callback(); }
+    else render();
+  }, 1000);
+}
+
+function resetTraduccionToggle() {
+  const panel  = $('translation-panel');
+  const toggle = $('btn-toggle-traduccion');
+  if (!panel || !toggle) return;
+  panel.style.display = 'none';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 7 7 7-7"/></svg> Ver traducción`;
+}
+
+/* ══════════════════════════════════════════════════════════════
    EJERCICIO ENGINE
 ══════════════════════════════════════════════════════════════ */
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
@@ -691,8 +739,8 @@ function buildExercise() {
   $('ordenar-wrap').style.display = 'none';
   $('respuesta-feedback').textContent = '';
   $('respuesta-feedback').className   = 'respuesta-feedback';
-  $('next-countdown').textContent     = '';
-  $('translation-panel').classList.remove('visible');
+  clearCountdown();
+  resetTraduccionToggle();
   $('btn-toggle-traduccion').style.display = 'none';
   $('btn-siguiente').disabled = true;
   $('btn-siguiente').style.display = 'inline-flex';
@@ -882,21 +930,9 @@ function recordScore(correct, word) {
 }
 
 function autoNext() {
-  let t = 3;
-  const countdown = $('next-countdown');
-  countdown.textContent = `Siguiente en ${t}…`;
-  const iv = setInterval(() => {
-    t--;
-    if (t <= 0) {
-      clearInterval(iv);
-      countdown.textContent = '';
-      nextWord();
-    } else {
-      countdown.textContent = `Siguiente en ${t}…`;
-    }
-  }, 1000);
   $('btn-siguiente').disabled = false;
-  $('btn-siguiente').onclick  = () => { clearInterval(iv); nextWord(); };
+  $('btn-siguiente').onclick  = () => { clearCountdown(); nextWord(); };
+  startCountdown(() => nextWord());
 }
 
 function nextWord() {
@@ -969,6 +1005,7 @@ function formatDate(value) {
 
 /* ── NAV BUTTONS ─────────────────────────────────────────────── */
 $('btn-atras').addEventListener('click', () => {
+  clearCountdown();
   if (currentIdx > 0) { currentIdx--; buildExercise(); }
 });
 
@@ -1028,10 +1065,18 @@ $('btn-repasar-errores').addEventListener('click', () => {
 });
 
 /* ── TRANSLATION TOGGLE ──────────────────────────────────────── */
-$('btn-toggle-traduccion').addEventListener('click', () => {
-  $('translation-panel').classList.toggle('visible');
-  $('btn-toggle-traduccion').textContent =
-    $('translation-panel').classList.contains('visible') ? 'Ocultar' : 'Ver traducción';
+$('btn-toggle-traduccion').addEventListener('click', function () {
+  const panel  = $('translation-panel');
+  const isOpen = panel.style.display !== 'none' && panel.style.display !== '';
+  if (isOpen) {
+    panel.style.display = 'none';
+    this.setAttribute('aria-expanded', 'false');
+    this.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 7 7 7-7"/></svg> Ver traducción`;
+  } else {
+    panel.style.display = 'block';
+    this.setAttribute('aria-expanded', 'true');
+    this.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 16-7-7-7 7"/></svg> Ocultar traducción`;
+  }
 });
 
 /* ══════════════════════════════════════════════════════════════
