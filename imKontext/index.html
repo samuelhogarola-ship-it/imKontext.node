@@ -5,9 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APP Vokabel Lab imKontext</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./styles.css?v=20">
+<link rel="stylesheet" href="./styles.css?v=22">
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════
+     NAV — always visible
+═══════════════════════════════════════════════════ -->
+<header id="app-header" class="app-header">
+  <nav class="app-nav-shell" aria-label="Navegación principal">
+    <div class="app-nav-inner">
+      <a class="app-nav-logo" href="#" id="nav-pagina-principal" aria-label="Ir a imKontext">
+        <img src="./logo.png?v=3" alt="Logo de imKontext">
+        <span><span class="app-nav-logo-im">im</span> Kontext</span>
+      </a>
+      <div class="app-nav-links">
+        <a href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">Samuel Coach de alemán</a>
+        <span class="app-nav-sep">|</span>
+        <a href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">Vokabel Lab</a>
+        <span class="app-nav-sep">|</span>
+        <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>
+        <span class="app-nav-sep">|</span>
+        <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
+        <span class="app-nav-sep">|</span>
+        <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
+      </div>
+    </div>
+  </nav>
+</header>
 
 <!-- ═══════════════════════════════════════════════════
      PANTALLA 1 — LANDING
@@ -43,19 +68,6 @@
     <p class="ln-nc-sub">Nachrichten · Bayern</p>
   </div>
 
-  <header class="ln-masthead" role="banner">
-    <div class="ln-masthead-top-rule"></div>
-    <div class="ln-masthead-preline">Ausgabe Nr. 1</div>
-    <div class="ln-masthead-inner">
-      <div class="ln-masthead-side"><span class="ln-masthead-edition">Ausgabe Nr. 1</span></div>
-      <div class="ln-masthead-title">
-        <span class="ln-masthead-name"><span class="ln-mh-im">im</span><span class="ln-mh-kontext">Kontext</span></span>
-        <span class="ln-masthead-sub">· Vokabel Lab ·</span>
-      </div>
-      <div class="ln-masthead-side ln-masthead-side--right"><span class="ln-masthead-edition">Deutsch lernen</span></div>
-    </div>
-    <div class="ln-masthead-bottom-rule"></div>
-  </header>
 
   <div class="ln-center">
     <div class="ln-hero">
@@ -101,28 +113,6 @@
      APP SHELL
 ═══════════════════════════════════════════════════ -->
 <div id="main-app">
-  <header id="app-header" class="app-header">
-    <nav class="app-nav-shell" aria-label="Navegación principal">
-      <div class="app-nav-inner">
-        <a class="app-nav-logo" href="#" id="nav-pagina-principal" aria-label="Ir a imKontext">
-          <img src="./logo.png?v=3" alt="Logo de imKontext">
-          <span>im Kontext</span>
-        </a>
-        <div class="app-nav-links">
-          <a href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">Samuel Coach de alemán</a>
-          <span class="app-nav-sep">|</span>
-          <a href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">Vokabel Lab</a>
-          <span class="app-nav-sep">|</span>
-          <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>
-          <span class="app-nav-sep">|</span>
-          <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
-          <span class="app-nav-sep">|</span>
-          <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
-        </div>
-      </div>
-    </nav>
-  </header>
-
   <div class="card" id="main-card">
 
     <!-- ── LOADING ── -->
