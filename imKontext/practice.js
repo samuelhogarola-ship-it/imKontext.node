@@ -7,7 +7,10 @@
      goToTextos, refreshSelectedTextVersion
    Also depends on common.js:
      EXERCISE_CONFIG, saveSessionErrors, getPersistedErrors,
-     clearPersistedErrors
+     clearPersistedErrors, getPersistedErrorIds
+   Also depends on shared/practice-core.js:
+     shuffle, getRandomWrong, buildQueue, getModoForIdx,
+     blankifyWord, getProgressPercent, createScore
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── START PRACTICE ──────────────────────────────────────────── */
@@ -44,6 +47,7 @@ async function startPractice() {
     currentIdx = 0;
     score = createScore();
     wrongWords = [];
+    questionStates = [];
 
     const pKey = `progress_${selectedText.id}_${selectedLevel}`;
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
@@ -71,11 +75,19 @@ async function startPractice() {
    COUNTDOWN + TRANSLATION HELPERS
 ══════════════════════════════════════════════════════════════ */
 let _cdTimer = null;
+let _advanceLocked = false;
+let questionStates = [];
 
 function clearCountdown() {
   if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
   const el = $('next-countdown');
   if (el) { el.innerHTML = ''; el.style.display = 'none'; }
+}
+
+function lockAdvance() {
+  if (_advanceLocked) return false;
+  _advanceLocked = true;
+  return true;
 }
 
 function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
@@ -117,6 +129,188 @@ function resetTraduccionToggle() {
   panel.style.display = 'none';
   toggle.setAttribute('aria-expanded', 'false');
   toggle.innerHTML = `${SVG_CHEVRON_DOWN} Ver traducción`;
+}
+
+function revealTranslationText(text) {
+  const panel  = $('translation-panel');
+  const toggle = $('btn-toggle-traduccion');
+  if (!panel || !toggle) return;
+  if (!text) { resetTraduccionToggle(); return; }
+  panel.textContent = text;
+  panel.style.display = 'block';
+  toggle.style.display = 'inline-flex';
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.innerHTML = `${SVG_CHEVRON_UP} Ocultar traducción`;
+}
+
+function revealTranslation(word) {
+  const lines = getRevealLines(word);
+  revealTranslationText(lines.join('\n'));
+}
+
+function revealCorrectOption(correctLabel) {
+  if (!correctLabel) return;
+  $('opciones-wrap').querySelectorAll('.opcion').forEach(btn => {
+    if (btn.textContent === correctLabel) btn.classList.add('correct-ans');
+  });
+}
+
+function renderQuestionHint(text) {
+  const sub = $('pregunta-sub');
+  if (!sub) return;
+  if (!text) { sub.textContent = ''; return; }
+
+  sub.innerHTML = `
+    <button class="pregunta-hint-toggle" id="pregunta-hint-toggle" type="button" aria-expanded="false">
+      💡 Tipp
+    </button>
+    <div class="pregunta-hint-panel" id="pregunta-hint-panel">${escapeHtml(text)}</div>
+  `;
+
+  const toggle = $('pregunta-hint-toggle');
+  const panel  = $('pregunta-hint-panel');
+  toggle.addEventListener('click', () => {
+    const isOpen = panel.classList.contains('visible');
+    panel.classList.toggle('visible', !isOpen);
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    toggle.textContent = !isOpen ? 'Ocultar tipp' : '💡 Tipp';
+  });
+}
+
+function disableNoSeButton() {
+  const btn = $('btn-no-se');
+  if (btn) btn.disabled = true;
+}
+
+function renderNoSeButton(onClick) {
+  const wrap = $('opciones-wrap');
+  const btn  = document.createElement('button');
+  btn.type = 'button';
+  btn.id = 'btn-no-se';
+  btn.className = 'btn-back practice-skip-btn';
+  btn.textContent = 'No la sé';
+  btn.addEventListener('click', onClick);
+  wrap.appendChild(btn);
+}
+
+function handleNoSe(word, correctLabel) {
+  revealCorrectOption(correctLabel);
+  disableOptions();
+  disableNoSeButton();
+  const answerState = recordAnswerOnce(currentIdx, false, word, {
+    selectedAnswer: null,
+    correctAnswer: correctLabel || '',
+    solutionText: correctLabel || '',
+    wasNoSe: true,
+    translationShown: true,
+    revealCorrectAnswer: true,
+  });
+  $('respuesta-feedback').textContent = answerState.feedbackText;
+  $('respuesta-feedback').className = 'respuesta-feedback wrong';
+  revealTranslation(word);
+  autoNext();
+}
+
+function buildQuestionState(index, correct, word, extras = {}) {
+  const answerMode  = extras.mode || getModo(index);
+  const feedbackText = extras.feedbackText || (correct
+    ? '✓ ¡Correcto!'
+    : `✗ Era: "${extras.solutionText || extras.correctAnswer || ''}"`);
+  return {
+    answered: true,
+    correct,
+    selectedAnswer:    extras.selectedAnswer ?? null,
+    correctAnswer:     extras.correctAnswer ?? null,
+    solutionText:      extras.solutionText ?? extras.correctAnswer ?? null,
+    translationText:   extras.translationText ?? getRevealLines(word).join('\n'),
+    translationShown:  extras.translationShown !== false,
+    feedbackText,
+    mode:              answerMode,
+    wordId:            word?.id,
+    wasNoSe:           Boolean(extras.wasNoSe),
+    revealCorrectAnswer: extras.revealCorrectAnswer !== false,
+    builtSentence:     extras.builtSentence ?? null,
+  };
+}
+
+function recordAnswerOnce(index, correct, word, extras = {}) {
+  if (questionStates[index]?.answered) return questionStates[index];
+
+  const state = buildQuestionState(index, correct, word, extras);
+  questionStates[index] = state;
+
+  if (correct) {
+    score.correct++;
+  } else {
+    score.wrong++;
+    if (word && !wrongWords.find(w => w.id === word.id)) {
+      wrongWords.push(word);
+    }
+  }
+
+  return state;
+}
+
+function applyAnsweredState(state, word) {
+  if (!state?.answered) return;
+
+  $('respuesta-feedback').textContent = state.feedbackText || '';
+  $('respuesta-feedback').className = `respuesta-feedback ${state.correct ? 'correct' : 'wrong'}`;
+
+  if (state.translationShown) {
+    revealTranslationText(state.translationText || getRevealLines(word).join('\n'));
+  }
+
+  if (state.mode === 'flashcards') {
+    $('flashcard-card').classList.add('flipped');
+    $('btn-flashcard-si').disabled = true;
+    $('btn-flashcard-no').disabled = true;
+    $('btn-siguiente').style.display = 'inline-flex';
+  } else if (state.mode === 'ordenar') {
+    const banco = $('banco-palabras');
+    const constr = $('orden-construccion');
+    Array.from(banco.querySelectorAll('.palabra-token')).forEach(btn => btn.disabled = true);
+    if (constr) constr.classList.add('disabled');
+    if (state.builtSentence) {
+      constr.innerHTML = '';
+      state.builtSentence.split(' ').filter(Boolean).forEach(token => {
+        const pill = document.createElement('button');
+        pill.className = 'palabra-token';
+        pill.textContent = token;
+        pill.disabled = true;
+        constr.appendChild(pill);
+      });
+      banco.innerHTML = '';
+    }
+  } else {
+    disableOptions();
+    disableNoSeButton();
+    if (state.selectedAnswer) {
+      $('opciones-wrap').querySelectorAll('.opcion').forEach(btn => {
+        if (btn.textContent === state.selectedAnswer) {
+          btn.classList.add(state.correct ? 'correct-ans' : 'wrong-ans');
+        }
+      });
+    }
+    if ((!state.correct || state.wasNoSe) && state.revealCorrectAnswer) {
+      revealCorrectOption(state.correctAnswer || state.solutionText);
+    }
+  }
+
+  $('btn-siguiente').disabled = false;
+  setNextHandler(() => {
+    clearCountdown();
+    if (!lockAdvance()) return;
+    nextWord();
+  });
+}
+
+function restoreQuestionState(index, word, modo) {
+  const state = questionStates[index];
+  if (!state || !state.answered) return;
+  if (state.wordId && word?.id && state.wordId !== word.id) return;
+  if (state.mode && state.mode !== modo) return;
+  applyAnsweredState(state, word);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -163,6 +357,7 @@ function buildExercise() {
   $('respuesta-feedback').textContent = '';
   $('respuesta-feedback').className   = 'respuesta-feedback';
   clearCountdown();
+  _advanceLocked = false;
   $('translation-panel').textContent = '';
   resetTraduccionToggle();
   $('btn-toggle-traduccion').style.display = 'none';
@@ -176,14 +371,14 @@ function buildExercise() {
     case 'articulo':    buildArticulo(word);    break;
     case 'lueckentext': buildLueckentext(word); break;
   }
+
+  restoreQuestionState(currentIdx, word, modo);
 }
 
 /* ── TEST ────────────────────────────────────────────────────── */
 function buildTest(word) {
   $('pregunta-texto').textContent = word.german;
-  $('pregunta-sub').textContent   = word.word_type || '';
-  $('btn-toggle-traduccion').style.display = 'block';
-  $('translation-panel').textContent       = word.example_sentence_de || '';
+  renderQuestionHint(word.word_type || '');
 
   const wrong3 = getRandomWrong(word, currentVocab, 3);
   const opts = shuffle([word.spanish, ...wrong3.map(w => w.spanish)]);
@@ -196,12 +391,15 @@ function buildTest(word) {
     btn.textContent = opt;
     btn.addEventListener('click', () => {
       const correct = opt === word.spanish;
-      markAnswer(btn, correct, word, correct ? null : word.spanish);
+      markAnswer(btn, correct, word, correct ? null : word.spanish, { selectedAnswer: opt, correctAnswer: word.spanish });
       disableOptions();
+      disableNoSeButton();
       autoNext();
     });
     wrap.appendChild(btn);
   });
+
+  renderNoSeButton(() => handleNoSe(word, word.spanish));
 }
 
 /* ── FLASHCARD ───────────────────────────────────────────────── */
@@ -219,20 +417,32 @@ function buildFlashcard(word) {
   fc.onclick = () => fc.classList.toggle('flipped');
 
   $('btn-flashcard-si').onclick = () => {
-    recordScore(true, word);
+    recordAnswerOnce(currentIdx, true, word, {
+      mode: 'flashcards',
+      selectedAnswer: 'Sí',
+      solutionText: word.spanish || word.german || '',
+      feedbackText: '✓ ¡Correcto!'
+    });
     nextWord();
   };
   $('btn-flashcard-no').onclick = () => {
-    recordScore(false, word);
+    recordAnswerOnce(currentIdx, false, word, {
+      mode: 'flashcards',
+      selectedAnswer: 'No la sé',
+      solutionText: word.spanish || word.german || '',
+      feedbackText: `✗ Era: "${word.spanish || word.german || ''}"`,
+      wasNoSe: true,
+      translationShown: true
+    });
     nextWord();
   };
 }
 
 /* ── ORDENAR ─────────────────────────────────────────────────── */
 function buildOrdenar(word) {
-  const sentence = word.example_sentence_de || `${word.german} — ${word.spanish}`;
+  const sentence = word.example_sentence_de || word.german;
   $('pregunta-texto').textContent = `Ordena las palabras:`;
-  $('pregunta-sub').textContent   = word.spanish;
+  renderQuestionHint(word.word_type || '');
 
   const tokens = shuffle(sentence.split(' '));
   const banco  = $('banco-palabras');
@@ -267,9 +477,16 @@ function checkOrdenar(original) {
     const correct = built.trim() === original.trim();
     $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${original}"`;
     $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
-    recordScore(correct, queue[currentIdx]);
-    setNextHandler(() => nextWord());
-    $('btn-siguiente').disabled = false;
+    recordAnswerOnce(currentIdx, correct, queue[currentIdx], {
+      mode: 'ordenar',
+      selectedAnswer: built,
+      solutionText: original,
+      correctAnswer: original,
+      builtSentence: built,
+      translationShown: true,
+    });
+    revealTranslation(queue[currentIdx]);
+    autoNext();
   }
 }
 
@@ -277,7 +494,7 @@ function checkOrdenar(original) {
 function buildArticulo(word) {
   const article = word.article?.toLowerCase();
   $('pregunta-texto').innerHTML = `<em>___</em> ${word.german}`;
-  $('pregunta-sub').textContent = word.spanish;
+  renderQuestionHint(word.word_type || '');
 
   const opts = ['der', 'die', 'das'];
   const wrap = $('opciones-wrap');
@@ -288,41 +505,34 @@ function buildArticulo(word) {
     btn.className = 'opcion';
     btn.textContent = opt;
     btn.onclick = () => {
-      const correct = article ? opt === article : opt === 'das';
-      markAnswer(btn, correct, word, article);
+      const correctLabel = article || 'das';
+      const correct = opt === correctLabel;
+      markAnswer(btn, correct, word, correctLabel, { selectedAnswer: opt, correctAnswer: correctLabel });
       disableOptions();
+      disableNoSeButton();
       autoNext();
     };
     wrap.appendChild(btn);
   });
+
+  renderNoSeButton(() => handleNoSe(word, article || 'das'));
 }
 
 /* ── LÜCKENTEXT ──────────────────────────────────────────────── */
 function buildLueckentext(word) {
-  // Build sentence with blank
   const sentence = word.example_sentence_de || '';
   const blanked  = blankifyWord(sentence, word.german);
 
   if (blanked) {
-    // Highlight the blank within the sentence
     $('pregunta-texto').innerHTML = escapeHtml(blanked).replace(
       '______',
       '<span class="luecken-blank">______</span>'
     );
   } else {
-    // Fallback: sentence shown separately, blank as generic prompt
-    const prefix = sentence ? `${escapeHtml(sentence)}<br><br>` : '';
-    $('pregunta-texto').innerHTML = `${prefix}¿Cómo se dice „${escapeHtml(word.spanish)}" auf Deutsch? <span class="luecken-blank">______</span>`;
+    $('pregunta-texto').innerHTML = 'Completa el hueco: <span class="luecken-blank">______</span>';
   }
-  $('pregunta-sub').textContent = '';
+  renderQuestionHint(word.word_type || '');
 
-  // Collapsible Tipp (Spanish translation, hidden by default)
-  $('btn-toggle-traduccion').style.display = 'block';
-  $('btn-toggle-traduccion').innerHTML     = `${SVG_CHEVRON_DOWN} 💡 Tipp`;
-  $('btn-toggle-traduccion').setAttribute('aria-expanded', 'false');
-  $('translation-panel').textContent       = word.spanish;
-
-  // 4 multiple-choice options (German words)
   const wrong3 = getRandomWrong(word, currentVocab, 3);
   const opts   = shuffle([word.german, ...wrong3.map(w => w.german)]);
 
@@ -334,40 +544,39 @@ function buildLueckentext(word) {
     btn.textContent = opt;
     btn.addEventListener('click', () => {
       const correct = opt === word.german;
-      markAnswer(btn, correct, word, correct ? null : word.german);
+      markAnswer(btn, correct, word, correct ? null : word.german, { selectedAnswer: opt, correctAnswer: word.german });
       disableOptions();
+      disableNoSeButton();
       autoNext();
     });
     wrap.appendChild(btn);
   });
+
+  renderNoSeButton(() => handleNoSe(word, word.german));
 }
 
 /* ── HELPERS ─────────────────────────────────────────────────── */
-function markAnswer(btn, correct, word, correctLabel) {
+function markAnswer(btn, correct, word, correctLabel, extras = {}) {
   btn.classList.add(correct ? 'correct-ans' : 'wrong-ans');
   if (!correct && correctLabel) {
-    $('opciones-wrap').querySelectorAll('.opcion').forEach(b => {
-      if (b.textContent === correctLabel) b.classList.add('correct-ans');
-    });
+    revealCorrectOption(correctLabel);
   }
-  recordScore(correct, word);
-  $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${correctLabel || ''}"`;
+  const answerState = recordAnswerOnce(currentIdx, correct, word, {
+    ...extras,
+    mode: extras.mode || getModo(currentIdx),
+    solutionText: correct
+      ? (extras.solutionText || correctLabel || extras.selectedAnswer || '')
+      : (extras.solutionText || correctLabel || ''),
+    translationShown: true,
+    revealCorrectAnswer: !correct,
+  });
+  $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
+  revealTranslation(word);
 }
 
 function disableOptions() {
   $('opciones-wrap').querySelectorAll('.opcion').forEach(b => b.disabled = true);
-}
-
-function recordScore(correct, word) {
-  if (correct) {
-    score.correct++;
-  } else {
-    score.wrong++;
-    if (word && !wrongWords.find(w => w.id === word.id)) {
-      wrongWords.push(word);
-    }
-  }
 }
 
 /* Replaces btn-siguiente with a fresh clone to wipe any prior listeners,
@@ -381,15 +590,22 @@ function setNextHandler(fn) {
 
 function autoNext() {
   $('btn-siguiente').disabled = false;
-  setNextHandler(() => { clearCountdown(); nextWord(); });
-  startCountdown(() => nextWord());
+  setNextHandler(() => {
+    clearCountdown();
+    if (!lockAdvance()) return;
+    nextWord();
+  });
+  startCountdown(() => {
+    if (!lockAdvance()) return;
+    nextWord();
+  });
 }
 
 function nextWord() {
+  clearCountdown();
   currentIdx++;
   buildExercise();
 }
-
 
 /* ── NAV BUTTONS (exercise screen) ──────────────────────────── */
 $('btn-atras').addEventListener('click', () => {
@@ -446,6 +662,7 @@ function showResultado() {
     currentIdx = 0;
     score = createScore();
     wrongWords = [];
+    questionStates = [];
     queue = shuffle(queue);
     showScreen('ejercicio');
     buildExercise();
@@ -456,6 +673,7 @@ $('btn-repasar-errores').addEventListener('click', () => {
   if (!wrongWords.length) return;
   queue = [...wrongWords];
   wrongWords = [];
+  questionStates = [];
   score = createScore();
   currentIdx = 0;
   clearPersistedErrors(); // errors will be re-saved if wrong again
