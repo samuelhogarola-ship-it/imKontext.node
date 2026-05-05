@@ -20,6 +20,7 @@ async function apiFetch(path) {
 
 /* ── STATE ───────────────────────────────────────────────────── */
 const isPremium    = false; // cambiar a true cuando exista acceso premium real
+const SUPPORT_EMAIL = 'www.vokabellab@pm.me';
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
@@ -31,6 +32,7 @@ let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
 let wrongWords     = [];  // words answered incorrectly in current session
 let numPalabras    = 10;
+let isReaderModeActive = false;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -45,8 +47,55 @@ const screens = {
   resultado: $('screen-resultado'),
 };
 
+function setReadingMode(active) {
+  isReaderModeActive = active;
+  document.body.classList.toggle('reader-mode-active', active);
+
+  const btn = $('btn-toggle-reading-mode');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(active));
+    btn.textContent = active ? 'Salir lectura ×' : 'Modo lectura ⤢';
+  }
+}
+
+async function exitReadingMode() {
+  if (document.fullscreenElement) {
+    try {
+      await document.exitFullscreen();
+    } catch {}
+  }
+  setReadingMode(false);
+}
+
+async function toggleReadingMode() {
+  if (isReaderModeActive) {
+    await exitReadingMode();
+    return;
+  }
+
+  setReadingMode(true);
+
+  const target = $('screen-content');
+  if (target?.requestFullscreen) {
+    try {
+      await target.requestFullscreen();
+    } catch {}
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement === $('screen-content')) {
+    setReadingMode(true);
+    return;
+  }
+
+  if (isReaderModeActive) {
+    setReadingMode(false);
+  }
+});
+
 /* ── SHOW/HIDE SCREEN ────────────────────────────────────────── */
-function showScreen(name) {
+async function showScreen(name) {
   $('main-app').style.display = name === 'landing' ? 'none' : 'block';
   screens.landing.style.display = name === 'landing' ? '' : 'none';
 
@@ -58,6 +107,10 @@ function showScreen(name) {
   // hide loading/error when showing a real screen
   $('loading').style.display = 'none';
   $('error-msg').textContent = '';
+
+  if (name !== 'content' && isReaderModeActive) {
+    await exitReadingMode();
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -273,7 +326,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
 // Nav: "Dashboard" — placeholder hasta que exista la ruta
 document.getElementById('nav-dashboard').addEventListener('click', e => {
   e.preventDefault();
-  alert('El dashboard estará disponible próximamente.');
+  alert(`El dashboard estará disponible próximamente. Si lo necesitas antes o quieres avisarnos de algo, escríbenos a ${SUPPORT_EMAIL}.`);
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -281,7 +334,7 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
 ══════════════════════════════════════════════════════════════ */
 async function selectText(text) {
   if (!canAccessText(text)) {
-    alert('Este texto es PREMIUM. Cuando tengamos login, aquí entraremos con acceso premium.');
+    alert(`Este texto es PREMIUM. Cuando tengamos login, aquí entraremos con acceso premium. Si necesitas acceso o información, escríbenos a ${SUPPORT_EMAIL}.`);
     return;
   }
 
@@ -306,11 +359,13 @@ async function selectText(text) {
   showScreen('content');
 }
 
-$('btn-volver-textos').addEventListener('click', () => {
+$('btn-volver-textos').addEventListener('click', async () => {
+  await exitReadingMode();
   goToTextos();
 });
 
 $('btn-ir-actividad').addEventListener('click', async () => {
+  await exitReadingMode();
   await loadActivityScreen();
   showScreen('activity');
 });
@@ -328,6 +383,14 @@ async function loadActivityScreen() {
 
 $('btn-volver-contenido-from-activity').addEventListener('click', () => {
   showScreen('content');
+});
+
+$('btn-toggle-reading-mode').addEventListener('click', async () => {
+  await toggleReadingMode();
+});
+
+$('btn-terminar-lectura').addEventListener('click', async () => {
+  await exitReadingMode();
 });
 
 // Level chips
