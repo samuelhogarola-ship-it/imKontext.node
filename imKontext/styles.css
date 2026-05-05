@@ -909,6 +909,24 @@ input, select { font-family: inherit; }
   margin-bottom: .5rem;
 }
 .pregunta-sub { font-size: .88rem; color: var(--muted); margin-bottom: .75rem; }
+.pregunta-hint-toggle {
+  font-size: .78rem;
+  color: var(--vl-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+.pregunta-hint-panel {
+  display: none;
+  margin-top: .35rem;
+  font-size: .88rem;
+  color: var(--ink-light);
+}
+.pregunta-hint-panel.visible { display: block; }
 
 /* Lückentext blank highlight */
 .luecken-blank {
@@ -954,6 +972,11 @@ input, select { font-family: inherit; }
 @keyframes fadeSlideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.practice-skip-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .respuesta-feedback {
