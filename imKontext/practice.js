@@ -7,7 +7,10 @@
      goToTextos, refreshSelectedTextVersion
    Also depends on common.js:
      EXERCISE_CONFIG, saveSessionErrors, getPersistedErrors,
-     clearPersistedErrors
+     clearPersistedErrors, getPersistedErrorIds
+   Also depends on shared/practice-core.js:
+     shuffle, getRandomWrong, buildQueue, getModoForIdx,
+     blankifyWord, getProgressPercent, createScore
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── START PRACTICE ──────────────────────────────────────────── */
@@ -38,17 +41,11 @@ async function startPractice() {
     currentVocab = vocab;
 
     // Build queue: persisted errors first, then fresh words up to numPalabras
-    const shuffled = [...vocab].sort(() => Math.random() - .5);
-    const n = Math.min(numPalabras, shuffled.length);
-    const errorWords = getPersistedErrors(shuffled);
-    const freshWords = shuffled.filter(w => !isPersistedErrorId(w.id));
-    const errorSlice = errorWords.slice(0, n);
-    const freshSlice = freshWords.slice(0, Math.max(0, n - errorSlice.length));
-    queue = [...errorSlice, ...freshSlice];
+    queue = buildQueue(vocab, numPalabras, getPersistedErrorIds());
     clearPersistedErrors();
 
     currentIdx = 0;
-    score = { correct: 0, wrong: 0 };
+    score = createScore();
     wrongWords = [];
     questionStates = [];
 
@@ -347,9 +344,7 @@ function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
 
 function getModo(idx) {
-  if (selectedModos && selectedModos.length === 1) return selectedModos[0];
-  if (selectedModos && selectedModos.length > 1) return selectedModos[idx % selectedModos.length];
-  return MODOS[idx % MODOS.length];
+  return getModoForIdx(idx, selectedModos, MODOS);
 }
 
 function buildExercise() {
@@ -408,7 +403,7 @@ function buildTest(word) {
   $('pregunta-texto').textContent = word.german;
   renderQuestionHint(word.word_type || '');
 
-  const wrong3 = getRandomWrong(word, 3);
+  const wrong3 = getRandomWrong(word, currentVocab, 3);
   const opts = shuffle([word.spanish, ...wrong3.map(w => w.spanish)]);
 
   const wrap = $('opciones-wrap');
@@ -472,7 +467,7 @@ function buildOrdenar(word) {
   $('pregunta-texto').textContent = `Ordena las palabras:`;
   renderQuestionHint(word.word_type || '');
 
-  const tokens = sentence.split(' ').sort(() => Math.random() - .5);
+  const tokens = shuffle(sentence.split(' '));
   const banco  = $('banco-palabras');
   const constr = $('orden-construccion');
   banco.innerHTML = constr.innerHTML = '';
@@ -561,7 +556,7 @@ function buildLueckentext(word) {
   }
   renderQuestionHint(word.word_type || '');
 
-  const wrong3 = getRandomWrong(word, 3);
+  const wrong3 = getRandomWrong(word, currentVocab, 3);
   const opts   = shuffle([word.german, ...wrong3.map(w => w.german)]);
 
   const wrap = $('opciones-wrap');
@@ -581,32 +576,6 @@ function buildLueckentext(word) {
   });
 
   renderNoSeButton(() => handleNoSe(word, word.german));
-}
-
-/* Returns sentence with the German word replaced by ______, or null if not found. */
-function blankifyWord(sentence, german) {
-  if (!sentence) return null;
-
-  function escRx(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
-  const tryReplace = (term) => {
-    const re = new RegExp(`\\b${escRx(term)}\\b`, 'i');
-    return re.test(sentence) ? sentence.replace(re, '______') : null;
-  };
-
-  let result = tryReplace(german);
-  if (result) return result;
-
-  // Try without leading article (der/die/das/den/dem/des/ein/eine/einen/einem/einer)
-  const noArticle = german.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/i, '');
-  if (noArticle !== german) {
-    result = tryReplace(noArticle);
-    if (result) return result;
-  }
-
-  return null;
 }
 
 /* ── HELPERS ─────────────────────────────────────────────────── */
@@ -659,15 +628,6 @@ function nextWord() {
   buildExercise();
 }
 
-function getRandomWrong(word, n) {
-  const pool = currentVocab.filter(w => w.id !== word.id);
-  return shuffle(pool).slice(0, n);
-}
-
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - .5);
-}
-
 /* ── NAV BUTTONS (exercise screen) ──────────────────────────── */
 $('btn-atras').addEventListener('click', () => {
   clearCountdown();
@@ -689,7 +649,7 @@ function showResultado() {
   showScreen('resultado');
 
   const total = score.correct + score.wrong;
-  const pct   = total > 0 ? Math.round((score.correct / total) * 100) : 0;
+  const pct   = getProgressPercent(score.correct, total);
 
   $('punt-grande').textContent = `${pct}%`;
   $('punt-label').textContent  = pct >= 80 ? '¡Sehr gut! 🎉' : pct >= 60 ? '¡Gut gemacht! 👍' : 'Sigue practicando 💪';
@@ -721,10 +681,10 @@ function showResultado() {
 
   $('btn-reiniciar').onclick = () => {
     currentIdx = 0;
-    score = { correct: 0, wrong: 0 };
+    score = createScore();
     wrongWords = [];
     questionStates = [];
-    queue = [...queue].sort(() => Math.random() - .5);
+    queue = shuffle(queue);
     showScreen('ejercicio');
     buildExercise();
   };
@@ -735,7 +695,7 @@ $('btn-repasar-errores').addEventListener('click', () => {
   queue = [...wrongWords];
   wrongWords = [];
   questionStates = [];
-  score = { correct: 0, wrong: 0 };
+  score = createScore();
   currentIdx = 0;
   clearPersistedErrors(); // errors will be re-saved if wrong again
   showScreen('ejercicio');

@@ -6,7 +6,7 @@
 
 /* ── EXERCISE CONFIG ─────────────────────────────────────────── */
 const EXERCISE_CONFIG = {
-  autoNextDelay: 3,   // seconds before auto-advancing after correct answer
+  autoNextDelay: 5,   // seconds before auto-advancing after correct answer
   optionsCount: 4,    // multiple-choice options per question
   minWords: 5,
   defaultWords: 10,
