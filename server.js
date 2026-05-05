@@ -58,11 +58,12 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/texts", async (req, res) => {
   try {
-    const [texts, versions] = await Promise.all([
+    const [texts, versions, vocabLinks] = await Promise.all([
       supabaseFetch(
         "texts?select=id,title,slug,topic,access_status,published_at&order=published_at.desc.nullslast,id.desc"
       ),
-      supabaseFetch("text_versions?select=text_id,level,content")
+      supabaseFetch("text_versions?select=id,text_id,level,content"),
+      supabaseFetch("text_version_vocabulary?select=text_version_id")
     ]);
 
     const versionsByTextId = {};
@@ -73,6 +74,10 @@ app.get("/api/texts", async (req, res) => {
       versionsByTextId[version.text_id].push(version);
     });
 
+    const versionIdsWithVocabulary = new Set(
+      (vocabLinks || []).map((link) => link.text_version_id).filter(Boolean)
+    );
+
     res.json(
       texts.map((text) => {
         const textVersions = versionsByTextId[text.id] || [];
@@ -81,9 +86,13 @@ app.get("/api/texts", async (req, res) => {
           textVersions.find((version) => version.level === "A2") ||
           textVersions[0] ||
           null;
+        const hasLoadedVocabulary = textVersions.some((version) =>
+          versionIdsWithVocabulary.has(version.id)
+        );
 
         return {
           ...text,
+          hasLoadedVocabulary,
           levels: textVersions.map((version) => version.level).sort(),
           previewContent: preferredPreview?.content || ""
         };

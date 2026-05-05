@@ -264,10 +264,13 @@ function createTextRow(text, position) {
 }
 
 function canAccessText(text) {
-  return isPremium || text.access_status !== 'premium';
+  return isPremium || text.access_status !== 'premium' || Boolean(text.hasLoadedVocabulary);
 }
 
 function renderAccessTag(text) {
+  if (text.access_status === 'premium' && text.hasLoadedVocabulary) {
+    return '<span class="tx-access-tag tx-access-tag--free">DISPONIBLE</span>';
+  }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
@@ -288,6 +291,10 @@ function formatShortDate(value) {
 
 function sortTextsByDate(list) {
   return [...list].sort((a, b) => {
+    const aAccessible = canAccessText(a) ? 0 : 1;
+    const bAccessible = canAccessText(b) ? 0 : 1;
+    if (aAccessible !== bAccessible) return aAccessible - bAccessible;
+
     const aTime = a.published_at ? new Date(a.published_at).getTime() : 0;
     const bTime = b.published_at ? new Date(b.published_at).getTime() : 0;
     return bTime - aTime;
