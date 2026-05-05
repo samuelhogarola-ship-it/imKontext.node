@@ -74,6 +74,58 @@ async function startPractice() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   COUNTDOWN + TRANSLATION HELPERS
+══════════════════════════════════════════════════════════════ */
+let _cdTimer = null;
+
+function clearCountdown() {
+  if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
+  const el = $('next-countdown');
+  if (el) { el.innerHTML = ''; el.style.display = 'none'; }
+}
+
+function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
+  clearCountdown();
+  const el = $('next-countdown');
+  if (!el) { callback(); return; }
+  el.style.display = 'flex';
+  let rem = seg;
+
+  const render = () => {
+    const pct = (rem / seg) * 100;
+    el.innerHTML = `
+      <span class="cd-label">Siguiente en</span>
+      <span class="cd-circle">
+        <svg viewBox="0 0 36 36" class="cd-svg">
+          <circle class="cd-track" cx="18" cy="18" r="15.9"/>
+          <circle class="cd-ring" cx="18" cy="18" r="15.9"
+            stroke-dasharray="${pct} 100" stroke-dashoffset="0"/>
+        </svg>
+        <span class="cd-num">${rem}</span>
+      </span>`;
+  };
+  render();
+
+  _cdTimer = setInterval(() => {
+    rem--;
+    if (rem <= 0) { clearCountdown(); callback(); }
+    else render();
+  }, 1000);
+}
+
+const SVG_CHEVRON_DOWN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 7 7 7-7"/></svg>`;
+const SVG_CHEVRON_UP   = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 16-7-7-7 7"/></svg>`;
+
+function resetTraduccionToggle() {
+  const panel  = $('translation-panel');
+  const toggle = $('btn-toggle-traduccion');
+  if (!panel || !toggle) return;
+  panel.style.display = 'none';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.innerHTML = `${SVG_CHEVRON_DOWN} Ver traducción`;
+}
+
+/* ══════════════════════════════════════════════════════════════
    EJERCICIO ENGINE
 ══════════════════════════════════════════════════════════════ */
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
@@ -118,11 +170,10 @@ function buildExercise() {
   $('ordenar-wrap').style.display = 'none';
   $('respuesta-feedback').textContent = '';
   $('respuesta-feedback').className   = 'respuesta-feedback';
-  $('next-countdown').textContent     = '';
-  $('translation-panel').classList.remove('visible');
-  $('translation-panel').textContent  = '';
+  clearCountdown();
+  $('translation-panel').textContent = '';
+  resetTraduccionToggle();
   $('btn-toggle-traduccion').style.display = 'none';
-  $('btn-toggle-traduccion').textContent   = 'Ver traducción';
   $('btn-siguiente').disabled = true;
   $('btn-siguiente').style.display = 'inline-flex';
 
@@ -140,7 +191,7 @@ function buildTest(word) {
   $('pregunta-texto').textContent = word.german;
   $('pregunta-sub').textContent   = word.word_type || '';
   $('btn-toggle-traduccion').style.display = 'block';
-  $('translation-panel').textContent = word.example_sentence_de || '';
+  $('translation-panel').textContent       = word.example_sentence_de || '';
 
   const wrong3 = getRandomWrong(word, 3);
   const opts = shuffle([word.spanish, ...wrong3.map(w => w.spanish)]);
@@ -275,7 +326,8 @@ function buildLueckentext(word) {
 
   // Collapsible Tipp (Spanish translation, hidden by default)
   $('btn-toggle-traduccion').style.display = 'block';
-  $('btn-toggle-traduccion').textContent   = '💡 Tipp';
+  $('btn-toggle-traduccion').innerHTML     = `${SVG_CHEVRON_DOWN} 💡 Tipp`;
+  $('btn-toggle-traduccion').setAttribute('aria-expanded', 'false');
   $('translation-panel').textContent       = word.spanish;
 
   // 4 multiple-choice options (German words)
@@ -362,21 +414,9 @@ function setNextHandler(fn) {
 }
 
 function autoNext() {
-  let t = EXERCISE_CONFIG.autoNextDelay;
-  const countdown = $('next-countdown');
-  countdown.textContent = `Siguiente en ${t}…`;
-  const iv = setInterval(() => {
-    t--;
-    if (t <= 0) {
-      clearInterval(iv);
-      countdown.textContent = '';
-      nextWord();
-    } else {
-      countdown.textContent = `Siguiente en ${t}…`;
-    }
-  }, 1000);
   $('btn-siguiente').disabled = false;
-  setNextHandler(() => { clearInterval(iv); nextWord(); });
+  setNextHandler(() => { clearCountdown(); nextWord(); });
+  startCountdown(() => nextWord());
 }
 
 function nextWord() {
@@ -395,6 +435,7 @@ function shuffle(arr) {
 
 /* ── NAV BUTTONS (exercise screen) ──────────────────────────── */
 $('btn-atras').addEventListener('click', () => {
+  clearCountdown();
   if (currentIdx > 0) { currentIdx--; buildExercise(); }
 });
 
@@ -475,14 +516,22 @@ $('btn-salir-test').addEventListener('click', () => {
 });
 
 /* ── TRANSLATION / TIPP TOGGLE ───────────────────────────────── */
-$('btn-toggle-traduccion').addEventListener('click', () => {
-  const panel = $('translation-panel');
-  const btn   = $('btn-toggle-traduccion');
-  panel.classList.toggle('visible');
-  const isLuecken = btn.textContent.startsWith('💡');
-  if (isLuecken) {
-    btn.textContent = panel.classList.contains('visible') ? 'Ocultar tipp' : '💡 Tipp';
+$('btn-toggle-traduccion').addEventListener('click', function () {
+  const panel  = $('translation-panel');
+  const isOpen = panel.style.display !== 'none' && panel.style.display !== '';
+  const isTipp = this.innerHTML.includes('💡');
+
+  if (isOpen) {
+    panel.style.display = 'none';
+    this.setAttribute('aria-expanded', 'false');
+    this.innerHTML = isTipp
+      ? `${SVG_CHEVRON_DOWN} 💡 Tipp`
+      : `${SVG_CHEVRON_DOWN} Ver traducción`;
   } else {
-    btn.textContent = panel.classList.contains('visible') ? 'Ocultar' : 'Ver traducción';
+    panel.style.display = 'block';
+    this.setAttribute('aria-expanded', 'true');
+    this.innerHTML = isTipp
+      ? `${SVG_CHEVRON_UP} Ocultar tipp`
+      : `${SVG_CHEVRON_UP} Ocultar traducción`;
   }
 });
