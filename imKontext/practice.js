@@ -81,7 +81,10 @@ let questionStates = [];
 function clearCountdown() {
   if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
   const el = $('next-countdown');
-  if (el) { el.innerHTML = ''; el.style.display = 'none'; }
+  if (el) {
+    el.innerHTML = '';
+    el.style.display = 'none';
+  }
 }
 
 function lockAdvance() {
@@ -90,57 +93,40 @@ function lockAdvance() {
   return true;
 }
 
-function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
-  clearCountdown();
-  const el = $('next-countdown');
-  if (!el) { callback(); return; }
-  el.style.display = 'flex';
-  let rem = seg;
-
-  const render = () => {
-    const pct = (rem / seg) * 100;
-    el.innerHTML = `
-      <span class="cd-label">Siguiente en</span>
-      <span class="cd-circle">
-        <svg viewBox="0 0 36 36" class="cd-svg">
-          <circle class="cd-track" cx="18" cy="18" r="15.9"/>
-          <circle class="cd-ring" cx="18" cy="18" r="15.9"
-            stroke-dasharray="${pct} 100" stroke-dashoffset="0"/>
-        </svg>
-        <span class="cd-num">${rem}</span>
-      </span>`;
-  };
-  render();
-
-  _cdTimer = setInterval(() => {
-    rem--;
-    if (rem <= 0) { clearCountdown(); callback(); }
-    else render();
-  }, 1000);
-}
-
-const SVG_CHEVRON_DOWN = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 7 7 7-7"/></svg>`;
-const SVG_CHEVRON_UP   = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 16-7-7-7 7"/></svg>`;
-
 function resetTraduccionToggle() {
-  const panel  = $('translation-panel');
+  const panel = $('translation-panel');
   const toggle = $('btn-toggle-traduccion');
   if (!panel || !toggle) return;
+  panel.textContent = '';
+  panel.classList.remove('visible');
   panel.style.display = 'none';
+  toggle.style.display = 'none';
   toggle.setAttribute('aria-expanded', 'false');
-  toggle.innerHTML = `${SVG_CHEVRON_DOWN} Ver traducción`;
+  toggle.textContent = 'Ver traducción';
+}
+
+function getRevealLines(word) {
+  const lines = [];
+  if (word?.spanish) lines.push(`Traducción: ${word.spanish}`);
+  if (word?.example_sentence_de) lines.push(`Ejemplo: ${word.example_sentence_de}`);
+  return lines;
 }
 
 function revealTranslationText(text) {
-  const panel  = $('translation-panel');
+  const panel = $('translation-panel');
   const toggle = $('btn-toggle-traduccion');
   if (!panel || !toggle) return;
-  if (!text) { resetTraduccionToggle(); return; }
+  if (!text) {
+    resetTraduccionToggle();
+    return;
+  }
+
   panel.textContent = text;
+  panel.classList.add('visible');
   panel.style.display = 'block';
   toggle.style.display = 'inline-flex';
   toggle.setAttribute('aria-expanded', 'true');
-  toggle.innerHTML = `${SVG_CHEVRON_UP} Ocultar traducción`;
+  toggle.textContent = 'Ocultar traducción';
 }
 
 function revealTranslation(word) {
@@ -158,7 +144,10 @@ function revealCorrectOption(correctLabel) {
 function renderQuestionHint(text) {
   const sub = $('pregunta-sub');
   if (!sub) return;
-  if (!text) { sub.textContent = ''; return; }
+  if (!text) {
+    sub.textContent = '';
+    return;
+  }
 
   sub.innerHTML = `
     <button class="pregunta-hint-toggle" id="pregunta-hint-toggle" type="button" aria-expanded="false">
@@ -168,7 +157,7 @@ function renderQuestionHint(text) {
   `;
 
   const toggle = $('pregunta-hint-toggle');
-  const panel  = $('pregunta-hint-panel');
+  const panel = $('pregunta-hint-panel');
   toggle.addEventListener('click', () => {
     const isOpen = panel.classList.contains('visible');
     panel.classList.toggle('visible', !isOpen);
@@ -184,7 +173,7 @@ function disableNoSeButton() {
 
 function renderNoSeButton(onClick) {
   const wrap = $('opciones-wrap');
-  const btn  = document.createElement('button');
+  const btn = document.createElement('button');
   btn.type = 'button';
   btn.id = 'btn-no-se';
   btn.className = 'btn-back practice-skip-btn';
@@ -212,24 +201,22 @@ function handleNoSe(word, correctLabel) {
 }
 
 function buildQuestionState(index, correct, word, extras = {}) {
-  const answerMode  = extras.mode || getModo(index);
-  const feedbackText = extras.feedbackText || (correct
-    ? '✓ ¡Correcto!'
-    : `✗ Era: "${extras.solutionText || extras.correctAnswer || ''}"`);
+  const answerMode = extras.mode || getModo(index);
+  const feedbackText = extras.feedbackText || (correct ? '✓ ¡Correcto!' : `✗ Era: "${extras.solutionText || extras.correctAnswer || ''}"`);
   return {
     answered: true,
     correct,
-    selectedAnswer:    extras.selectedAnswer ?? null,
-    correctAnswer:     extras.correctAnswer ?? null,
-    solutionText:      extras.solutionText ?? extras.correctAnswer ?? null,
-    translationText:   extras.translationText ?? getRevealLines(word).join('\n'),
-    translationShown:  extras.translationShown !== false,
+    selectedAnswer: extras.selectedAnswer ?? null,
+    correctAnswer: extras.correctAnswer ?? null,
+    solutionText: extras.solutionText ?? extras.correctAnswer ?? null,
+    translationText: extras.translationText ?? getRevealLines(word).join('\n'),
+    translationShown: extras.translationShown !== false,
     feedbackText,
-    mode:              answerMode,
-    wordId:            word?.id,
-    wasNoSe:           Boolean(extras.wasNoSe),
+    mode: answerMode,
+    wordId: word?.id,
+    wasNoSe: Boolean(extras.wasNoSe),
     revealCorrectAnswer: extras.revealCorrectAnswer !== false,
-    builtSentence:     extras.builtSentence ?? null,
+    builtSentence: extras.builtSentence ?? null,
   };
 }
 
@@ -313,6 +300,44 @@ function restoreQuestionState(index, word, modo) {
   applyAnsweredState(state, word);
 }
 
+function renderCountdown(seg, rem) {
+  const el = $('next-countdown');
+  if (!el) return;
+  const pct = (rem / seg) * 100;
+  el.innerHTML = `
+    <span class="cd-label">Siguiente en</span>
+    <span class="cd-circle">
+      <svg viewBox="0 0 36 36" class="cd-svg" aria-hidden="true">
+        <circle class="cd-track" cx="18" cy="18" r="15.9"/>
+        <circle class="cd-ring" cx="18" cy="18" r="15.9" stroke-dasharray="${pct} 100" stroke-dashoffset="0"/>
+      </svg>
+      <span class="cd-num">${rem}</span>
+    </span>`;
+}
+
+function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
+  clearCountdown();
+  const el = $('next-countdown');
+  if (!el) {
+    callback();
+    return;
+  }
+
+  el.style.display = 'flex';
+  let rem = seg;
+  renderCountdown(seg, rem);
+
+  _cdTimer = setInterval(() => {
+    rem -= 1;
+    if (rem <= 0) {
+      clearCountdown();
+      callback();
+    } else {
+      renderCountdown(seg, rem);
+    }
+  }, 1000);
+}
+
 /* ══════════════════════════════════════════════════════════════
    EJERCICIO ENGINE
 ══════════════════════════════════════════════════════════════ */
@@ -355,12 +380,10 @@ function buildExercise() {
   $('input-wrap').style.display = 'none';
   $('ordenar-wrap').style.display = 'none';
   $('respuesta-feedback').textContent = '';
-  $('respuesta-feedback').className   = 'respuesta-feedback';
+  $('respuesta-feedback').className = 'respuesta-feedback';
   clearCountdown();
   _advanceLocked = false;
-  $('translation-panel').textContent = '';
   resetTraduccionToggle();
-  $('btn-toggle-traduccion').style.display = 'none';
   $('btn-siguiente').disabled = true;
   $('btn-siguiente').style.display = 'inline-flex';
 
@@ -564,9 +587,7 @@ function markAnswer(btn, correct, word, correctLabel, extras = {}) {
   const answerState = recordAnswerOnce(currentIdx, correct, word, {
     ...extras,
     mode: extras.mode || getModo(currentIdx),
-    solutionText: correct
-      ? (extras.solutionText || correctLabel || extras.selectedAnswer || '')
-      : (extras.solutionText || correctLabel || ''),
+    solutionText: correct ? (extras.solutionText || correctLabel || extras.selectedAnswer || '') : (extras.solutionText || correctLabel || ''),
     translationShown: true,
     revealCorrectAnswer: !correct,
   });
@@ -692,22 +713,20 @@ $('btn-salir-test').addEventListener('click', () => {
 });
 
 /* ── TRANSLATION / TIPP TOGGLE ───────────────────────────────── */
-$('btn-toggle-traduccion').addEventListener('click', function () {
-  const panel  = $('translation-panel');
-  const isOpen = panel.style.display !== 'none' && panel.style.display !== '';
-  const isTipp = this.innerHTML.includes('💡');
+$('btn-toggle-traduccion').addEventListener('click', () => {
+  const panel = $('translation-panel');
+  const btn   = $('btn-toggle-traduccion');
+  const isOpen = panel.classList.contains('visible');
 
   if (isOpen) {
+    panel.classList.remove('visible');
     panel.style.display = 'none';
-    this.setAttribute('aria-expanded', 'false');
-    this.innerHTML = isTipp
-      ? `${SVG_CHEVRON_DOWN} 💡 Tipp`
-      : `${SVG_CHEVRON_DOWN} Ver traducción`;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = 'Ver traducción';
   } else {
+    panel.classList.add('visible');
     panel.style.display = 'block';
-    this.setAttribute('aria-expanded', 'true');
-    this.innerHTML = isTipp
-      ? `${SVG_CHEVRON_UP} Ocultar tipp`
-      : `${SVG_CHEVRON_UP} Ocultar traducción`;
+    btn.setAttribute('aria-expanded', 'true');
+    btn.textContent = 'Ocultar traducción';
   }
 });
