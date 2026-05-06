@@ -20,7 +20,7 @@ async function apiFetch(path) {
 
 /* ── STATE ───────────────────────────────────────────────────── */
 const isPremium    = false; // cambiar a true cuando exista acceso premium real
-const SUPPORT_EMAIL = 'www.vokabellab@pm.me';
+const SUPPORT_EMAIL = 'vokabellab@pm.me';
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
@@ -46,6 +46,28 @@ const screens = {
   ejercicio: $('screen-ejercicio'),
   resultado: $('screen-resultado'),
 };
+
+function getIsoWeekNumber(date = new Date()) {
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+  target.setDate(target.getDate() + 4 - (target.getDay() || 7));
+  const yearStart = new Date(target.getFullYear(), 0, 1);
+  return Math.ceil((((target - yearStart) / 86400000) + 1) / 7);
+}
+
+function updateLandingEdition() {
+  const issueEl = $('ln-edition-issue');
+  if (!issueEl) return;
+
+  const now = new Date();
+  const edition = getIsoWeekNumber(now);
+  const monthYear = new Intl.DateTimeFormat('es-ES', {
+    month: 'long',
+    year: 'numeric'
+  }).format(now);
+
+  issueEl.textContent = `Ed. ${edition} · ${monthYear.charAt(0).toUpperCase()}${monthYear.slice(1)}`;
+}
 
 function setReadingMode(active) {
   isReaderModeActive = active;
@@ -717,5 +739,6 @@ function formatDate(value) {
 ══════════════════════════════════════════════════════════════ */
 // Initial state: show landing
 $('main-app').style.display = 'none';
+updateLandingEdition();
 
 // Preload slider max on level change handled inside loadActivityScreen
