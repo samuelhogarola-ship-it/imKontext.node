@@ -25,6 +25,7 @@ let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
 let selectedLevel  = 'b1';
+let selectedTopic  = null; // null = all topics
 let selectedModos  = [];  // array — supports multi-select
 let currentVocab   = [];
 let queue          = [];
@@ -104,6 +105,7 @@ async function showScreen(name) {
     if (el) el.style.display = s === name ? '' : 'none';
   });
   $('main-card').classList.toggle('is-textos', name === 'textos');
+  $('app-header').classList.toggle('app-is-landing', name === 'landing');
 
   // hide loading/error when showing a real screen
   $('loading').style.display = 'none';
@@ -133,7 +135,8 @@ async function goToTextos(autoOpenFeatured = false) {
 
   // If already loaded, just render
   if (allTexts.length > 0) {
-    renderTextGrid(allTexts);
+    buildTopicChips();
+    renderTextGrid(getFilteredTexts());
     return;
   }
 
@@ -145,6 +148,7 @@ async function goToTextos(autoOpenFeatured = false) {
   try {
     allTexts = await apiFetch('/api/texts');
 
+    buildTopicChips();
     renderTextGrid(allTexts);
   } catch (err) {
     console.error(err);
@@ -306,17 +310,57 @@ function getFeaturedText(list) {
   return sortTextsByDate(list).find(text => text.access_status === 'free') || null;
 }
 
+function getFilteredTexts() {
+  const q = $('txsel-search').value.toLowerCase().trim();
+  let list = allTexts;
+  if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
+  if (selectedTopic) list = list.filter(t => (t.topic || 'Otros').trim() === selectedTopic);
+  return list;
+}
+
+function buildTopicChips() {
+  const container = $('txsel-topic-filter');
+  if (!container || !allTexts.length) return;
+
+  const topics = [...new Set(allTexts.map(t => (t.topic || 'Otros').trim()))].sort();
+  container.innerHTML = '';
+
+  const makeChip = (label, topic) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'txsel-topic-chip';
+    btn.textContent = label;
+    if (topic) btn.dataset.topic = topic;
+    btn.addEventListener('click', () => {
+      selectedTopic = (topic && selectedTopic !== topic) ? topic : null;
+      updateTopicChips();
+      renderTextGrid(getFilteredTexts());
+    });
+    return btn;
+  };
+
+  container.appendChild(makeChip('Todos'));
+  topics.forEach(t => container.appendChild(makeChip(t, t)));
+  updateTopicChips();
+}
+
+function updateTopicChips() {
+  document.querySelectorAll('.txsel-topic-chip').forEach(chip => {
+    const isAll = !chip.dataset.topic;
+    chip.classList.toggle('active', isAll ? selectedTopic === null : chip.dataset.topic === selectedTopic);
+  });
+}
+
 // Live search
-$('txsel-search').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase().trim();
-  if (!q) { renderTextGrid(allTexts); return; }
-  const filtered = allTexts.filter(t => t.title.toLowerCase().includes(q));
-  renderTextGrid(filtered);
+$('txsel-search').addEventListener('input', () => {
+  renderTextGrid(getFilteredTexts());
 });
 
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
+  selectedTopic = null;
   $('main-app').style.display = 'none';
   screens.landing.style.display = '';
+  $('app-header').classList.add('app-is-landing');
 });
 
 // Nav: volver a la landing desde logo o enlace activo
@@ -327,6 +371,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
     e.preventDefault();
     $('main-app').style.display = 'none';
     document.getElementById('screen-landing').style.display = '';
+    $('app-header').classList.add('app-is-landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });

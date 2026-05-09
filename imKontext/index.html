@@ -12,7 +12,7 @@
 <!-- ═══════════════════════════════════════════════════
      NAV — always visible
 ═══════════════════════════════════════════════════ -->
-<header id="app-header" class="app-header">
+<header id="app-header" class="app-header app-is-landing">
   <nav class="app-nav-shell" aria-label="Navegación principal">
     <div class="app-nav-inner">
       <a class="app-nav-logo" href="#" id="nav-pagina-principal" aria-label="Ir a imKontext">
@@ -27,9 +27,8 @@
         <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>
         <span class="app-nav-sep">|</span>
         <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
-        <span class="app-nav-sep">|</span>
-        <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
       </div>
+      <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
     </div>
   </nav>
 </header>
@@ -152,6 +151,8 @@
         <button class="txsel-lvl-chip" type="button" data-level="b2">B2</button>
         <button class="txsel-lvl-chip" type="button" data-level="c1">C1</button>
       </div>
+
+      <div id="txsel-topic-filter" class="txsel-topic-filter" aria-label="Filtrar por categoría"></div>
 
       <div class="txsel-layout">
         <aside class="txsel-sidebar">
