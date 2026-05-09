@@ -1802,3 +1802,33 @@ body.reader-mode-active .txdet-article p:last-child {
   }
   .txsel-search-label { display: block; }
 }
+
+/* ── tx-row mobile: 2-line layout to prevent horizontal overflow ── */
+@media (max-width: 640px) {
+  .tx-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: .4rem .6rem;
+    padding: .85rem 1rem;
+  }
+  .tx-row-num {
+    align-self: center;
+  }
+  .tx-row-title {
+    flex: 1;
+    min-width: 0;
+  }
+  .tx-row-meta {
+    flex: 0 0 100%;
+    padding-left: 2.4rem; /* align under title */
+    justify-content: flex-start;
+    gap: .35rem;
+  }
+  /* Hide DISPONIBLE badge on mobile — redundant in context */
+  .tx-row .tx-access-tag {
+    display: none;
+  }
+  .tx-row-arrow {
+    display: none; /* arrow implicit in the row tap */
+  }
+}
