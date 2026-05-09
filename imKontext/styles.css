@@ -1736,6 +1736,39 @@ body.reader-mode-active .txdet-article p:last-child {
   padding: 1rem 1.25rem;
 }
 
+/* ── Topic filter chips ── */
+.txsel-topic-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  margin-bottom: 1.25rem;
+  min-height: 0;
+}
+.txsel-topic-filter:empty {
+  display: none;
+}
+.txsel-topic-chip {
+  padding: .28rem .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: white;
+  color: var(--ink-light);
+  font-size: .74rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.txsel-topic-chip:hover {
+  border-color: var(--ink-light);
+  color: var(--ink);
+  background: var(--cream);
+}
+.txsel-topic-chip.active {
+  background: var(--vl-blue);
+  border-color: var(--vl-blue);
+  color: white;
+}
+
 /* ── Mobile: restore stacked layout ── */
 @media (max-width: 680px) {
   .card.is-textos {
