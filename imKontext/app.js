@@ -103,6 +103,7 @@ async function showScreen(name) {
     const el = screens[s];
     if (el) el.style.display = s === name ? '' : 'none';
   });
+  $('main-card').classList.toggle('is-textos', name === 'textos');
 
   // hide loading/error when showing a real screen
   $('loading').style.display = 'none';

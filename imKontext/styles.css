@@ -1656,3 +1656,99 @@ body.reader-mode-active .txdet-article p:last-child {
   opacity: .4;
   border-style: dashed;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PANTALLA 2 — LAYOUT EDITORIAL (wide)
+═══════════════════════════════════════════════════════════════ */
+
+/* Expand the card container only while text selection is active */
+.card.is-textos {
+  max-width: 1060px;
+}
+
+/* ── Sidebar → horizontal filter toolbar ── */
+.txsel-layout {
+  display: block;
+}
+
+.txsel-sidebar {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Back button leads the row */
+.txsel-back {
+  order: -1;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* Search takes remaining space */
+.txsel-search-panel {
+  flex: 1;
+  min-width: 200px;
+  max-width: 340px;
+  margin-bottom: 0;
+}
+
+.txsel-search-wrap {
+  margin-bottom: 0;
+}
+
+/* Hide label and help in horizontal mode */
+.txsel-search-label,
+.txsel-search-help {
+  display: none;
+}
+
+/* ── Level selector: tighter gap before toolbar ── */
+.txsel-lvl-selector {
+  margin-bottom: .6rem;
+}
+
+/* ── Featured card: more editorial presence ── */
+.tx-featured-card {
+  padding: 1.75rem 2rem;
+}
+
+.tx-featured-title {
+  font-size: clamp(1.45rem, 2.8vw, 2.15rem);
+}
+
+/* ── Section headings: slightly bolder ── */
+.tx-topic-heading {
+  border-bottom-width: 2px;
+  margin-bottom: .75rem;
+}
+
+.tx-topic-title {
+  font-size: 1.25rem;
+}
+
+/* ── Rows: a touch more breathing room ── */
+.tx-row {
+  padding: 1rem 1.25rem;
+}
+
+/* ── Mobile: restore stacked layout ── */
+@media (max-width: 680px) {
+  .card.is-textos {
+    max-width: 860px;
+  }
+  .txsel-sidebar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .65rem;
+  }
+  .txsel-search-panel {
+    max-width: 100%;
+    width: 100%;
+  }
+  .txsel-search-label { display: block; }
+}
