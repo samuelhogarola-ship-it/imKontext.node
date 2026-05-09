@@ -105,6 +105,7 @@ async function showScreen(name) {
     if (el) el.style.display = s === name ? '' : 'none';
   });
   $('main-card').classList.toggle('is-textos', name === 'textos');
+  $('app-header').classList.toggle('app-is-landing', name === 'landing');
 
   // hide loading/error when showing a real screen
   $('loading').style.display = 'none';
@@ -359,6 +360,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
   $('main-app').style.display = 'none';
   screens.landing.style.display = '';
+  $('app-header').classList.add('app-is-landing');
 });
 
 // Nav: volver a la landing desde logo o enlace activo
@@ -369,6 +371,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
     e.preventDefault();
     $('main-app').style.display = 'none';
     document.getElementById('screen-landing').style.display = '';
+    $('app-header').classList.add('app-is-landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
