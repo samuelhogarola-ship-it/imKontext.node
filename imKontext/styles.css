@@ -1662,7 +1662,7 @@ body.reader-mode-active .txdet-article p:last-child {
 ═══════════════════════════════════════════════════════════════ */
 
 /* Expand the card container only while text selection is active */
-.card:has(#screen-textos:not([style*="none"])) {
+.card.is-textos {
   max-width: 1060px;
 }
 
@@ -1738,7 +1738,7 @@ body.reader-mode-active .txdet-article p:last-child {
 
 /* ── Mobile: restore stacked layout ── */
 @media (max-width: 680px) {
-  .card:has(#screen-textos:not([style*="none"])) {
+  .card.is-textos {
     max-width: 860px;
   }
   .txsel-sidebar {
