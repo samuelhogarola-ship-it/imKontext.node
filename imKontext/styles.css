@@ -393,29 +393,19 @@ input, select { font-family: inherit; }
   font-size: .75rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   .app-nav-inner {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 8px 18px;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px;
+    gap: 8px;
   }
-  .app-nav-logo { justify-content: center; }
-  .app-nav-links { justify-content: center; row-gap: 2px; }
-  .app-nav-sep { display: none; }
-}
-
-@media (max-width: 560px) {
-  .app-nav-links a,
-  .app-nav-dashboard {
-    width: 100%;
-    text-align: center;
-    padding: 5px 8px;
-  }
+  .app-nav-links { display: none; }
+  .app-nav-logo img { height: 28px; }
+  .app-nav-logo span { font-size: .95rem; }
   .app-nav-dashboard::after {
-    display: block;
-    margin-left: 0;
-    margin-top: 3px;
+    display: none;
   }
 }
 
