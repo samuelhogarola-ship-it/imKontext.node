@@ -499,7 +499,7 @@ async function selectText(text, { pushState: doPush = true } = {}) {
 
   $('content-title').textContent = text.title || 'Texto';
   const _topic = text.topic ? ` sobre ${text.topic.toLowerCase()}` : '';
-  $('content-description').textContent = `Lee este artículo en alemán${_topic}, practica las palabras clave y consolida tu ${selectedLevel.toUpperCase()} con ejercicios de vocabulario real.`;
+  $('content-description').textContent = `Lee este artículo en alemán${_topic}, practica las palabras clave y consolida tu nivel con ejercicios de vocabulario real.`;
   $('content-meta').innerHTML = renderTextMeta(text);
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
