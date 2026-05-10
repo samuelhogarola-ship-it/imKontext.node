@@ -210,12 +210,12 @@ $('btn-entrar').addEventListener('click', async () => {
 async function goToTextos({ pushState: doPush = true } = {}) {
   if (doPush) {
     history.pushState({ screen: 'textos' }, '', '/textos');
-    updateSEOMeta({
-      title: 'imKontext — Elige un texto',
-      description: 'Explora los textos de actualidad en alemán. Elige el artículo que quieres leer y practicar hoy.',
-      canonical: window.location.origin + '/textos'
-    });
   }
+  updateSEOMeta({
+    title: 'imKontext — Elige un texto',
+    description: 'Explora los textos de actualidad en alemán. Elige el artículo que quieres leer y practicar hoy.',
+    canonical: window.location.origin + '/textos'
+  });
   showScreen('textos');
 
   // If already loaded, just render
