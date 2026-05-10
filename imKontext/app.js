@@ -55,7 +55,8 @@ function setReadingMode(active) {
   const btn = $('btn-toggle-reading-mode');
   if (btn) {
     btn.setAttribute('aria-pressed', String(active));
-    btn.textContent = active ? 'Salir lectura ×' : 'Modo lectura ⤢';
+    const label = document.getElementById('btn-reading-mode-label');
+    if (label) label.textContent = active ? 'Salir lectura' : 'Modo lectura';
   }
 }
 
@@ -169,15 +170,15 @@ async function openTextBySlug(slug) {
 /* ── SHARE BUTTON ────────────────────────────────────────────── */
 $('btn-share-text').addEventListener('click', async () => {
   const url = window.location.href;
-  const btn = $('btn-share-text');
+  const label = document.getElementById('btn-share-text-label');
   try {
     await navigator.clipboard.writeText(url);
-    btn.textContent = '¡Copiado! ✓';
+    if (label) label.textContent = '¡Copiado! ✓';
   } catch {
     prompt('Copia este enlace:', url);
     return;
   }
-  setTimeout(() => { btn.textContent = 'Compartir ↗'; }, 2000);
+  setTimeout(() => { if (label) label.textContent = 'Copiar enlace'; }, 2000);
 });
 
 /* ── WHATSAPP SHARE ──────────────────────────────────────────── */
