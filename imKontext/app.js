@@ -180,6 +180,14 @@ $('btn-share-text').addEventListener('click', async () => {
   setTimeout(() => { btn.textContent = 'Compartir ↗'; }, 2000);
 });
 
+/* ── WHATSAPP SHARE ──────────────────────────────────────────── */
+$('btn-share-whatsapp').addEventListener('click', () => {
+  if (!selectedText) return;
+  const url = window.location.origin + getTextUrl(selectedText, selectedLevel);
+  const msg = `Lee este texto en alemán:\n"${selectedText.title}"\nNivel ${selectedLevel.toUpperCase()}\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+});
+
 /* ── POPSTATE ────────────────────────────────────────────────── */
 window.addEventListener('popstate', async () => {
   const pathname = window.location.pathname;
