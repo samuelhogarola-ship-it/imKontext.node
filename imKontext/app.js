@@ -498,8 +498,10 @@ async function selectText(text, { pushState: doPush = true } = {}) {
   syncLevelControls(available);
 
   $('content-title').textContent = text.title || 'Texto';
-  $('content-description').textContent =
-    `Lee "${text.title}" directamente desde Supabase y vuelve cuando estés listo para practicar el vocabulario.`;
+  const _preview = String(text.previewContent || '').trim().replace(/\s+/g, ' ');
+  $('content-description').textContent = _preview
+    ? (_preview.length > 180 ? _preview.slice(0, 180) + '…' : _preview)
+    : `Practica vocabulario alemán con "${text.title}". Lee el artículo y vuelve cuando estés listo para los ejercicios.`;
   $('content-meta').innerHTML = renderTextMeta(text);
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
