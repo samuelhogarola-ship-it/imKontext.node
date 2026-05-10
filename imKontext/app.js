@@ -285,13 +285,20 @@ function createTextRow(text, position) {
   return row;
 }
 
+function isTextPracticallyComplete(text) {
+  return Boolean(text.slug)
+    && Array.isArray(text.levels)
+    && text.levels.length > 0
+    && Boolean(text.hasLoadedVocabulary);
+}
+
 function canAccessText(text) {
-  return isPremium || text.access_status !== 'premium' || Boolean(text.hasLoadedVocabulary);
+  return isPremium || text.access_status !== 'premium' || isTextPracticallyComplete(text);
 }
 
 function renderAccessTag(text) {
-  if (text.access_status === 'premium' && text.hasLoadedVocabulary) {
-    return '<span class="tx-access-tag tx-access-tag--free">DISPONIBLE</span>';
+  if (text.access_status === 'premium' && isTextPracticallyComplete(text)) {
+    return '<span class="tx-access-tag tx-access-tag--freemium">PREMIUM · GRATIS AHORA</span>';
   }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
@@ -362,11 +369,6 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
    PANTALLA 2b — DETALLE DE TEXTO
 ══════════════════════════════════════════════════════════════ */
 async function selectText(text) {
-  if (!canAccessText(text)) {
-    alert(`Este texto es PREMIUM. Cuando tengamos login, aquí entraremos con acceso premium. Si necesitas acceso o información, escríbenos a ${SUPPORT_EMAIL}.`);
-    return;
-  }
-
   selectedText = text;
 
   const available = getAvailableLevels(text);
@@ -377,16 +379,51 @@ async function selectText(text) {
   syncLevelControls(available);
 
   $('content-title').textContent = text.title || 'Texto';
-  $('content-description').textContent =
-    `Lee "${text.title}" directamente desde Supabase y vuelve cuando estés listo para practicar el vocabulario.`;
+  const _preview = String(text.previewContent || '').trim().replace(/\s+/g, ' ');
+  $('content-description').textContent = _preview
+    ? (_preview.length > 180 ? _preview.slice(0, 180) + '…' : _preview)
+    : `Practica vocabulario alemán con "${text.title}". Lee el artículo y vuelve cuando estés listo para los ejercicios.`;
   $('content-meta').innerHTML = renderTextMeta(text);
-  $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
-
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
-  await refreshSelectedTextVersion();
+  const canAccess = canAccessText(text);
+  const isFreemium = canAccess && text.access_status === 'premium' && isTextPracticallyComplete(text) && !isPremium;
+  const freemiumNotice = $('freemium-notice');
+  if (freemiumNotice) freemiumNotice.style.display = isFreemium ? '' : 'none';
+  $('btn-ir-actividad').style.display = canAccess ? '' : 'none';
+  $('btn-toggle-reading-mode').style.display = canAccess ? '' : 'none';
+
+  if (canAccess) {
+    $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
+    await refreshSelectedTextVersion();
+  } else {
+    $('content-body').innerHTML = renderPremiumGateBody(text);
+  }
+
   showScreen('content');
 }
+
+/* ── SHARE BUTTON ────────────────────────────────────────────── */
+$('btn-share-text').addEventListener('click', async () => {
+  const url = window.location.href;
+  const btn = $('btn-share-text');
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '¡Copiado! ✓';
+  } catch {
+    prompt('Copia este enlace:', url);
+    return;
+  }
+  setTimeout(() => { btn.textContent = 'Compartir ↗'; }, 2000);
+});
+
+/* ── WHATSAPP SHARE ──────────────────────────────────────────── */
+$('btn-share-whatsapp').addEventListener('click', () => {
+  if (!selectedText) return;
+  const url = window.location.href;
+  const msg = `Lee este texto en alemán:\n"${selectedText.title}"\nNivel ${selectedLevel.toUpperCase()}\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+});
 
 $('btn-volver-textos').addEventListener('click', async () => {
   await exitReadingMode();
@@ -680,6 +717,25 @@ $('btn-reset-progress').addEventListener('click', () => {
 });
 
 /* ── HELPERS ─────────────────────────────────────────────────── */
+function renderPremiumGateBody(text) {
+  const excerpt = String(text.previewContent || '').trim().slice(0, 350);
+  const excerptHtml = excerpt
+    ? excerpt.split(/\n\s*\n/).map(p => `<p>${escapeHtml(p)}</p>`).join('')
+    : '';
+  return `
+    <div class="premium-gate">
+      ${excerptHtml ? `<div class="premium-gate-excerpt">${excerptHtml}</div>` : ''}
+      <div class="premium-gate-lock">
+        <span class="premium-gate-icon" aria-hidden="true">🔒</span>
+        <p class="premium-gate-title">${escapeHtml(text.title)}</p>
+        ${text.topic ? `<p class="premium-gate-topic">${escapeHtml(text.topic)}</p>` : ''}
+        <p class="premium-gate-msg">Este texto es premium. Escríbenos para obtener acceso.</p>
+        <a class="btn-back premium-gate-cta" href="mailto:${SUPPORT_EMAIL}">Contactar → ${SUPPORT_EMAIL}</a>
+      </div>
+    </div>
+  `;
+}
+
 function escapeHtml(str) {
   return String(str ?? '')
     .replace(/&/g,'&amp;')

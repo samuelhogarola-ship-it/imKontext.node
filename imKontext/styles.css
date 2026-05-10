@@ -1965,6 +1965,25 @@ select:focus-visible,
 .tx-access-tag--premium {
   background: #24180f;
 }
+.tx-access-tag--freemium {
+  background: #1a4731;
+}
+.freemium-notice {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: .5rem;
+  background: #edfaf3;
+  border: 1px solid #a7e9c6;
+  color: #1a4731;
+  font-size: .875rem;
+}
+.freemium-notice::before {
+  content: '🎁';
+  flex-shrink: 0;
+}
 .tx-row--locked {
   opacity: .82;
 }
