@@ -201,9 +201,7 @@ window.addEventListener('popstate', async () => {
    PANTALLA 1 → LANDING
 ══════════════════════════════════════════════════════════════ */
 $('btn-entrar').addEventListener('click', async () => {
-  $('main-app').style.display = 'block';
-  screens.landing.style.display = 'none';
-  await goToTextos();
+  await goToTextos({ pushState: true });
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -356,13 +354,10 @@ function createTextRow(text, position) {
 }
 
 function canAccessText(text) {
-  return isPremiumUser() || text.access_status !== 'premium' || Boolean(text.hasLoadedVocabulary);
+  return isPremiumUser() || text.access_status !== 'premium';
 }
 
 function renderAccessTag(text) {
-  if (text.access_status === 'premium' && text.hasLoadedVocabulary) {
-    return '<span class="tx-access-tag tx-access-tag--free">DISPONIBLE</span>';
-  }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
@@ -507,7 +502,7 @@ async function selectText(text, { pushState: doPush = true } = {}) {
   }
 
   updateSEOMeta({
-    title: `${text.title} — imKontext`,
+    title: `${text.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
     description: `Lee y practica vocabulario alemán con "${text.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
     canonical: window.location.origin + getTextUrl(text, selectedLevel)
   });
@@ -517,7 +512,7 @@ async function selectText(text, { pushState: doPush = true } = {}) {
 
 $('btn-volver-textos').addEventListener('click', async () => {
   await exitReadingMode();
-  await goToTextos();
+  await goToTextos({ pushState: true });
 });
 
 $('btn-ir-actividad').addEventListener('click', async () => {
@@ -627,7 +622,7 @@ document.querySelectorAll('.content-lvl-chip').forEach(btn => {
           getTextUrl(selectedText, selectedLevel)
         );
         updateSEOMeta({
-          title: `${selectedText.title} — imKontext`,
+          title: `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
           description: `Lee y practica vocabulario alemán con "${selectedText.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
           canonical: window.location.origin + getTextUrl(selectedText, selectedLevel)
         });
