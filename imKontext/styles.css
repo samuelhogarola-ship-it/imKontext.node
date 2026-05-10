@@ -781,6 +781,25 @@ input, select { font-family: inherit; }
 .premium-gate-cta {
   display: inline-block;
 }
+
+/* ── Freemium notice ────────────────────────────────────────── */
+.freemium-notice {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: .5rem;
+  background: #edfaf3;
+  border: 1px solid #a7e9c6;
+  color: #1a4731;
+  font-size: .875rem;
+  font-weight: 500;
+}
+.freemium-notice::before {
+  content: '🎁';
+  flex-shrink: 0;
+}
 .content-actions {
   display: flex; flex-direction: column; gap: .75rem; margin-top: 1rem;
 }
@@ -1634,6 +1653,9 @@ body.reader-mode-active .txdet-article p:last-child {
 }
 .tx-access-tag--premium {
   background: #24180f;
+}
+.tx-access-tag--freemium {
+  background: #1a4731;
 }
 .tx-row--locked {
   opacity: .82;

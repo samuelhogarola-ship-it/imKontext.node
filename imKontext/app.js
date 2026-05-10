@@ -361,11 +361,23 @@ function createTextRow(text, position) {
   return row;
 }
 
+function isTextPracticallyComplete(text) {
+  return Boolean(text.slug)
+    && Array.isArray(text.levels)
+    && text.levels.length > 0
+    && Boolean(text.hasLoadedVocabulary);
+}
+
 function canAccessText(text) {
-  return isPremiumUser() || text.access_status !== 'premium';
+  return isPremiumUser()
+    || text.access_status !== 'premium'
+    || isTextPracticallyComplete(text);
 }
 
 function renderAccessTag(text) {
+  if (text.access_status === 'premium' && isTextPracticallyComplete(text)) {
+    return '<span class="tx-access-tag tx-access-tag--freemium">PREMIUM · GRATIS AHORA</span>';
+  }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
@@ -491,6 +503,8 @@ async function selectText(text, { pushState: doPush = true } = {}) {
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
   const canAccess = canAccessText(text);
+  const isFreemium = canAccess && text.access_status === 'premium' && isTextPracticallyComplete(text) && !isPremiumUser();
+  $('freemium-notice').style.display = isFreemium ? '' : 'none';
   $('btn-ir-actividad').style.display = canAccess ? '' : 'none';
   $('btn-toggle-reading-mode').style.display = canAccess ? '' : 'none';
 
