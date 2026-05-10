@@ -170,6 +170,10 @@ app.get("/api/vocabulario", async (req, res) => {
   }
 });
 
+// SPA routes — serve index.html so client-side router resolves the URL
+app.get('/textos', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
+app.get('/textos/:slug', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
+
 app.use(express.static(frontendDir, {
   extensions: ["html"]
 }));

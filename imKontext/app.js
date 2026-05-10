@@ -19,7 +19,7 @@ async function apiFetch(path) {
 }
 
 /* ── STATE ───────────────────────────────────────────────────── */
-const isPremium    = false; // cambiar a true cuando exista acceso premium real
+function isPremiumUser() { return false; } // replace when auth exists
 const SUPPORT_EMAIL = 'www.vokabellab@pm.me';
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
@@ -118,19 +118,104 @@ async function showScreen(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+/* ── SEO & ROUTING HELPERS ───────────────────────────────────── */
+function updateSEOMeta({ title, description, canonical }) {
+  document.title = title;
+  const metaDesc = document.getElementById('meta-description');
+  if (metaDesc) metaDesc.setAttribute('content', description);
+  const canonicalEl = document.getElementById('link-canonical');
+  if (canonicalEl) canonicalEl.setAttribute('href', canonical);
+}
+
+function getTextUrl(text, level) {
+  const base = `/textos/${encodeURIComponent(text.slug)}`;
+  return level ? `${base}?nivel=${level.toUpperCase()}` : base;
+}
+
+function showLanding() {
+  $('main-app').style.display = 'none';
+  screens.landing.style.display = '';
+  $('app-header').classList.add('app-is-landing');
+  updateSEOMeta({
+    title: 'APP Vokabel Lab imKontext',
+    description: 'Aprende alemán con textos de actualidad. Practica vocabulario real con imKontext de Vokabel Lab.',
+    canonical: window.location.origin + '/'
+  });
+}
+
+async function openTextBySlug(slug) {
+  if (!allTexts.length) {
+    try {
+      allTexts = await apiFetch('/api/texts');
+    } catch {
+      showScreen('textos');
+      $('txsel-loading').style.display = 'none';
+      $('txsel-error').style.display = 'block';
+      return;
+    }
+  }
+  const text = allTexts.find(t => t.slug === slug);
+  if (!text) {
+    showScreen('textos');
+    $('txsel-loading').style.display = 'none';
+    const errEl = $('txsel-error');
+    errEl.style.display = 'block';
+    errEl.textContent = 'No se encontró el texto solicitado.';
+    return;
+  }
+  await selectText(text, { pushState: false });
+}
+
+/* ── SHARE BUTTON ────────────────────────────────────────────── */
+$('btn-share-text').addEventListener('click', async () => {
+  const url = window.location.href;
+  const btn = $('btn-share-text');
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '¡Copiado! ✓';
+  } catch {
+    prompt('Copia este enlace:', url);
+    return;
+  }
+  setTimeout(() => { btn.textContent = 'Compartir ↗'; }, 2000);
+});
+
+/* ── POPSTATE ────────────────────────────────────────────────── */
+window.addEventListener('popstate', async () => {
+  const pathname = window.location.pathname;
+  const levelParam = new URLSearchParams(window.location.search).get('nivel');
+
+  if (pathname === '/textos') {
+    await goToTextos({ pushState: false });
+  } else if (pathname.startsWith('/textos/')) {
+    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
+    if (levelParam) selectedLevel = levelParam.toLowerCase();
+    await openTextBySlug(slug);
+  } else {
+    selectedTopic = null;
+    showLanding();
+  }
+});
+
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 1 → LANDING
 ══════════════════════════════════════════════════════════════ */
 $('btn-entrar').addEventListener('click', async () => {
-  $('main-app').style.display = 'block';
-  screens.landing.style.display = 'none';
-  await goToTextos(false);
+  await goToTextos({ pushState: true });
 });
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2 — SELECCIÓN DE TEXTOS
 ══════════════════════════════════════════════════════════════ */
-async function goToTextos(autoOpenFeatured = false) {
+async function goToTextos({ pushState: doPush = true } = {}) {
+  if (doPush) {
+    history.pushState({ screen: 'textos' }, '', '/textos');
+  }
+  updateSEOMeta({
+    title: 'imKontext — Elige un texto',
+    description: 'Explora los textos de actualidad en alemán. Elige el artículo que quieres leer y practicar hoy.',
+    canonical: window.location.origin + '/textos'
+  });
   showScreen('textos');
 
   // If already loaded, just render
@@ -269,13 +354,10 @@ function createTextRow(text, position) {
 }
 
 function canAccessText(text) {
-  return isPremium || text.access_status !== 'premium' || Boolean(text.hasLoadedVocabulary);
+  return isPremiumUser() || text.access_status !== 'premium';
 }
 
 function renderAccessTag(text) {
-  if (text.access_status === 'premium' && text.hasLoadedVocabulary) {
-    return '<span class="tx-access-tag tx-access-tag--free">DISPONIBLE</span>';
-  }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
@@ -358,9 +440,8 @@ $('txsel-search').addEventListener('input', () => {
 
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
-  $('main-app').style.display = 'none';
-  screens.landing.style.display = '';
-  $('app-header').classList.add('app-is-landing');
+  history.pushState({ screen: 'landing' }, '', '/');
+  showLanding();
 });
 
 // Nav: volver a la landing desde logo o enlace activo
@@ -369,9 +450,9 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   if (!el) return;
   el.addEventListener('click', e => {
     e.preventDefault();
-    $('main-app').style.display = 'none';
-    document.getElementById('screen-landing').style.display = '';
-    $('app-header').classList.add('app-is-landing');
+    selectedTopic = null;
+    history.pushState({ screen: 'landing' }, '', '/');
+    showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
@@ -385,12 +466,7 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2b — DETALLE DE TEXTO
 ══════════════════════════════════════════════════════════════ */
-async function selectText(text) {
-  if (!canAccessText(text)) {
-    alert(`Este texto es PREMIUM. Cuando tengamos login, aquí entraremos con acceso premium. Si necesitas acceso o información, escríbenos a ${SUPPORT_EMAIL}.`);
-    return;
-  }
-
+async function selectText(text, { pushState: doPush = true } = {}) {
   selectedText = text;
 
   const available = getAvailableLevels(text);
@@ -404,17 +480,39 @@ async function selectText(text) {
   $('content-description').textContent =
     `Lee "${text.title}" directamente desde Supabase y vuelve cuando estés listo para practicar el vocabulario.`;
   $('content-meta').innerHTML = renderTextMeta(text);
-  $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
-
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
-  await refreshSelectedTextVersion();
+  const canAccess = canAccessText(text);
+  $('btn-ir-actividad').style.display = canAccess ? '' : 'none';
+  $('btn-toggle-reading-mode').style.display = canAccess ? '' : 'none';
+
+  if (canAccess) {
+    $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
+    await refreshSelectedTextVersion();
+  } else {
+    $('content-body').innerHTML = renderPremiumGateBody(text);
+  }
+
+  if (doPush && text.slug) {
+    history.pushState(
+      { screen: 'content', slug: text.slug, level: selectedLevel },
+      '',
+      getTextUrl(text, selectedLevel)
+    );
+  }
+
+  updateSEOMeta({
+    title: `${text.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
+    description: `Lee y practica vocabulario alemán con "${text.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
+    canonical: window.location.origin + getTextUrl(text, selectedLevel)
+  });
+
   showScreen('content');
 }
 
 $('btn-volver-textos').addEventListener('click', async () => {
   await exitReadingMode();
-  goToTextos();
+  await goToTextos({ pushState: true });
 });
 
 $('btn-ir-actividad').addEventListener('click', async () => {
@@ -517,6 +615,18 @@ document.querySelectorAll('.content-lvl-chip').forEach(btn => {
     selectedLevel = btn.dataset.level;
     syncLevelControls(getAvailableLevels(selectedText));
     if (selectedText) {
+      if (selectedText.slug) {
+        history.replaceState(
+          { screen: 'content', slug: selectedText.slug, level: selectedLevel },
+          '',
+          getTextUrl(selectedText, selectedLevel)
+        );
+        updateSEOMeta({
+          title: `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
+          description: `Lee y practica vocabulario alemán con "${selectedText.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
+          canonical: window.location.origin + getTextUrl(selectedText, selectedLevel)
+        });
+      }
       await refreshSelectedTextVersion();
     }
   });
@@ -747,6 +857,25 @@ function renderTextBody(text) {
     .join('');
 }
 
+function renderPremiumGateBody(text) {
+  const excerpt = String(text.previewContent || '').trim().slice(0, 350);
+  const excerptHtml = excerpt
+    ? excerpt.split(/\n\s*\n/).map(p => `<p>${escapeHtml(p)}</p>`).join('')
+    : '';
+  return `
+    <div class="premium-gate">
+      ${excerptHtml ? `<div class="premium-gate-excerpt">${excerptHtml}</div>` : ''}
+      <div class="premium-gate-lock">
+        <span class="premium-gate-icon" aria-hidden="true">🔒</span>
+        <p class="premium-gate-title">${escapeHtml(text.title)}</p>
+        ${text.topic ? `<p class="premium-gate-topic">${escapeHtml(text.topic)}</p>` : ''}
+        <p class="premium-gate-msg">Este texto es premium. Escríbenos para obtener acceso.</p>
+        <a class="btn-back premium-gate-cta" href="mailto:${SUPPORT_EMAIL}">Contactar → ${SUPPORT_EMAIL}</a>
+      </div>
+    </div>
+  `;
+}
+
 function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -759,9 +888,30 @@ function formatDate(value) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   INIT
+   INIT — resolve URL and route
 ══════════════════════════════════════════════════════════════ */
-// Initial state: show landing
-$('main-app').style.display = 'none';
+(async function initRouting() {
+  const pathname = window.location.pathname;
+  const levelParam = new URLSearchParams(window.location.search).get('nivel');
 
-// Preload slider max on level change handled inside loadActivityScreen
+  if (pathname === '/textos') {
+    $('main-app').style.display = 'block';
+    screens.landing.style.display = 'none';
+    await goToTextos({ pushState: false });
+  } else if (pathname.startsWith('/textos/')) {
+    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
+    if (levelParam) selectedLevel = levelParam.toLowerCase();
+    $('main-app').style.display = 'block';
+    screens.landing.style.display = 'none';
+    $('app-header').classList.remove('app-is-landing');
+    await openTextBySlug(slug);
+  } else {
+    // Default: landing
+    $('main-app').style.display = 'none';
+    updateSEOMeta({
+      title: 'APP Vokabel Lab imKontext',
+      description: 'Aprende alemán con textos de actualidad. Practica vocabulario real con imKontext de Vokabel Lab.',
+      canonical: window.location.origin + '/'
+    });
+  }
+})();
