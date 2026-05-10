@@ -836,6 +836,18 @@ input, select { font-family: inherit; }
   color: #128c5e;
 }
 .btn-share-icon--wa:hover { background: #f0fdf6; }
+.btn-share-icon--ig {
+  border-color: #c13584;
+  color: #c13584;
+}
+.btn-share-icon--ig:hover { background: #fdf4f9; }
+.result-share-row {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: .25rem;
+}
 .btn-reading-mode {
   display: flex;
   align-items: center;

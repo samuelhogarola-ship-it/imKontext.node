@@ -640,6 +640,115 @@ $('btn-atras').addEventListener('click', () => {
 $('btn-terminar').addEventListener('click', () => { showResultado(); });
 
 /* ══════════════════════════════════════════════════════════════
+   COMPARTIR RESULTADO
+══════════════════════════════════════════════════════════════ */
+function buildResultShareData() {
+  const total = score.correct + score.wrong;
+  const pct   = getProgressPercent(score.correct, total);
+  const label = pct >= 80 ? '¡Sehr gut! 🎉' : pct >= 60 ? '¡Gut gemacht! 👍' : 'Sigue practicando 💪';
+  const title = selectedText ? selectedText.title : '';
+  const level = selectedLevel ? selectedLevel.toUpperCase() : '';
+  return { pct, total, label, title, level };
+}
+
+function generateResultCanvas() {
+  const { pct, total, label, title, level } = buildResultShareData();
+  const SIZE = 1080;
+  const cvs  = document.createElement('canvas');
+  cvs.width  = SIZE;
+  cvs.height = SIZE;
+  const ctx  = cvs.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#0f0f0f';
+  ctx.fillRect(0, 0, SIZE, SIZE);
+
+  // Subtle top accent bar
+  const grad = ctx.createLinearGradient(0, 0, SIZE, 0);
+  grad.addColorStop(0, '#4f46e5');
+  grad.addColorStop(1, '#7c3aed');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, SIZE, 8);
+
+  // Brand
+  ctx.fillStyle = '#666';
+  ctx.font = '500 44px "DM Sans", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('imKontext · Vokabel Lab', SIZE / 2, 100);
+
+  // Percentage
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '700 280px "DM Sans", sans-serif';
+  ctx.fillText(`${pct}%`, SIZE / 2, 520);
+
+  // Label
+  ctx.fillStyle = '#cccccc';
+  ctx.font = '500 62px "DM Sans", sans-serif';
+  ctx.fillText(label, SIZE / 2, 610);
+
+  // Stats row
+  const statsY = 740;
+  const statItems = [
+    { val: score.correct, lbl: 'Correctas' },
+    { val: score.wrong,   lbl: 'Errores' },
+    { val: total,         lbl: 'Palabras' },
+  ];
+  const colW = SIZE / 3;
+  statItems.forEach((item, i) => {
+    const x = colW * i + colW / 2;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 80px "DM Sans", sans-serif';
+    ctx.fillText(String(item.val), x, statsY);
+    ctx.fillStyle = '#888';
+    ctx.font = '400 40px "DM Sans", sans-serif';
+    ctx.fillText(item.lbl, x, statsY + 60);
+  });
+
+  // Text title + level
+  if (title) {
+    ctx.fillStyle = '#555';
+    ctx.font = '400 36px "DM Sans", sans-serif';
+    const maxWidth = SIZE - 120;
+    const display  = title.length > 60 ? title.slice(0, 57) + '…' : title;
+    ctx.fillText(`"${display}"${level ? '  ·  ' + level : ''}`, SIZE / 2, 960);
+  }
+
+  return cvs;
+}
+
+function shareResultWhatsApp() {
+  const { pct, total, label, title, level } = buildResultShareData();
+  const textLine = title ? `Texto: "${title}"${level ? ' · ' + level : ''}\n` : '';
+  const url = selectedText
+    ? window.location.origin + (typeof getTextUrl === 'function' ? getTextUrl(selectedText, selectedLevel) : '/textos')
+    : window.location.href;
+  const msg = `He practicado alemán en imKontext 🇩🇪\n${textLine}Resultado: ${pct}% (${score.correct}/${total}) ${label}\nPruébalo: ${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+}
+
+async function shareResultIG() {
+  const cvs  = generateResultCanvas();
+  const blob = await new Promise(resolve => cvs.toBlob(resolve, 'image/png'));
+  const file = new File([blob], 'resultado-imkontext.png', { type: 'image/png' });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: 'Mi resultado en imKontext' });
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  // Fallback: download the image
+  const url = URL.createObjectURL(blob);
+  const a   = document.createElement('a');
+  a.href    = url;
+  a.download = 'resultado-imkontext.png';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+/* ══════════════════════════════════════════════════════════════
    RESULTADO
 ══════════════════════════════════════════════════════════════ */
 function showResultado() {
@@ -678,6 +787,11 @@ function showResultado() {
       done: (existing.done || 0) + score.correct,
     }));
   }
+
+  // Show share row
+  $('result-share-row').style.display = selectedText ? '' : 'none';
+  $('btn-share-result-wa').onclick = shareResultWhatsApp;
+  $('btn-share-result-ig').onclick = shareResultIG;
 
   $('btn-reiniciar').onclick = () => {
     currentIdx = 0;
