@@ -32,6 +32,8 @@ Rutas de interfaz clave:
 - `/textos/:slug?nivel=A1`
 - `/textos/:slug?nivel=A2`
 - `/textos/:slug?nivel=B1`
+- `/textos/:slug?nivel=B2`
+- `/textos/:slug?nivel=C1`
 
 ## Backend/API
 
