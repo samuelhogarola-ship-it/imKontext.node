@@ -204,7 +204,7 @@ function renderTextGrid(list) {
     featuredWrap.innerHTML = `
       <div class="tx-featured-head">
         <p class="tx-featured-kicker">Tema principal de la semana</p>
-        <span class="tx-access-tag tx-access-tag--free">FREE</span>
+        ${renderFeaturedAccessTag(featured)}
       </div>
       <button class="tx-featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-copy">
@@ -214,7 +214,7 @@ function renderTextGrid(list) {
           </div>
           <p class="tx-featured-topic">${escapeHtml(featured.topic || 'Tema destacado')}</p>
           <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
-          <p class="tx-featured-desc">Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.</p>
+          <p class="tx-featured-desc">${renderFeaturedDescription(featured)}</p>
           <div class="tx-featured-meta">
             <div class="tx-row-levels">${renderLevelBadges(featured.levels)}</div>
             <span class="tx-row-date">${formatShortDate(featured.published_at)}</span>
@@ -292,12 +292,18 @@ function isTextPracticallyComplete(text) {
     && Boolean(text.hasLoadedVocabulary);
 }
 
+function isFreemiumText(text) {
+  return !isPremium
+    && text?.access_status === 'premium'
+    && isTextPracticallyComplete(text);
+}
+
 function canAccessText(text) {
-  return isPremium || text.access_status !== 'premium' || isTextPracticallyComplete(text);
+  return isPremium || text.access_status !== 'premium' || isFreemiumText(text);
 }
 
 function renderAccessTag(text) {
-  if (text.access_status === 'premium' && isTextPracticallyComplete(text)) {
+  if (isFreemiumText(text)) {
     return '<span class="tx-access-tag tx-access-tag--freemium">PREMIUM · GRATIS AHORA</span>';
   }
   if (text.access_status === 'premium') {
@@ -331,7 +337,28 @@ function sortTextsByDate(list) {
 }
 
 function getFeaturedText(list) {
-  return sortTextsByDate(list).find(text => text.access_status === 'free') || null;
+  return sortTextsByDate(list).find(canAccessText) || null;
+}
+
+function renderFeaturedAccessTag(text) {
+  if (isFreemiumText(text)) {
+    return '<span class="tx-access-tag tx-access-tag--freemium">PROMO · GRATIS AHORA</span>';
+  }
+  if (text.access_status === 'free') {
+    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
+  }
+  if (text.access_status === 'premium') {
+    return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
+  }
+  return '';
+}
+
+function renderFeaturedDescription(text) {
+  if (isFreemiumText(text)) {
+    return 'Promoción activa: este texto premium está desbloqueado gratis por tiempo limitado. Entra aquí para aprovecharlo.';
+  }
+
+  return 'Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.';
 }
 
 // Live search
@@ -387,7 +414,7 @@ async function selectText(text) {
   $('act-text-title').textContent = text.title || 'Configura tu práctica';
 
   const canAccess = canAccessText(text);
-  const isFreemium = canAccess && text.access_status === 'premium' && isTextPracticallyComplete(text) && !isPremium;
+  const isFreemium = isFreemiumText(text);
   const freemiumNotice = $('freemium-notice');
   if (freemiumNotice) freemiumNotice.style.display = isFreemium ? '' : 'none';
   $('btn-ir-actividad').style.display = canAccess ? '' : 'none';
