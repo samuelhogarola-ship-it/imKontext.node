@@ -5151,3 +5151,1362 @@ where not exists (
     and existing.vocabulario_id = v.id
 );
 
+-- ============================================================
+-- Seed generated from structured TXT
+-- Source: /Users/sam/Documents/Codex/2026-05-15/fuchsy-imk-noticia-deutschland-r-stet/deutschland-ruestet-auf.txt
+-- Tables: texts, text_versions, vocabulario, text_version_vocabulary
+-- ============================================================
+
+-- Theme 1: Deutschland rüstet auf
+insert into texts (
+  title,
+  topic,
+  access_status,
+  published_at,
+  slug
+)
+values (
+  'Deutschland rüstet auf',
+  'Politik & Sicherheit',
+  'premium',
+  '2026-05-01'::date,
+  'deutschland-ruestet-auf'
+)
+on conflict (slug) do update set
+  title = excluded.title,
+  topic = excluded.topic,
+  access_status = excluded.access_status,
+  published_at = excluded.published_at;
+
+insert into text_versions (text_id, level, content)
+values
+(
+  (select id from texts where slug = 'deutschland-ruestet-auf'),
+  'A2',
+  'Deutschland baut sein Militär aus. Das Militär heißt Bundeswehr. Der Chef von Deutschland heißt Friedrich Merz. Er ist der Bundeskanzler.
+
+Merz sagt: "Die Bundeswehr muss stark sein." Deutschland gibt jetzt viel Geld für das Militär aus. Es sind 83 Milliarden Euro pro Jahr.
+
+Deutschland hat heute 180.000 Soldaten. In Zukunft soll es 260.000 Soldaten geben. Junge Männer bekommen einen Brief. Sie müssen antworten, ob sie Soldat werden wollen. Frauen können auch antworten, aber sie müssen nicht.
+
+Amerika hat Soldaten in Deutschland. Aber bald kommen 5.000 Soldaten weniger. Das ist ein Problem für Europa.'
+),
+(
+  (select id from texts where slug = 'deutschland-ruestet-auf'),
+  'B1',
+  'Deutschland investiert so viel Geld ins Militär wie seit dem Zweiten Weltkrieg nicht mehr. Bundeskanzler Friedrich Merz hat ein klares Ziel: Die Bundeswehr soll bis 2039 das stärkste konventionelle Heer in Europa werden.
+
+Das Verteidigungsbudget steigt 2026 auf 83 Milliarden Euro, also 20 Milliarden mehr als im Vorjahr. Um mehr Soldaten zu gewinnen, verschickt die Bundeswehr seit Januar Fragebögen an alle jungen Männer, die 2026 18 Jahre alt werden. Frauen können freiwillig teilnehmen. Bisher hat fast ein Drittel der Männer nicht geantwortet.
+
+Gleichzeitig hat US-Präsident Trump angekündigt, 5.000 der 35.000 amerikanischen Soldaten aus Deutschland abzuziehen. Das macht das Rüsten noch dringlicher. Merz reagierte: "Wir müssen heute bereit sein, heute Nacht zu kämpfen."
+
+Deutschland kauft außerdem neue Waffen: 20 Kampfjets vom Typ Eurofighter, 3.000 gepanzerte Fahrzeuge und moderne Luftabwehrsysteme.'
+),
+(
+  (select id from texts where slug = 'deutschland-ruestet-auf'),
+  'B2',
+  'Was 2022 als politisches Versprechen begann, ist heute harte Haushaltspolitik. Der Begriff Zeitenwende, geprägt vom damaligen Kanzler Olaf Scholz nach dem russischen Angriff auf die Ukraine, beschreibt den Wendepunkt in der deutschen Verteidigungspolitik. Unter Bundeskanzler Friedrich Merz wird dieser Schwenk nun konsequent umgesetzt.
+
+Das Verteidigungsbudget für 2026 beträgt 83 Milliarden Euro. Langfristig sollen ab 2029 mindestens 3,5 Prozent des BIP für Verteidigung ausgegeben werden. Um diesen Kurs zu finanzieren, setzte Merz die Aussetzung der im Grundgesetz verankerten Schuldenbremse durch.
+
+Auf personeller Ebene soll die Bundeswehr von derzeit 180.000 auf 260.000 aktive Soldaten wachsen, ergänzt durch 200.000 Reservisten. Dafür wurde ein neues freiwilliges Wehrdienstmodell eingeführt. Seit Januar erhalten alle männlichen Volljährigen des Jahrgangs 2026 einen Fragebogen. Knapp ein Drittel der Männer hat bislang nicht reagiert.
+
+Auf internationaler Ebene belastet die Ankündigung Trumps, 5.000 US-Soldaten aus Deutschland abzuziehen, das transatlantische Verhältnis zusätzlich. Trotz der Spannungen bleibt der Kurs klar: Deutschland will militärisch eigenständiger werden, auch innerhalb der NATO.'
+),
+(
+  (select id from texts where slug = 'deutschland-ruestet-auf'),
+  'C1',
+  'Die Zeitenwende von 2022 war eine Ankündigung. Was heute unter Friedrich Merz stattfindet, ist ihre institutionelle Verankerung. Mit einem Verteidigungsetat von 83 Milliarden Euro im Jahr 2026 und dem Ziel, ab 2029 dauerhaft 3,5 Prozent des BIP für Verteidigung aufzuwenden, vollzieht Deutschland einen sicherheitspolitischen Paradigmenwechsel.
+
+Die Finanzierung dieses Kurses setzt eine Verfassungsänderung voraus. Die im Grundgesetz verankerte Schuldenbremse wurde gezielt für Verteidigungsausgaben aufgebrochen. Der Gesamthaushalt 2026 umfasst 524 Milliarden Euro bei einer Nettokreditaufnahme von 180 Milliarden. Die Kehrseite sind Kürzungen im Sozialbereich, bei der Gesundheitsversorgung und den Renten.
+
+Militärisch strebt Deutschland an, bis 2039 über das stärkste konventionelle Heer Europas zu verfügen. Derzeit liegen die aktiven Kräfte bei rund 180.000. Das neue freiwillige Wehrdienstmodell soll diese Lücke schrittweise schließen. Seit Januar 2026 sind alle männlichen Volljährigen des entsprechenden Jahrgangs zur Antwort verpflichtet, während Frauen freiwillig teilnehmen können.
+
+Die geopolitische Dimension ist nicht weniger komplex. Trumps angekündigter Abzug von 5.000 US-Soldaten aus Deutschland illustriert die neue Fragilität der transatlantischen Allianz. Deutschland reagiert darauf nicht mit Deeskalation, sondern mit beschleunigter Eigenständigkeit. Die Frage, ob dieses nationale Aufrüsten mit einer gesamteuropäischen Verteidigungsstrategie vereinbar ist, bleibt offen.'
+)
+on conflict (text_id, level) do update set
+  content = excluded.content;
+
+-- Global deduplicated vocabulary
+insert into vocabulario (
+  german,
+  word_type,
+  spanish,
+  example_sentence_de,
+  level,
+  article,
+  plural_form,
+  infinitive,
+  example_sentence_es,
+  example_sentence_de_generated,
+  past_simple,
+  past_participle
+)
+select *
+from (
+  values
+  (
+    'abziehen',
+    'verb',
+    'retirar',
+    'Trump hat angekündigt, 5.000 Soldaten aus Deutschland abzuziehen.',
+    'B1',
+    null,
+    null,
+    'abziehen',
+    'Trump ha anunciado retirar 5.000 soldados de Alemania.',
+    'Die Regierung will Truppen aus dem Ausland abziehen.',
+    'zog ab',
+    'abgezogen'
+  ),
+  (
+    'ankündigen',
+    'verb',
+    'anunciar',
+    'US-Präsident Trump hat angekündigt, 5.000 Soldaten aus Deutschland abzuziehen.',
+    'B1',
+    null,
+    null,
+    'ankündigen',
+    'El presidente Trump ha anunciado retirar 5.000 soldados de Alemania.',
+    'Die USA kündigen neue Schritte an.',
+    'kündigte an',
+    'angekündigt'
+  ),
+  (
+    'antworten',
+    'verb',
+    'responder',
+    'Sie müssen antworten, ob sie Soldat werden wollen.',
+    'A2',
+    null,
+    null,
+    'antworten',
+    'Tienen que responder si quieren ser soldados.',
+    'Viele junge Männer antworten schnell.',
+    'antwortete',
+    'geantwortet'
+  ),
+  (
+    'aufbrechen',
+    'verb',
+    'romper, quebrar',
+    'Die im Grundgesetz verankerte Schuldenbremse wurde gezielt für Verteidigungsausgaben aufgebrochen.',
+    'C1',
+    null,
+    null,
+    'aufbrechen',
+    'El freno a la deuda anclado en la Constitución fue roto deliberadamente para gastos de defensa.',
+    'Die Regierung will alte Regeln aufbrechen.',
+    'brach auf',
+    'aufgebrochen'
+  ),
+  (
+    'aufwenden',
+    'verb',
+    'destinar, invertir',
+    'Deutschland will ab 2029 dauerhaft 3,5 Prozent des BIP für Verteidigung aufwenden.',
+    'C1',
+    null,
+    null,
+    'aufwenden',
+    'Alemania quiere destinar de forma permanente a partir de 2029 el 3,5 por ciento del PIB a defensa.',
+    'Der Staat muss dafür mehr Mittel aufwenden.',
+    'wendete auf',
+    'aufgewendet'
+  ),
+  (
+    'ausbauen',
+    'verb',
+    'ampliar, reforzar',
+    'Deutschland baut sein Militär aus.',
+    'A2',
+    null,
+    null,
+    'ausbauen',
+    'Alemania amplía su ejército.',
+    'Deutschland will die Armee weiter ausbauen.',
+    'baute aus',
+    'ausgebaut'
+  ),
+  (
+    'ausgeben',
+    'verb',
+    'gastar',
+    'Deutschland gibt jetzt viel Geld für das Militär aus.',
+    'A2',
+    null,
+    null,
+    'ausgeben',
+    'Alemania gasta ahora mucho dinero en el ejército.',
+    'Der Staat gibt mehr Geld aus.',
+    'gab aus',
+    'ausgegeben'
+  ),
+  (
+    'belasten',
+    'verb',
+    'poner a prueba, lastrar',
+    'Die Ankündigung Trumps belastet das transatlantische Verhältnis zusätzlich.',
+    'B2',
+    null,
+    null,
+    'belasten',
+    'El anuncio de Trump pone aún más a prueba la relación transatlántica.',
+    'Der Konflikt belastet die Beziehungen.',
+    'belastete',
+    'belastet'
+  ),
+  (
+    'das Drittel',
+    'noun',
+    'el tercio',
+    'Bisher hat fast ein Drittel der Männer nicht geantwortet.',
+    'B1',
+    'das',
+    null,
+    null,
+    'Hasta ahora casi un tercio de los hombres no ha respondido.',
+    'Ein Drittel ist eine große Zahl.',
+    null,
+    null
+  ),
+  (
+    'das Grundgesetz',
+    'noun',
+    'la Ley Fundamental, la Constitución alemana',
+    'Merz setzte die Aussetzung der im Grundgesetz verankerten Schuldenbremse durch.',
+    'B2',
+    'das',
+    null,
+    null,
+    'Merz impulsó la suspensión del freno a la deuda anclado en la Constitución alemana.',
+    'Das Grundgesetz ist die Verfassung Deutschlands.',
+    null,
+    null
+  ),
+  (
+    'das Militär',
+    'noun',
+    'el ejército, lo militar',
+    'Deutschland baut sein Militär aus.',
+    'A2',
+    'das',
+    null,
+    null,
+    'Alemania amplía su ejército.',
+    'Das Militär bekommt mehr Geld.',
+    null,
+    null
+  ),
+  (
+    'das Problem',
+    'noun',
+    'el problema',
+    'Das ist ein Problem für Europa.',
+    'A2',
+    'das',
+    null,
+    null,
+    'Eso es un problema para Europa.',
+    'Das Problem betrifft viele Länder.',
+    null,
+    null
+  ),
+  (
+    'das Verhältnis',
+    'noun',
+    'la relación',
+    'Die Ankündigung Trumps belastet das transatlantische Verhältnis zusätzlich.',
+    'B2',
+    'das',
+    null,
+    null,
+    'El anuncio de Trump pone aún más a prueba la relación transatlántica.',
+    'Das Verhältnis zwischen den Partnern wird schwieriger.',
+    null,
+    null
+  ),
+  (
+    'das Versprechen',
+    'noun',
+    'la promesa',
+    'Was 2022 als politisches Versprechen begann, ist heute harte Haushaltspolitik.',
+    'B2',
+    'das',
+    null,
+    null,
+    'Lo que empezó en 2022 como una promesa política es hoy una dura política presupuestaria.',
+    'Das Versprechen wurde später konkret.',
+    null,
+    null
+  ),
+  (
+    'das Verteidigungsbudget',
+    'noun',
+    'el presupuesto de defensa',
+    'Das Verteidigungsbudget steigt 2026 auf 83 Milliarden Euro.',
+    'B1',
+    'das',
+    null,
+    null,
+    'El presupuesto de defensa sube en 2026 a 83 mil millones de euros.',
+    'Das Verteidigungsbudget wächst stark.',
+    null,
+    null
+  ),
+  (
+    'das Vorjahr',
+    'noun',
+    'el año anterior',
+    'Das Verteidigungsbudget steigt 2026 auf 83 Milliarden Euro, also 20 Milliarden mehr als im Vorjahr.',
+    'B1',
+    'das',
+    null,
+    null,
+    'El presupuesto de defensa sube a 83 mil millones, es decir, 20 mil millones más que el año anterior.',
+    'Im Vorjahr war das Budget deutlich kleiner.',
+    null,
+    null
+  ),
+  (
+    'das Wehrdienstmodell',
+    'noun',
+    'el modelo de servicio militar',
+    'Dafür wurde ein neues freiwilliges Wehrdienstmodell eingeführt.',
+    'B2',
+    'das',
+    null,
+    null,
+    'Para ello se introdujo un nuevo modelo voluntario de servicio militar.',
+    'Das Wehrdienstmodell soll mehr Personal bringen.',
+    null,
+    null
+  ),
+  (
+    'das Ziel',
+    'noun',
+    'el objetivo',
+    'Bundeskanzler Friedrich Merz hat ein klares Ziel.',
+    'B1',
+    'das',
+    null,
+    null,
+    'El canciller federal Friedrich Merz tiene un objetivo claro.',
+    'Das Ziel der Regierung ist eine stärkere Armee.',
+    null,
+    null
+  ),
+  (
+    'der Brief',
+    'noun',
+    'la carta',
+    'Junge Männer bekommen einen Brief.',
+    'A2',
+    'der',
+    null,
+    null,
+    'Los hombres jóvenes reciben una carta.',
+    'Der Brief kommt per Post.',
+    null,
+    null
+  ),
+  (
+    'der Bundeskanzler',
+    'noun',
+    'el canciller federal',
+    'Er ist der Bundeskanzler.',
+    'A2',
+    'der',
+    null,
+    null,
+    'Él es el canciller federal.',
+    'Der Bundeskanzler spricht im Parlament.',
+    null,
+    null
+  ),
+  (
+    'der Chef',
+    'noun',
+    'el jefe, el líder',
+    'Der Chef von Deutschland heißt Friedrich Merz.',
+    'A2',
+    'der',
+    null,
+    null,
+    'El jefe de Alemania se llama Friedrich Merz.',
+    'Er ist der Chef der Regierung.',
+    null,
+    null
+  ),
+  (
+    'der Fragebogen',
+    'noun',
+    'el cuestionario',
+    'Die Bundeswehr verschickt seit Januar Fragebögen an alle jungen Männer.',
+    'B1',
+    'der',
+    null,
+    null,
+    'La Bundeswehr envía desde enero cuestionarios a todos los hombres jóvenes.',
+    'Der Fragebogen fragt nach Interesse am Dienst.',
+    null,
+    null
+  ),
+  (
+    'der Kampfjet',
+    'noun',
+    'el caza militar',
+    'Deutschland kauft 20 Kampfjets vom Typ Eurofighter.',
+    'B1',
+    'der',
+    null,
+    null,
+    'Alemania compra 20 cazas del tipo Eurofighter.',
+    'Der Kampfjet ist sehr teuer.',
+    null,
+    null
+  ),
+  (
+    'der Paradigmenwechsel',
+    'noun',
+    'el cambio de paradigma',
+    'Deutschland vollzieht einen sicherheitspolitischen Paradigmenwechsel.',
+    'C1',
+    'der',
+    null,
+    null,
+    'Alemania lleva a cabo un cambio de paradigma en política de seguridad.',
+    'Dieser Paradigmenwechsel prägt die nächsten Jahre.',
+    null,
+    null
+  ),
+  (
+    'der Reservist',
+    'noun',
+    'el reservista',
+    'Die Bundeswehr soll durch 200.000 Reservisten ergänzt werden.',
+    'B2',
+    'der',
+    null,
+    null,
+    'La Bundeswehr debe completarse con 200.000 reservistas.',
+    'Ein Reservist kann im Notfall zurückkommen.',
+    null,
+    null
+  ),
+  (
+    'der Soldat',
+    'noun',
+    'el soldado',
+    'Deutschland hat heute 180.000 Soldaten.',
+    'A2',
+    'der',
+    null,
+    null,
+    'Alemania tiene hoy 180.000 soldados.',
+    'Der Soldat arbeitet bei der Armee.',
+    null,
+    null
+  ),
+  (
+    'der Verteidigungsetat',
+    'noun',
+    'el presupuesto de defensa',
+    'Mit einem Verteidigungsetat von 83 Milliarden Euro im Jahr 2026 vollzieht Deutschland einen Paradigmenwechsel.',
+    'C1',
+    'der',
+    null,
+    null,
+    'Con un presupuesto de defensa de 83 mil millones de euros en 2026, Alemania realiza un cambio de paradigma.',
+    'Der Verteidigungsetat steigt deutlich.',
+    null,
+    null
+  ),
+  (
+    'der Wendepunkt',
+    'noun',
+    'el punto de inflexión',
+    'Der Begriff Zeitenwende beschreibt den Wendepunkt in der deutschen Verteidigungspolitik.',
+    'B2',
+    'der',
+    null,
+    null,
+    'El término Zeitenwende describe el punto de inflexión en la política de defensa alemana.',
+    'Das war ein historischer Wendepunkt.',
+    null,
+    null
+  ),
+  (
+    'die Bundeswehr',
+    'noun',
+    'las Fuerzas Armadas alemanas',
+    'Das Militär heißt Bundeswehr.',
+    'A2',
+    'die',
+    null,
+    null,
+    'El ejército se llama Bundeswehr.',
+    'Die Bundeswehr ist das Militär von Deutschland.',
+    null,
+    null
+  ),
+  (
+    'die Deeskalation',
+    'noun',
+    'la desescalada',
+    'Deutschland reagiert darauf nicht mit Deeskalation.',
+    'C1',
+    'die',
+    null,
+    null,
+    'Alemania no reacciona a ello con desescalada.',
+    'Viele fordern zuerst Deeskalation.',
+    null,
+    null
+  ),
+  (
+    'die Eigenständigkeit',
+    'noun',
+    'la autonomía',
+    'Deutschland reagiert darauf mit beschleunigter Eigenständigkeit.',
+    'C1',
+    'die',
+    null,
+    null,
+    'Alemania reacciona a ello con una autonomía acelerada.',
+    'Mehr Eigenständigkeit bleibt das Ziel.',
+    null,
+    null
+  ),
+  (
+    'die Fragilität',
+    'noun',
+    'la fragilidad',
+    'Trumps angekündigter Abzug illustriert die neue Fragilität der transatlantischen Allianz.',
+    'C1',
+    'die',
+    null,
+    null,
+    'La retirada anunciada por Trump ilustra la nueva fragilidad de la alianza transatlántica.',
+    'Die Fragilität der Allianz wird sichtbar.',
+    null,
+    null
+  ),
+  (
+    'die Kehrseite',
+    'noun',
+    'el lado negativo, el reverso',
+    'Die Kehrseite sind Kürzungen im Sozialbereich.',
+    'C1',
+    'die',
+    null,
+    null,
+    'El lado negativo son los recortes en el ámbito social.',
+    'Jede Reform hat eine Kehrseite.',
+    null,
+    null
+  ),
+  (
+    'die Luftabwehr',
+    'noun',
+    'la defensa aérea',
+    'Deutschland kauft moderne Luftabwehrsysteme.',
+    'B1',
+    'die',
+    null,
+    null,
+    'Alemania compra sistemas modernos de defensa aérea.',
+    'Die Luftabwehr soll Städte schützen.',
+    null,
+    null
+  ),
+  (
+    'die Milliarde',
+    'noun',
+    'mil millones',
+    'Es sind 83 Milliarden Euro pro Jahr.',
+    'A2',
+    'die',
+    null,
+    null,
+    'Son 83 mil millones de euros al año.',
+    'Eine Milliarde ist sehr viel Geld.',
+    null,
+    null
+  ),
+  (
+    'die Nettokreditaufnahme',
+    'noun',
+    'el endeudamiento neto',
+    'Der Gesamthaushalt 2026 umfasst 524 Milliarden Euro bei einer Nettokreditaufnahme von 180 Milliarden.',
+    'C1',
+    'die',
+    null,
+    null,
+    'El presupuesto total de 2026 asciende a 524 mil millones con un endeudamiento neto de 180 mil millones.',
+    'Die Nettokreditaufnahme bleibt sehr hoch.',
+    null,
+    null
+  ),
+  (
+    'die Schuldenbremse',
+    'noun',
+    'el freno a la deuda',
+    'Merz setzte die Aussetzung der im Grundgesetz verankerten Schuldenbremse durch.',
+    'B2',
+    'die',
+    null,
+    null,
+    'Merz impulsó la suspensión del freno a la deuda anclado en la Constitución.',
+    'Die Schuldenbremse ist in Deutschland sehr bekannt.',
+    null,
+    null
+  ),
+  (
+    'die Verankerung',
+    'noun',
+    'la institucionalización, el arraigo',
+    'Was heute unter Friedrich Merz stattfindet, ist ihre institutionelle Verankerung.',
+    'C1',
+    'die',
+    null,
+    null,
+    'Lo que ocurre hoy bajo Friedrich Merz es su institucionalización.',
+    'Die Verankerung der Politik zeigt sich im Haushalt.',
+    null,
+    null
+  ),
+  (
+    'die Verfassungsänderung',
+    'noun',
+    'la reforma constitucional',
+    'Die Finanzierung dieses Kurses setzt eine Verfassungsänderung voraus.',
+    'C1',
+    'die',
+    null,
+    null,
+    'La financiación de este rumbo exige una reforma constitucional.',
+    'Eine Verfassungsänderung ist politisch heikel.',
+    null,
+    null
+  ),
+  (
+    'die Verteidigungsstrategie',
+    'noun',
+    'la estrategia de defensa',
+    'Die Frage, ob dieses nationale Aufrüsten mit einer gesamteuropäischen Verteidigungsstrategie vereinbar ist, bleibt offen.',
+    'C1',
+    'die',
+    null,
+    null,
+    'La cuestión de si este rearme nacional es compatible con una estrategia de defensa paneuropea sigue abierta.',
+    'Europa braucht eine gemeinsame Verteidigungsstrategie.',
+    null,
+    null
+  ),
+  (
+    'die Waffe',
+    'noun',
+    'el arma',
+    'Deutschland kauft außerdem neue Waffen.',
+    'B1',
+    'die',
+    null,
+    null,
+    'Alemania compra además nuevas armas.',
+    'Neue Waffen kosten viel Geld.',
+    null,
+    null
+  ),
+  (
+    'die Zeitenwende',
+    'noun',
+    'el cambio de era, el punto de inflexión',
+    'Der Begriff Zeitenwende beschreibt den Wendepunkt in der deutschen Verteidigungspolitik.',
+    'B2',
+    'die',
+    null,
+    null,
+    'El término Zeitenwende describe el punto de inflexión en la política de defensa alemana.',
+    'Die Zeitenwende verändert die Politik des Landes.',
+    null,
+    null
+  ),
+  (
+    'die Zukunft',
+    'noun',
+    'el futuro',
+    'In Zukunft soll es 260.000 Soldaten geben.',
+    'A2',
+    'die',
+    null,
+    null,
+    'En el futuro debe haber 260.000 soldados.',
+    'Die Zukunft der Bundeswehr ist ein großes Thema.',
+    null,
+    null
+  ),
+  (
+    'dringlich',
+    'adjective',
+    'urgente',
+    'Das macht das Rüsten noch dringlicher.',
+    'B1',
+    null,
+    null,
+    null,
+    'Eso hace que el rearme sea aún más urgente.',
+    'Das Thema ist politisch sehr dringlich.',
+    null,
+    null
+  ),
+  (
+    'eigenständig',
+    'adjective',
+    'autónomo, independiente',
+    'Deutschland will militärisch eigenständiger werden.',
+    'B2',
+    null,
+    null,
+    null,
+    'Alemania quiere volverse militarmente más autónoma.',
+    'Europa möchte eigenständiger handeln.',
+    null,
+    null
+  ),
+  (
+    'ergänzen',
+    'verb',
+    'completar',
+    'Die Bundeswehr soll durch 200.000 Reservisten ergänzt werden.',
+    'B2',
+    null,
+    null,
+    'ergänzen',
+    'La Bundeswehr debe completarse con 200.000 reservistas.',
+    'Neue Kräfte ergänzen die Armee.',
+    'ergänzte',
+    'ergänzt'
+  ),
+  (
+    'freiwillig',
+    'adjective',
+    'voluntariamente',
+    'Frauen können freiwillig teilnehmen.',
+    'B1',
+    null,
+    null,
+    null,
+    'Las mujeres pueden participar voluntariamente.',
+    'Die Teilnahme ist freiwillig.',
+    null,
+    null
+  ),
+  (
+    'geopolitisch',
+    'adjective',
+    'geopolítico',
+    'Die geopolitische Dimension ist nicht weniger komplex.',
+    'C1',
+    null,
+    null,
+    null,
+    'La dimensión geopolítica no es menos compleja.',
+    'Die geopolitische Lage verändert die Prioritäten.',
+    null,
+    null
+  ),
+  (
+    'illustrieren',
+    'verb',
+    'ilustrar',
+    'Trumps angekündigter Abzug illustriert die neue Fragilität der transatlantischen Allianz.',
+    'C1',
+    null,
+    null,
+    'illustrieren',
+    'La retirada anunciada por Trump ilustra la nueva fragilidad de la alianza transatlántica.',
+    'Dieses Beispiel illustriert das Problem klar.',
+    'illustrierte',
+    'illustriert'
+  ),
+  (
+    'investieren',
+    'verb',
+    'invertir',
+    'Deutschland investiert so viel Geld ins Militär wie seit dem Zweiten Weltkrieg nicht mehr.',
+    'B1',
+    null,
+    null,
+    'investieren',
+    'Alemania invierte en el ejército tanto dinero como no hacía desde la Segunda Guerra Mundial.',
+    'Der Staat investiert mehr in Sicherheit.',
+    'investierte',
+    'investiert'
+  ),
+  (
+    'komplex',
+    'adjective',
+    'complejo',
+    'Die geopolitische Dimension ist nicht weniger komplex.',
+    'C1',
+    null,
+    null,
+    null,
+    'La dimensión geopolítica no es menos compleja.',
+    'Die Lage bleibt politisch komplex.',
+    null,
+    null
+  ),
+  (
+    'konsequent',
+    'adjective',
+    'de forma consecuente',
+    'Unter Bundeskanzler Friedrich Merz wird dieser Schwenk nun konsequent umgesetzt.',
+    'B2',
+    null,
+    null,
+    null,
+    'Bajo el canciller Friedrich Merz este giro se ejecuta ahora de forma consecuente.',
+    'Die Regierung verfolgt den Kurs konsequent.',
+    null,
+    null
+  ),
+  (
+    'konventionell',
+    'adjective',
+    'convencional',
+    'Die Bundeswehr soll bis 2039 das stärkste konventionelle Heer in Europa werden.',
+    'B1',
+    null,
+    null,
+    null,
+    'La Bundeswehr debe convertirse hasta 2039 en el ejército convencional más fuerte de Europa.',
+    'Konventionelle Waffen spielen weiter eine große Rolle.',
+    null,
+    null
+  ),
+  (
+    'langfristig',
+    'adjective',
+    'a largo plazo',
+    'Langfristig sollen ab 2029 mindestens 3,5 Prozent des BIP für Verteidigung ausgegeben werden.',
+    'B2',
+    null,
+    null,
+    null,
+    'A largo plazo, a partir de 2029, se deberá gastar al menos el 3,5 por ciento del PIB en defensa.',
+    'Langfristig verändert das den Staatshaushalt.',
+    null,
+    null
+  ),
+  (
+    'neu',
+    'adjective',
+    'nuevo',
+    'Junge Männer bekommen einen Brief.',
+    'A2',
+    null,
+    null,
+    null,
+    'Los hombres jóvenes reciben una carta.',
+    'Das ist ein neues Programm.',
+    null,
+    null
+  ),
+  (
+    'offen',
+    'adjective',
+    'abierto',
+    'Die Frage bleibt offen.',
+    'C1',
+    null,
+    null,
+    null,
+    'La cuestión sigue abierta.',
+    'Viele politische Fragen bleiben offen.',
+    null,
+    null
+  ),
+  (
+    'prägen',
+    'verb',
+    'acuñar, marcar',
+    'Der Begriff Zeitenwende, geprägt vom damaligen Kanzler Olaf Scholz, beschreibt den Wendepunkt.',
+    'B2',
+    null,
+    null,
+    'prägen',
+    'El término Zeitenwende, acuñado por el entonces canciller Olaf Scholz, describe el punto de inflexión.',
+    'Ein Kanzler kann eine ganze Epoche prägen.',
+    'prägte',
+    'geprägt'
+  ),
+  (
+    'stark',
+    'adjective',
+    'fuerte',
+    'Die Bundeswehr muss stark sein.',
+    'A2',
+    null,
+    null,
+    null,
+    'La Bundeswehr tiene que ser fuerte.',
+    'Eine starke Armee braucht viele Soldaten.',
+    null,
+    null
+  ),
+  (
+    'streben',
+    'verb',
+    'aspirar',
+    'Militärisch strebt Deutschland an, bis 2039 über das stärkste konventionelle Heer Europas zu verfügen.',
+    'C1',
+    null,
+    null,
+    'streben',
+    'En lo militar, Alemania aspira a disponer hasta 2039 del ejército convencional más fuerte de Europa.',
+    'Das Land strebt nach mehr Unabhängigkeit.',
+    'strebte',
+    'gestrebt'
+  ),
+  (
+    'umsetzen',
+    'verb',
+    'llevar a cabo',
+    'Unter Bundeskanzler Friedrich Merz wird dieser Schwenk nun konsequent umgesetzt.',
+    'B2',
+    null,
+    null,
+    'umsetzen',
+    'Bajo el canciller federal Friedrich Merz este giro se lleva ahora a cabo de forma consecuente.',
+    'Die Regierung will ihren Plan schnell umsetzen.',
+    'setzte um',
+    'umgesetzt'
+  ),
+  (
+    'vereinbar',
+    'adjective',
+    'compatible',
+    'Die Frage, ob dieses nationale Aufrüsten mit einer gesamteuropäischen Verteidigungsstrategie vereinbar ist, bleibt offen.',
+    'C1',
+    null,
+    null,
+    null,
+    'La cuestión de si este rearme nacional es compatible con una estrategia de defensa paneuropea sigue abierta.',
+    'Nicht jede nationale Lösung ist mit Europa vereinbar.',
+    null,
+    null
+  ),
+  (
+    'verfügen',
+    'verb',
+    'disponer de',
+    'Deutschland strebt an, bis 2039 über das stärkste konventionelle Heer Europas zu verfügen.',
+    'C1',
+    null,
+    null,
+    'verfügen',
+    'Alemania aspira a disponer hasta 2039 del ejército convencional más fuerte de Europa.',
+    'Das Land will über moderne Systeme verfügen.',
+    'verfügte',
+    'verfügt'
+  ),
+  (
+    'verschicken',
+    'verb',
+    'enviar',
+    'Die Bundeswehr verschickt seit Januar Fragebögen an alle jungen Männer.',
+    'B1',
+    null,
+    null,
+    'verschicken',
+    'La Bundeswehr envía desde enero cuestionarios a todos los hombres jóvenes.',
+    'Die Behörde verschickt viele Briefe.',
+    'verschickte',
+    'verschickt'
+  ),
+  (
+    'weniger',
+    'adjective',
+    'menos',
+    'Aber bald kommen 5.000 Soldaten weniger.',
+    'A2',
+    null,
+    null,
+    null,
+    'Pero pronto habrá 5.000 soldados menos.',
+    'Weniger Soldaten sind ein Problem.',
+    null,
+    null
+  )
+) as v(
+  german,
+  word_type,
+  spanish,
+  example_sentence_de,
+  level,
+  article,
+  plural_form,
+  infinitive,
+  example_sentence_es,
+  example_sentence_de_generated,
+  past_simple,
+  past_participle
+)
+where not exists (
+  select 1
+  from vocabulario existing
+  where lower(existing.german) = lower(v.german)
+);
+
+-- Vocabulary links per text version
+insert into text_version_vocabulary (
+  text_version_id,
+  vocabulario_id
+)
+select distinct
+  tv.id,
+  v.id
+from (
+  values
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'die Bundeswehr'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'das Militär'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'der Chef'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'der Bundeskanzler'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'die Milliarde'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'der Soldat'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'der Brief'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'die Zukunft'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'das Problem'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'ausbauen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'ausgeben'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'antworten'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'stark'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'weniger'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'A2',
+    'neu'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'das Ziel'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'das Verteidigungsbudget'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'das Vorjahr'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'der Fragebogen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'das Drittel'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'die Waffe'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'der Kampfjet'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'die Luftabwehr'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'investieren'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'verschicken'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'ankündigen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'abziehen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'dringlich'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'freiwillig'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B1',
+    'konventionell'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'das Versprechen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'die Zeitenwende'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'der Wendepunkt'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'die Schuldenbremse'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'das Grundgesetz'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'der Reservist'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'das Wehrdienstmodell'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'das Verhältnis'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'prägen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'umsetzen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'ergänzen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'belasten'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'langfristig'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'eigenständig'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'B2',
+    'konsequent'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Verankerung'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'der Verteidigungsetat'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'der Paradigmenwechsel'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Verfassungsänderung'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Nettokreditaufnahme'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Kehrseite'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Fragilität'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Deeskalation'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Eigenständigkeit'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'die Verteidigungsstrategie'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'aufwenden'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'aufbrechen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'streben'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'verfügen'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'illustrieren'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'vereinbar'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'komplex'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'konventionell'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'geopolitisch'
+  ),
+  (
+    'deutschland-ruestet-auf',
+    'C1',
+    'offen'
+  )
+) as m(
+  slug,
+  level,
+  german
+)
+join texts t on t.slug = m.slug
+join text_versions tv on tv.text_id = t.id and tv.level = m.level
+join vocabulario v on lower(v.german) = lower(m.german)
+where not exists (
+  select 1
+  from text_version_vocabulary existing
+  where existing.text_version_id = tv.id
+    and existing.vocabulario_id = v.id
+);
