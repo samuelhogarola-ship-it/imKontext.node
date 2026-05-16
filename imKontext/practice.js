@@ -3,7 +3,7 @@
    Exercise engine. Depends on globals set by app.js:
      $, selectedText, selectedLevel, selectedTextVersion,
      numPalabras, currentVocab, queue, currentIdx, score,
-     wrongWords, selectedModos, slider, apiFetch, showScreen,
+     wrongWords, selectedModos, apiFetch, showScreen,
      goToTextos, refreshSelectedTextVersion
    Also depends on common.js:
      EXERCISE_CONFIG, saveSessionErrors, getPersistedErrors,
@@ -40,8 +40,9 @@ async function startPractice() {
     );
     currentVocab = vocab;
 
-    // Build queue: persisted errors first, then fresh words up to numPalabras
-    queue = buildQueue(vocab, numPalabras, getPersistedErrorIds());
+    // Build queue using all available words (numPalabras set by updateSliderMax)
+    const count = numPalabras > 0 ? numPalabras : vocab.length;
+    queue = buildQueue(vocab, count, getPersistedErrorIds());
     clearPersistedErrors();
 
     currentIdx = 0;
@@ -55,9 +56,6 @@ async function startPractice() {
       total: vocab.length,
       done: existing?.done || 0,
     }));
-
-    slider.max = vocab.length;
-    $('slider-max-label').textContent = vocab.length;
 
     showScreen('ejercicio');
     buildExercise();
