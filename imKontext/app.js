@@ -638,7 +638,6 @@ function updateModoHint() {
   }
 }
 
-// Words slider
 document.querySelectorAll('.txsel-lvl-chip').forEach(btn => {
   btn.addEventListener('click', async () => {
     if (btn.classList.contains('disabled')) return;
