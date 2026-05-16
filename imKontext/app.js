@@ -32,7 +32,7 @@ let queue          = [];
 let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
 let wrongWords     = [];  // words answered incorrectly in current session
-let numPalabras    = 10;
+let numPalabras    = 0;
 let isReaderModeActive = false;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
@@ -735,12 +735,6 @@ async function refreshSelectedTextVersion(options = {}) {
   return selectedTextVersion;
 }
 
-const slider = $('slider-palabras');
-slider.addEventListener('input', () => {
-  numPalabras = parseInt(slider.value);
-  $('num-palabras-display').textContent = numPalabras;
-});
-
 async function updateSliderMax() {
   if (!selectedText) return;
   try {
@@ -749,11 +743,7 @@ async function updateSliderMax() {
       : await refreshSelectedTextVersion({ updateContent: false });
     const vId = version?.id;
     if (!vId) {
-      slider.max = 5;
-      slider.value = 5;
-      numPalabras = 5;
-      $('slider-max-label').textContent = '0';
-      $('num-palabras-display').textContent = '5';
+      numPalabras = 0;
       updateLevelStatus(0);
       return;
     }
@@ -761,14 +751,7 @@ async function updateSliderMax() {
       `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
     const max = vocab.length || 0;
-    const safeMax = Math.max(max, 5);
-    slider.max = safeMax;
-    $('slider-max-label').textContent = max;
-    if (numPalabras > safeMax) {
-      numPalabras = safeMax;
-      slider.value = safeMax;
-      $('num-palabras-display').textContent = safeMax;
-    }
+    numPalabras = max;
     updateLevelStatus(max);
     $('btn-empezar').disabled = max === 0;
   } catch {
