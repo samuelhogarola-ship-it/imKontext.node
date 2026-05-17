@@ -135,10 +135,10 @@ app.get("/api/text-version-vocabulary", async (req, res) => {
   }
 
   try {
-    const links = await supabaseFetch(
-      `text_version_vocabulary?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=vocabulario_id`
+    const rows = await supabaseFetch(
+      `text_version_vocabulary?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=vocabulario(id,german,spanish,article,word_type,plural_form,infinitive,example_sentence_de)`
     );
-    res.json(links);
+    res.json(rows.map(row => row.vocabulario).filter(Boolean));
   } catch (error) {
     res.status(500).json({
       error: "No se pudo cargar el vocabulario del texto",
@@ -159,7 +159,7 @@ app.get("/api/vocabulario", async (req, res) => {
 
   try {
     const vocab = await supabaseFetch(
-      `vocabulario?id=in.(${ids.join(",")})&select=id,german,spanish,article,word_type,example_sentence_de`
+      `vocabulario?id=in.(${ids.join(",")})&select=id,german,spanish,article,word_type,plural_form,infinitive,example_sentence_de`
     );
     res.json(vocab);
   } catch (error) {
