@@ -725,6 +725,7 @@ async function refreshSelectedTextVersion(options = {}) {
   }
 
   if (updateContent) {
+    closeVocabPanel();
     if (selectedTextVersion?.id) {
       try {
         currentTextVocab = await apiFetch(
@@ -880,9 +881,10 @@ const ARTICLE_PREFIX_RE = /^(?:der|die|das)\s+/i;
 const VOCAB_WORD_EDGE   = 'a-zA-ZäöüÄÖÜß';
 const ADJ_ENDINGS       = ['e', 'en', 'er', 'es', 'em'];
 
-function buildVocabPattern(vocab) {
-  if (!vocab || !vocab.length) return null;
-  const terms = new Set();
+function buildVocabData(vocab) {
+  if (!vocab || !vocab.length) return { pattern: null, termToId: null };
+  const terms   = new Set();
+  const termToId = new Map(); // lowercase term → vocab id
 
   vocab.forEach(item => {
     const g  = String(item.german || '').trim();
@@ -891,35 +893,43 @@ function buildVocabPattern(vocab) {
     const wt   = String(item.word_type || '').toLowerCase().trim();
     const bare = g.replace(ARTICLE_PREFIX_RE, '');
 
-    terms.add(g);
-    if (bare !== g) terms.add(bare);
+    const add = t => { if (t) { terms.add(t); termToId.set(t.toLowerCase(), item.id); } };
+
+    add(g);
+    if (bare !== g) add(bare);
 
     if (wt === 'noun') {
       const plural = String(item.plural_form || '').trim().replace(ARTICLE_PREFIX_RE, '');
-      if (plural) terms.add(plural);
+      if (plural) add(plural);
     } else if (wt === 'verb') {
       [item.infinitive, item.past_simple, item.past_participle].forEach(f => {
         const v = String(f || '').trim();
-        if (v) terms.add(v);
+        if (v) add(v);
       });
     } else if (wt === 'adjective') {
-      ADJ_ENDINGS.forEach(sfx => terms.add(bare + sfx));
+      ADJ_ENDINGS.forEach(sfx => add(bare + sfx));
     }
   });
 
-  if (!terms.size) return null;
+  if (!terms.size) return { pattern: null, termToId: null };
   const escaped = [...terms]
     .sort((a, b) => b.length - a.length)
     .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(
-    `(?<![${VOCAB_WORD_EDGE}])(${escaped.join('|')})(?![${VOCAB_WORD_EDGE}])`,
-    'gi'
-  );
+  return {
+    pattern: new RegExp(
+      `(?<![${VOCAB_WORD_EDGE}])(${escaped.join('|')})(?![${VOCAB_WORD_EDGE}])`,
+      'gi'
+    ),
+    termToId
+  };
 }
 
-function applyVocabUnderlines(escapedText, pattern) {
+function applyVocabUnderlines(escapedText, pattern, termToId) {
   if (!pattern) return escapedText;
-  return escapedText.replace(pattern, '<span class="vocab-underline">$1</span>');
+  return escapedText.replace(pattern, (match) => {
+    const id = termToId.get(match.toLowerCase()) || '';
+    return `<span class="vocab-underline" data-vocab-id="${id}">${match}</span>`;
+  });
 }
 
 function renderTextBody(text, vocab) {
@@ -934,17 +944,66 @@ function renderTextBody(text, vocab) {
     `;
   }
 
-  const pattern = buildVocabPattern(vocab);
+  const { pattern, termToId } = buildVocabData(vocab);
 
   return raw
     .split(/\n\s*\n/)
     .map(paragraph => {
       let html = escapeHtml(paragraph);
-      html = applyVocabUnderlines(html, pattern);
+      html = applyVocabUnderlines(html, pattern, termToId);
       return `<p>${html.replace(/\n/g, '<br>')}</p>`;
     })
     .join('');
 }
+
+/* ── VOCAB DETAIL PANEL ──────────────────────────────────────── */
+function openVocabPanel(item) {
+  if (!item) return;
+
+  const set = (id, val) => { const el = $(id); if (el) el.textContent = String(val || ''); };
+  const row = (id, visible) => { const el = $(id); if (el) el.hidden = !visible; };
+
+  // Header
+  const articleEl = $('vp-article');
+  if (articleEl) {
+    articleEl.textContent = item.article || '';
+    articleEl.hidden = !item.article;
+  }
+  set('vp-word', item.german);
+
+  // Detail rows — only shown when data is present
+  row('vp-row-meaning',    !!item.spanish);           set('vp-meaning',    item.spanish);
+  row('vp-row-type',       !!item.word_type);         set('vp-type',       item.word_type);
+  row('vp-row-plural',     !!item.plural_form);       set('vp-plural',     item.plural_form);
+  row('vp-row-infinitive', !!item.infinitive);        set('vp-infinitive', item.infinitive);
+  row('vp-row-example',    !!item.example_sentence_de); set('vp-example',  item.example_sentence_de);
+
+  const panel = $('vocab-panel');
+  panel.removeAttribute('aria-hidden');
+  panel.classList.add('is-open');
+}
+
+function closeVocabPanel() {
+  const panel = $('vocab-panel');
+  if (!panel) return;
+  panel.setAttribute('aria-hidden', 'true');
+  panel.classList.remove('is-open');
+}
+
+$('content-body').addEventListener('click', e => {
+  const span = e.target.closest('.vocab-underline[data-vocab-id]');
+  if (!span) return;
+  const item = (currentTextVocab || []).find(v => String(v.id) === span.dataset.vocabId);
+  if (item) openVocabPanel(item);
+});
+
+$('vp-close').addEventListener('click', closeVocabPanel);
+
+document.addEventListener('click', e => {
+  if (!$('vocab-panel')?.classList.contains('is-open')) return;
+  if (e.target.closest('#vocab-panel') || e.target.closest('.vocab-underline')) return;
+  closeVocabPanel();
+});
 
 function renderPremiumGateBody(text) {
   const excerpt = String(text.previewContent || '').trim().slice(0, 350);
