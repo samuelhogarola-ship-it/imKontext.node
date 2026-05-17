@@ -27,7 +27,8 @@ let selectedTextVersion = null; // exact text_version for the selected text + le
 let selectedLevel  = 'b1';
 let selectedTopic  = null; // null = all topics
 let selectedModos  = [];  // array — supports multi-select
-let currentVocab   = [];
+let currentVocab     = [];
+let currentTextVocab = [];   // linked vocab for current text version (reader underlines)
 let queue          = [];
 let currentIdx     = 0;
 let score          = { correct: 0, wrong: 0 };
@@ -724,10 +725,21 @@ async function refreshSelectedTextVersion(options = {}) {
   }
 
   if (updateContent) {
-    $('content-body').innerHTML = renderTextBody({
-      ...selectedText,
-      text_content: selectedTextVersion?.content || ''
-    });
+    if (selectedTextVersion?.id) {
+      try {
+        currentTextVocab = await apiFetch(
+          `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(selectedTextVersion.id)}`
+        );
+      } catch {
+        currentTextVocab = [];
+      }
+    } else {
+      currentTextVocab = [];
+    }
+    $('content-body').innerHTML = renderTextBody(
+      { ...selectedText, text_content: selectedTextVersion?.content || '' },
+      currentTextVocab
+    );
   }
 
   updateLevelStatus();
@@ -862,7 +874,35 @@ function renderTextMeta(text) {
   return bits.join('');
 }
 
-function renderTextBody(text) {
+const ARTICLE_PREFIX_RE = /^(?:der|die|das)\s+/i;
+const VOCAB_WORD_EDGE   = 'a-zA-ZäöüÄÖÜß';
+
+function buildVocabPattern(vocab) {
+  if (!vocab || !vocab.length) return null;
+  const terms = new Set();
+  vocab.forEach(item => {
+    const g = String(item.german || '').trim();
+    if (!g) return;
+    terms.add(g);
+    const bare = g.replace(ARTICLE_PREFIX_RE, '');
+    if (bare !== g) terms.add(bare);
+  });
+  if (!terms.size) return null;
+  const escaped = [...terms]
+    .sort((a, b) => b.length - a.length)
+    .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return new RegExp(
+    `(?<![${VOCAB_WORD_EDGE}])(${escaped.join('|')})(?![${VOCAB_WORD_EDGE}])`,
+    'gi'
+  );
+}
+
+function applyVocabUnderlines(escapedText, pattern) {
+  if (!pattern) return escapedText;
+  return escapedText.replace(pattern, '<span class="vocab-underline">$1</span>');
+}
+
+function renderTextBody(text, vocab) {
   const raw = String(text.text_content || text.previewContent || '').trim();
 
   if (!raw) {
@@ -874,9 +914,15 @@ function renderTextBody(text) {
     `;
   }
 
+  const pattern = buildVocabPattern(vocab);
+
   return raw
     .split(/\n\s*\n/)
-    .map(paragraph => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+    .map(paragraph => {
+      let html = escapeHtml(paragraph);
+      html = applyVocabUnderlines(html, pattern);
+      return `<p>${html.replace(/\n/g, '<br>')}</p>`;
+    })
     .join('');
 }
 
