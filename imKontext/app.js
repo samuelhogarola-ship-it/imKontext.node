@@ -122,10 +122,14 @@ async function showScreen(name) {
 /* ── SEO & ROUTING HELPERS ───────────────────────────────────── */
 function updateSEOMeta({ title, description, canonical }) {
   document.title = title;
-  const metaDesc = document.getElementById('meta-description');
-  if (metaDesc) metaDesc.setAttribute('content', description);
-  const canonicalEl = document.getElementById('link-canonical');
-  if (canonicalEl) canonicalEl.setAttribute('href', canonical);
+  const set = (id, attr, val) => { const el = document.getElementById(id); if (el) el.setAttribute(attr, val); };
+  set('meta-description', 'content', description);
+  set('link-canonical',   'href',    canonical);
+  set('og-title',         'content', title);
+  set('og-description',   'content', description);
+  set('og-url',           'content', canonical);
+  set('tw-title',         'content', title);
+  set('tw-description',   'content', description);
 }
 
 function getTextUrl(text, level) {
