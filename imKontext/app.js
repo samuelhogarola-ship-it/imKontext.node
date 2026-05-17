@@ -876,17 +876,35 @@ function renderTextMeta(text) {
 
 const ARTICLE_PREFIX_RE = /^(?:der|die|das)\s+/i;
 const VOCAB_WORD_EDGE   = 'a-zA-ZäöüÄÖÜß';
+const ADJ_ENDINGS       = ['e', 'en', 'er', 'es', 'em'];
 
 function buildVocabPattern(vocab) {
   if (!vocab || !vocab.length) return null;
   const terms = new Set();
+
   vocab.forEach(item => {
-    const g = String(item.german || '').trim();
+    const g  = String(item.german || '').trim();
     if (!g) return;
-    terms.add(g);
+
+    const wt   = String(item.word_type || '').toLowerCase().trim();
     const bare = g.replace(ARTICLE_PREFIX_RE, '');
+
+    terms.add(g);
     if (bare !== g) terms.add(bare);
+
+    if (wt === 'noun') {
+      const plural = String(item.plural_form || '').trim().replace(ARTICLE_PREFIX_RE, '');
+      if (plural) terms.add(plural);
+    } else if (wt === 'verb') {
+      [item.infinitive, item.past_simple, item.past_participle].forEach(f => {
+        const v = String(f || '').trim();
+        if (v) terms.add(v);
+      });
+    } else if (wt === 'adjective') {
+      ADJ_ENDINGS.forEach(sfx => terms.add(bare + sfx));
+    }
   });
+
   if (!terms.size) return null;
   const escaped = [...terms]
     .sort((a, b) => b.length - a.length)

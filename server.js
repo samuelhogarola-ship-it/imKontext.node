@@ -136,7 +136,7 @@ app.get("/api/text-version-vocabulary", async (req, res) => {
 
   try {
     const rows = await supabaseFetch(
-      `text_version_vocabulary?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=vocabulario(id,german,spanish,article,word_type,plural_form,infinitive,example_sentence_de)`
+      `text_version_vocabulary?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=vocabulario(id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de)`
     );
     res.json(rows.map(row => row.vocabulario).filter(Boolean));
   } catch (error) {
@@ -159,7 +159,7 @@ app.get("/api/vocabulario", async (req, res) => {
 
   try {
     const vocab = await supabaseFetch(
-      `vocabulario?id=in.(${ids.join(",")})&select=id,german,spanish,article,word_type,plural_form,infinitive,example_sentence_de`
+      `vocabulario?id=in.(${ids.join(",")})&select=id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de`
     );
     res.json(vocab);
   } catch (error) {
