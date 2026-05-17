@@ -1229,6 +1229,33 @@ body.reader-mode-active .txdet-article p:last-child {
   display: block;
 }
 
+/* Sentence context translation */
+.sentence-ctx-toggle {
+  font-size: .78rem;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: .2rem;
+}
+.sentence-ctx-panel {
+  display: none;
+  font-size: .82rem;
+  color: var(--ink-light);
+  font-style: italic;
+  margin-bottom: .5rem;
+}
+.sentence-ctx-panel.visible {
+  display: block;
+}
+#sentence-context-wrap {
+  margin-bottom: .5rem;
+}
+
 /* Lückentext blank highlight */
 .luecken-blank {
   display: inline-block;
