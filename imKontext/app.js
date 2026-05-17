@@ -957,7 +957,7 @@ function renderTextBody(text, vocab) {
 }
 
 /* ── VOCAB DETAIL PANEL ──────────────────────────────────────── */
-function openVocabPanel(item) {
+function openVocabPanel(item, triggerEl) {
   if (!item) return;
 
   const set = (id, val) => { const el = $(id); if (el) el.textContent = String(val || ''); };
@@ -981,6 +981,18 @@ function openVocabPanel(item) {
   const panel = $('vocab-panel');
   panel.removeAttribute('aria-hidden');
   panel.classList.add('is-open');
+
+  // On mobile, scroll so the tapped word sits above the bottom sheet
+  if (triggerEl && window.innerWidth < 680) {
+    const panelH = window.innerHeight * 0.55;
+    const rect = triggerEl.getBoundingClientRect();
+    const targetTop = (window.innerHeight - panelH) / 2;
+    const delta = rect.top - targetTop;
+    if (Math.abs(delta) > 8) {
+      const scrollEl = $('screen-content');
+      (scrollEl || window).scrollBy({ top: delta, behavior: 'smooth' });
+    }
+  }
 }
 
 function closeVocabPanel() {
@@ -994,7 +1006,7 @@ $('content-body').addEventListener('click', e => {
   const span = e.target.closest('.vocab-underline[data-vocab-id]');
   if (!span) return;
   const item = (currentTextVocab || []).find(v => String(v.id) === span.dataset.vocabId);
-  if (item) openVocabPanel(item);
+  if (item) openVocabPanel(item, span);
 });
 
 $('vp-close').addEventListener('click', closeVocabPanel);
