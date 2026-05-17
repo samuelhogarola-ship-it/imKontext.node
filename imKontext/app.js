@@ -985,9 +985,8 @@ function openVocabPanel(item, triggerEl) {
   // On mobile, scroll so the tapped word sits above the bottom sheet
   if (triggerEl && window.innerWidth < 680) {
     const panelH = window.innerHeight * 0.55;
-    const margin = 48;
     const rect = triggerEl.getBoundingClientRect();
-    const targetTop = window.innerHeight - panelH - margin;
+    const targetTop = (window.innerHeight - panelH) / 2;
     const delta = rect.top - targetTop;
     if (Math.abs(delta) > 8) {
       const scrollEl = $('screen-content');
