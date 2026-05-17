@@ -29,15 +29,10 @@ async function startPractice() {
     if (!version?.id) throw new Error('No hay versión para este nivel.');
     const vId = version.id;
 
-    const links = await apiFetch(
+    const vocab = await apiFetch(
       `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
     );
-    const vocabIds = links.map(l => l.vocabulario_id);
-    if (!vocabIds.length) throw new Error('No hay vocabulario para este texto y nivel.');
-
-    const vocab = await apiFetch(
-      `/api/vocabulario?ids=${encodeURIComponent(vocabIds.join(','))}`
-    );
+    if (!vocab.length) throw new Error('No hay vocabulario para este texto y nivel.');
     currentVocab = vocab;
 
     // Build queue using all available words (numPalabras set by updateSliderMax)
