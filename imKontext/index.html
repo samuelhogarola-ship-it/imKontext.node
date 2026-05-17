@@ -231,6 +231,38 @@
           <button class="btn-back reader-exit-btn" id="btn-terminar-lectura" type="button">Terminar</button>
         </div>
       </div>
+
+      <!-- VOCAB DETAIL PANEL -->
+      <aside id="vocab-panel" class="vocab-panel" aria-hidden="true" aria-label="Detalle de vocabulario">
+        <div class="vocab-panel-inner">
+          <div class="vocab-panel-header">
+            <div class="vocab-panel-word-block">
+              <span class="vocab-panel-article" id="vp-article"></span>
+              <span class="vocab-panel-word" id="vp-word"></span>
+            </div>
+            <button class="vocab-panel-close" id="vp-close" type="button" aria-label="Cerrar">&#x2715;</button>
+          </div>
+          <!-- audio slot: attach playback button here when audio is added -->
+          <div class="vocab-panel-audio" id="vp-audio-slot"></div>
+          <dl class="vocab-panel-details">
+            <div class="vp-row" id="vp-row-meaning">
+              <dt>Significado</dt><dd id="vp-meaning"></dd>
+            </div>
+            <div class="vp-row" id="vp-row-type">
+              <dt>Tipo</dt><dd id="vp-type"></dd>
+            </div>
+            <div class="vp-row" id="vp-row-plural">
+              <dt>Plural</dt><dd id="vp-plural"></dd>
+            </div>
+            <div class="vp-row" id="vp-row-infinitive">
+              <dt>Infinitivo</dt><dd id="vp-infinitive"></dd>
+            </div>
+            <div class="vp-row" id="vp-row-example">
+              <dt>Ejemplo</dt><dd id="vp-example"></dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
     </div>
 
     <!-- ══════════════════════════════════════════════
