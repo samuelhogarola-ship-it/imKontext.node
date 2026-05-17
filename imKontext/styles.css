@@ -731,8 +731,8 @@ input, select { font-family: inherit; }
 }
 .vocab-underline {
   text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: var(--vl-blue);
+  text-decoration-color: rgba(59, 130, 246, 0.45);
+  text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
 .txdet-empty {
