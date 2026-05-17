@@ -764,6 +764,7 @@ async function updateSliderMax() {
     const max = vocab.length || 0;
     numPalabras = max;
     updateLevelStatus(max);
+    updateProgressPanel();
     $('btn-empezar').disabled = max === 0;
   } catch {
     $('btn-empezar').disabled = true;
@@ -817,10 +818,11 @@ function updateProgressPanel() {
     $('weekly-progress-main').textContent = `${data.done} / ${data.total} palabras practicadas`;
     $('weekly-progress-sub').textContent  = `${data.total} palabras en nivel ${lvlLabel}`;
   } else {
+    const total = numPalabras || 0;
     $('weekly-progress-pct').textContent  = '0% completado';
     $('weekly-progress-fill').style.width = '0%';
-    $('weekly-progress-main').textContent = '0 / 0 palabras practicadas';
-    $('weekly-progress-sub').textContent  = `Nivel ${lvlLabel}`;
+    $('weekly-progress-main').textContent = `0 / ${total} palabras practicadas`;
+    $('weekly-progress-sub').textContent  = total > 0 ? `${total} palabras en nivel ${lvlLabel}` : `Nivel ${lvlLabel}`;
   }
 }
 
