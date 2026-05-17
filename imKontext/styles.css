@@ -251,6 +251,21 @@ input, select { font-family: inherit; }
   }
 }
 
+/* Desktop hero centering — give the portada card visual breathing room so the
+   headline reads as balanced within the card, and shift the centering zone down */
+@media (min-width: 641px) {
+  .ln-center {
+    padding-top: clamp(1.5rem, 3vh, 2.5rem);
+    padding-bottom: clamp(.5rem, 1.5vh, 1.25rem);
+  }
+  .ln-hero {
+    gap: 1.25rem;
+  }
+  .ln-portada {
+    padding-top: clamp(1.9rem, 3.5vw, 2.8rem);
+  }
+}
+
 @media (max-width: 640px) {
   .ln-center {
     padding: 1.5rem 1rem 2rem;
