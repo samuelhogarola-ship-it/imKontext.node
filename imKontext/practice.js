@@ -159,6 +159,29 @@ function renderQuestionHint(text) {
   });
 }
 
+function renderSentenceContext(word) {
+  const wrap = $('sentence-context-wrap');
+  if (!wrap) return;
+  const sentence = word && word.example_sentence_es;
+  if (!sentence) { wrap.innerHTML = ''; return; }
+
+  wrap.innerHTML = `
+    <button class="sentence-ctx-toggle" id="sentence-ctx-toggle" type="button" aria-expanded="false">
+      Mostrar traducción
+    </button>
+    <div class="sentence-ctx-panel" id="sentence-ctx-panel">${escapeHtml(sentence)}</div>
+  `;
+
+  const toggle = $('sentence-ctx-toggle');
+  const panel  = $('sentence-ctx-panel');
+  toggle.addEventListener('click', () => {
+    const open = panel.classList.contains('visible');
+    panel.classList.toggle('visible', !open);
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.textContent = !open ? 'Ocultar traducción' : 'Mostrar traducción';
+  });
+}
+
 function disableNoSeButton() {
   const btn = $('btn-no-se');
   if (btn) btn.disabled = true;
@@ -379,6 +402,8 @@ function buildExercise() {
   resetTraduccionToggle();
   $('btn-siguiente').disabled = true;
   $('btn-siguiente').style.display = 'inline-flex';
+  const scWrap = $('sentence-context-wrap');
+  if (scWrap) scWrap.innerHTML = '';
 
   switch (modo) {
     case 'test':        buildTest(word);        break;
@@ -388,6 +413,7 @@ function buildExercise() {
     case 'lueckentext': buildLueckentext(word); break;
   }
 
+  renderSentenceContext(word);
   restoreQuestionState(currentIdx, word, modo);
 }
 
