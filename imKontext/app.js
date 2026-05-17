@@ -999,6 +999,12 @@ $('content-body').addEventListener('click', e => {
 
 $('vp-close').addEventListener('click', closeVocabPanel);
 
+document.addEventListener('click', e => {
+  if (!$('vocab-panel')?.classList.contains('is-open')) return;
+  if (e.target.closest('#vocab-panel') || e.target.closest('.vocab-underline')) return;
+  closeVocabPanel();
+});
+
 function renderPremiumGateBody(text) {
   const excerpt = String(text.previewContent || '').trim().slice(0, 350);
   const excerptHtml = excerpt
