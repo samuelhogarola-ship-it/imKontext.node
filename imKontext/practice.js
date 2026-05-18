@@ -679,6 +679,9 @@ function showResultado() {
     <div class="stat-item"><span class="stat-val">${queue.length}</span><span class="stat-lbl">Palabras</span></div>
   `;
 
+  // Populate answer-by-answer summary
+  $('resumen-lista').innerHTML = renderResumenHTML(buildResumenRows(questionStates, queue));
+
   // Show "Repasar solo errores" only when there are errors
   const btnRepasar = $('btn-repasar-errores');
   if (wrongWords.length > 0) {
