@@ -1463,6 +1463,9 @@ body.reader-mode-active .txdet-article p:last-child {
 }
 .resumen-item.correct { background: #f0faf3; }
 .resumen-item.wrong   { background: #fef2f2; }
+.resumen-icon  { font-size: .85rem; flex-shrink: 0; width: 1rem; text-align: center; }
+.resumen-word  { flex: 1; font-weight: 500; }
+.resumen-correction { color: var(--muted); font-size: .82rem; }
 .result-actions {
   display: flex; flex-direction: column; align-items: center; gap: .65rem;
 }
