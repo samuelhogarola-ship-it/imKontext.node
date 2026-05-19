@@ -472,15 +472,21 @@ function buildFlashcard(word) {
     nextWord();
   };
   $('btn-flashcard-no').onclick = () => {
+    $('flashcard-card').classList.add('flipped');
+    $('btn-flashcard-si').disabled = true;
+    $('btn-flashcard-no').disabled = true;
     recordAnswerOnce(currentIdx, false, word, {
       mode: 'flashcards',
       selectedAnswer: '✗ No la sé',
       solutionText: word.spanish || word.german || '',
-      feedbackText: `✗ Era: "${word.spanish || word.german || ''}"`,
+      feedbackText: '✗ Incorrecto',
       wasNoSe: true,
-      translationShown: true
+      translationShown: true,
     });
-    nextWord();
+    $('respuesta-feedback').textContent = '✗ Incorrecto';
+    $('respuesta-feedback').className = 'respuesta-feedback wrong';
+    $('btn-siguiente').style.display = 'inline-flex';
+    autoNext();
   };
 }
 

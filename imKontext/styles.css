@@ -1391,8 +1391,8 @@ body.reader-mode-active .txdet-article p:last-child {
 }
 .flashcard-back {
   transform: rotateY(180deg);
-  background: var(--vl-blue); color: #fff;
-  border-color: var(--vl-blue);
+  background: #e9f5ee; color: #1c4a32;
+  border-color: #b8dfc6;
 }
 .fc-badges { position: absolute; top: 12px; left: 16px; right: 16px; display: flex; }
 .fc-badge  { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
