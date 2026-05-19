@@ -735,6 +735,7 @@ $('btn-volver-menu').addEventListener('click', () => {
   // Keep errors available for the next session
   saveSessionErrors(wrongWords);
   showScreen('activity');
+  updateProgressPanel();
 });
 
 $('btn-salir-test').addEventListener('click', () => {
