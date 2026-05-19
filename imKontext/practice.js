@@ -535,6 +535,14 @@ function checkOrdenar(original) {
 /* ── ARTÍCULO ────────────────────────────────────────────────── */
 function buildArticulo(word) {
   const article = word.article?.toLowerCase();
+
+  // Word has no article (e.g. verb, adverb) — fall back to test mode.
+  if (!article) {
+    $('tipo-badge').textContent = '🎯 Test';
+    buildTest(word);
+    return;
+  }
+
   $('pregunta-texto').innerHTML = `<em>___</em> ${word.german}`;
   renderQuestionHint(word.word_type || '');
 
@@ -547,9 +555,8 @@ function buildArticulo(word) {
     btn.className = 'opcion';
     btn.textContent = opt;
     btn.onclick = () => {
-      const correctLabel = article || 'das';
-      const correct = opt === correctLabel;
-      markAnswer(btn, correct, word, correctLabel, { selectedAnswer: opt, correctAnswer: correctLabel });
+      const correct = opt === article;
+      markAnswer(btn, correct, word, article, { selectedAnswer: opt, correctAnswer: article });
       disableOptions();
       disableNoSeButton();
       autoNext();
@@ -557,7 +564,7 @@ function buildArticulo(word) {
     wrap.appendChild(btn);
   });
 
-  renderNoSeButton(() => handleNoSe(word, article || 'das'));
+  renderNoSeButton(() => handleNoSe(word, article));
 }
 
 /* ── LÜCKENTEXT ──────────────────────────────────────────────── */
