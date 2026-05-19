@@ -572,14 +572,17 @@ function buildLueckentext(word) {
   const sentence = word.example_sentence_de || '';
   const blanked  = blankifyWord(sentence, word.german);
 
-  if (blanked) {
-    $('pregunta-texto').innerHTML = escapeHtml(blanked).replace(
-      '______',
-      '<span class="luecken-blank">______</span>'
-    );
-  } else {
-    $('pregunta-texto').innerHTML = 'Completa el hueco: <span class="luecken-blank">______</span>';
+  // No example sentence — fall back to test mode.
+  if (!blanked) {
+    $('tipo-badge').textContent = '🎯 Test';
+    buildTest(word);
+    return;
   }
+
+  $('pregunta-texto').innerHTML = escapeHtml(blanked).replace(
+    '______',
+    '<span class="luecken-blank">______</span>'
+  );
   renderQuestionHint(word.word_type || '');
 
   const wrong3 = getRandomWrong(word, currentVocab, 3);
