@@ -1318,9 +1318,9 @@ body.reader-mode-active .txdet-article p:last-child {
 .next-countdown {
   display: none;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 0.55rem;
-  margin: 0.6rem 0;
+  margin: 0.4rem 0 0.2rem;
   font-size: .85rem;
 }
 .cd-label { font-size: .8rem; color: var(--muted); }
