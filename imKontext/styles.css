@@ -1371,30 +1371,38 @@ body.reader-mode-active .txdet-article p:last-child {
 
 /* Flashcard */
 .flashcard {
-  perspective: 900px;
-  width: 100%; max-width: 400px; margin: 0 auto 1rem;
-  height: 180px; cursor: pointer;
+  perspective: 1000px;
+  width: 100%; max-width: 420px; margin: 0 auto 1rem;
+  height: 200px;
 }
 .flashcard-card {
   position: relative; width: 100%; height: 100%;
   transform-style: preserve-3d; transition: transform .5s;
+  cursor: pointer;
 }
 .flashcard-card.flipped { transform: rotateY(180deg); }
 .flashcard-face {
   position: absolute; inset: 0;
   backface-visibility: hidden;
   border: 1.5px solid var(--border); border-radius: var(--radius);
-  display: flex; align-items: center; justify-content: center;
-  padding: 1.25rem; text-align: center;
-  font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
-  background: white;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 1.5rem; text-align: center;
+  background: #f6f6f6;
 }
 .flashcard-back {
   transform: rotateY(180deg);
-  background: var(--vl-blue-lt); color: var(--vl-blue);
+  background: var(--vl-blue); color: #fff;
+  border-color: var(--vl-blue);
 }
-.flashcard-actions { display: flex; gap: .75rem; justify-content: center; margin-bottom: 1rem; }
-.flashcard-btn { flex: 1; max-width: 160px; }
+.fc-badges { position: absolute; top: 12px; left: 16px; right: 16px; display: flex; }
+.fc-badge  { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.fc-word   { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--fg); }
+.fc-hint   { font-size: .72rem; color: var(--muted); margin-top: .45rem; letter-spacing: .3px; }
+.fc-trans  { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: .35rem; }
+.fc-type   { font-size: .7rem; opacity: .75; letter-spacing: 1px; text-transform: uppercase; }
+.flashcard-actions { display: flex; gap: .75rem; justify-content: center; align-items: center; margin-bottom: 1rem; }
+.flashcard-btn { flex: 1; max-width: 140px; }
+.fc-counter { font-size: .8rem; color: var(--muted); min-width: 48px; text-align: center; }
 
 .input-wrap { margin-bottom: 1rem; }
 .input-wrap input {

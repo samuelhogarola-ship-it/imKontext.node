@@ -369,13 +369,23 @@
       <div class="next-countdown" id="next-countdown"></div>
       <div class="opciones" id="opciones-wrap"></div>
       <div id="flashcard-wrap" style="display:none">
-        <div class="flashcard" id="flashcard-card">
-          <div class="flashcard-face flashcard-front" id="flashcard-front"></div>
-          <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
+        <div class="flashcard">
+          <div class="flashcard-card" id="flashcard-card">
+            <div class="flashcard-face flashcard-front">
+              <div class="fc-badges"><span class="fc-badge" id="flashcard-badge"></span></div>
+              <div class="fc-word" id="flashcard-front"></div>
+              <div class="fc-hint">Haz clic para ver la traducción</div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="fc-trans" id="flashcard-back"></div>
+              <div class="fc-type" id="flashcard-type"></div>
+            </div>
+          </div>
         </div>
         <div class="flashcard-actions">
-          <button class="btn-back flashcard-btn" id="btn-flashcard-no">No la sé</button>
-          <button class="btn-main flashcard-btn" id="btn-flashcard-si">Sí</button>
+          <button class="btn-back flashcard-btn" id="btn-flashcard-no">✗ No la sé</button>
+          <span class="fc-counter" id="flashcard-counter"></span>
+          <button class="btn-main flashcard-btn" id="btn-flashcard-si">✓ Lo sé</button>
         </div>
       </div>
       <div class="input-wrap" id="input-wrap" style="display:none">

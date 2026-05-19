@@ -453,15 +453,19 @@ function buildFlashcard(word) {
 
   const fc = $('flashcard-card');
   fc.classList.remove('flipped');
+
+  $('flashcard-badge').textContent = word.word_type || '';
   $('flashcard-front').textContent = word.german;
   $('flashcard-back').textContent  = word.spanish;
+  $('flashcard-type').textContent  = word.word_type || '';
+  $('flashcard-counter').textContent = `${currentIdx + 1} / ${queue.length}`;
 
   fc.onclick = () => fc.classList.toggle('flipped');
 
   $('btn-flashcard-si').onclick = () => {
     recordAnswerOnce(currentIdx, true, word, {
       mode: 'flashcards',
-      selectedAnswer: 'Sí',
+      selectedAnswer: '✓ Lo sé',
       solutionText: word.spanish || word.german || '',
       feedbackText: '✓ ¡Correcto!'
     });
@@ -470,7 +474,7 @@ function buildFlashcard(word) {
   $('btn-flashcard-no').onclick = () => {
     recordAnswerOnce(currentIdx, false, word, {
       mode: 'flashcards',
-      selectedAnswer: 'No la sé',
+      selectedAnswer: '✗ No la sé',
       solutionText: word.spanish || word.german || '',
       feedbackText: `✗ Era: "${word.spanish || word.german || ''}"`,
       wasNoSe: true,
