@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { mockApi } from './helpers/mock-api.js';
+
+test.beforeEach(async ({ page }) => {
+  await mockApi(page);
+});
 
 test('landing page loads', async ({ page }) => {
   await page.goto('/');
