@@ -1,0 +1,80 @@
+[
+  {
+    "id": "v1",
+    "german": "die Energie",
+    "spanish": "la energía",
+    "article": "die",
+    "word_type": "Nomen",
+    "plural_form": "die Energien",
+    "infinitive": null,
+    "past_simple": null,
+    "past_participle": null,
+    "example_sentence_de": "Die Energie kommt aus der Sonne.",
+    "example_sentence_es": "La energía viene del sol."
+  },
+  {
+    "id": "v2",
+    "german": "das Klima",
+    "spanish": "el clima",
+    "article": "das",
+    "word_type": "Nomen",
+    "plural_form": "die Klimata",
+    "infinitive": null,
+    "past_simple": null,
+    "past_participle": null,
+    "example_sentence_de": "Das Klima verändert sich schnell.",
+    "example_sentence_es": "El clima cambia rápidamente."
+  },
+  {
+    "id": "v3",
+    "german": "der Strom",
+    "spanish": "la electricidad",
+    "article": "der",
+    "word_type": "Nomen",
+    "plural_form": "die Ströme",
+    "infinitive": null,
+    "past_simple": null,
+    "past_participle": null,
+    "example_sentence_de": "Der Strom kommt aus erneuerbaren Quellen.",
+    "example_sentence_es": "La electricidad proviene de fuentes renovables."
+  },
+  {
+    "id": "v4",
+    "german": "die Zukunft",
+    "spanish": "el futuro",
+    "article": "die",
+    "word_type": "Nomen",
+    "plural_form": null,
+    "infinitive": null,
+    "past_simple": null,
+    "past_participle": null,
+    "example_sentence_de": "Die Zukunft der Energie ist solar.",
+    "example_sentence_es": "El futuro de la energía es solar."
+  },
+  {
+    "id": "v5",
+    "german": "investieren",
+    "spanish": "invertir",
+    "article": null,
+    "word_type": "Verb",
+    "plural_form": null,
+    "infinitive": "investieren",
+    "past_simple": "investierte",
+    "past_participle": "investiert",
+    "example_sentence_de": "Wir müssen in Solarenergie investieren.",
+    "example_sentence_es": "Debemos invertir en energía solar."
+  },
+  {
+    "id": "v6",
+    "german": "erneuerbar",
+    "spanish": "renovable",
+    "article": null,
+    "word_type": "Adjektiv",
+    "plural_form": null,
+    "infinitive": null,
+    "past_simple": null,
+    "past_participle": null,
+    "example_sentence_de": "Solarenergie ist erneuerbar und sauber.",
+    "example_sentence_es": "La energía solar es renovable y limpia."
+  }
+]

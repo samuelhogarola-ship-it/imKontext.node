@@ -1,0 +1,35 @@
+[
+  {
+    "id": "text-001",
+    "title": "Die Energiewende in Deutschland",
+    "slug": "energiewende-deutschland",
+    "topic": "Umwelt",
+    "access_status": "free",
+    "published_at": "2026-05-01T00:00:00Z",
+    "hasLoadedVocabulary": true,
+    "levels": ["A2", "B1"],
+    "previewContent": "Deutschland plant die vollständige Umstellung auf erneuerbare Energien bis 2045."
+  },
+  {
+    "id": "text-002",
+    "title": "Künstliche Intelligenz im Alltag",
+    "slug": "ki-im-alltag",
+    "topic": "Technologie",
+    "access_status": "free",
+    "published_at": "2026-04-01T00:00:00Z",
+    "hasLoadedVocabulary": true,
+    "levels": ["B1", "B2"],
+    "previewContent": "Immer mehr Menschen nutzen KI-Assistenten in ihrem täglichen Leben."
+  },
+  {
+    "id": "text-003",
+    "title": "Der Wohnungsmarkt in Berlin",
+    "slug": "wohnungsmarkt-berlin",
+    "topic": "Gesellschaft",
+    "access_status": "premium",
+    "published_at": "2026-03-01T00:00:00Z",
+    "hasLoadedVocabulary": false,
+    "levels": ["B2", "C1"],
+    "previewContent": "Die Mieten in Berlin steigen weiter und der Markt bleibt angespannt."
+  }
+]
