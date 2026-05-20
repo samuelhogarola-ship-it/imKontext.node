@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 // Navigate through the full flow to reach the exercise screen.
 async function reachExercise(page) {
   await page.goto('/textos');
-  await page.locator('.tx-featured-card').first().waitFor({ state: 'visible', timeout: 10_000 });
-  await page.locator('.tx-featured-card').first().click();
+  await page.locator('[data-testid="featured-card"]').first().waitFor({ state: 'visible', timeout: 10_000 });
+  await page.locator('[data-testid="featured-card"]').first().click();
   await expect(page.locator('#screen-content')).toBeVisible();
   await page.locator('#btn-ir-actividad').click();
   await expect(page.locator('#screen-activity')).toBeVisible();
@@ -21,7 +21,7 @@ async function respondToExercise(page) {
     await page.locator('#btn-flashcard-no').click();
   } else if (badge.includes('Ordenar')) {
     // Move every token from the bank to the construction area.
-    const banco = page.locator('#banco-palabras .palabra-token');
+    const banco = page.locator('#banco-palabras [data-testid="palabra-token"]');
     const count = await banco.count();
     for (let i = 0; i < count; i++) {
       await banco.first().click();

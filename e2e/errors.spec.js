@@ -6,8 +6,8 @@ test('no JS errors during main navigation flow', async ({ page }) => {
 
   await page.goto('/');
   await page.locator('#btn-entrar').click();
-  await page.locator('.tx-featured-card').first().waitFor({ state: 'visible', timeout: 10_000 });
-  await page.locator('.tx-featured-card').first().click();
+  await page.locator('[data-testid="featured-card"]').first().waitFor({ state: 'visible', timeout: 10_000 });
+  await page.locator('[data-testid="featured-card"]').first().click();
   await expect(page.locator('#screen-content')).toBeVisible();
 
   expect(errors).toEqual([]);

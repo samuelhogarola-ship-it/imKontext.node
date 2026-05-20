@@ -15,7 +15,7 @@ test('can navigate to text list and see texts', async ({ page }) => {
   await expect(page.locator('#screen-textos')).toBeVisible();
 
   // At least one text card should appear (featured or regular row)
-  const anyCard = page.locator('.tx-featured-card, .tx-row').first();
+  const anyCard = page.locator('[data-testid="featured-card"], [data-testid="text-row"]').first();
   await expect(anyCard).toBeVisible({ timeout: 10_000 });
 });
 
@@ -23,7 +23,7 @@ test('can open a free text and reach the activity screen', async ({ page }) => {
   await page.goto('/textos');
 
   // Wait for the list to render
-  const featuredCard = page.locator('.tx-featured-card').first();
+  const featuredCard = page.locator('[data-testid="featured-card"]').first();
   await expect(featuredCard).toBeVisible({ timeout: 10_000 });
 
   // Open the featured (always-accessible) text

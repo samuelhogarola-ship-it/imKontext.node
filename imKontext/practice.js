@@ -495,6 +495,7 @@ function buildOrdenar(word) {
   tokens.forEach(t => {
     const pill = document.createElement('button');
     pill.className = 'palabra-token';
+    pill.dataset.testid = 'palabra-token';
     pill.textContent = t;
     pill.onclick = () => {
       constr.appendChild(pill);
