@@ -5,6 +5,10 @@
 tmp/
 output/
 
+# Playwright output
+test-results/
+playwright-report/
+
 # Node and package manager artifacts
 node_modules/
 backend/.local-node/
