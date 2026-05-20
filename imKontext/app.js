@@ -279,7 +279,7 @@ function renderTextGrid(list) {
         <p class="tx-featured-kicker">Tema principal de la semana</p>
         ${renderFeaturedAccessTag(featured)}
       </div>
-      <button class="tx-featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-copy">
           <div class="tx-featured-edition">
             <span class="tx-featured-edition-label">Número de la semana</span>
@@ -296,7 +296,7 @@ function renderTextGrid(list) {
         <span class="tx-featured-arrow">→</span>
       </button>
     `;
-    featuredWrap.querySelector('.tx-featured-card').addEventListener('click', () => selectText(featured));
+    featuredWrap.querySelector('[data-testid="featured-card"]').addEventListener('click', () => selectText(featured));
     grid.appendChild(featuredWrap);
   }
 
@@ -334,6 +334,7 @@ function createTextRow(text, position) {
   const row = document.createElement('button');
   const isLocked = !canAccessText(text);
   row.className = `tx-row${isLocked ? ' tx-row--locked' : ''}`;
+  row.dataset.testid = 'text-row';
   row.setAttribute('type', 'button');
   row.setAttribute('role', 'listitem');
   row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
