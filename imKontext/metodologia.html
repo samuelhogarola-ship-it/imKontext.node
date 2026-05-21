@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metodología — imKontext · Vokabel Lab</title>
+<meta name="description" content="Cómo funciona imKontext: aprende alemán con noticias reales, practica el vocabulario en contexto y combina las apps del ecosistema Vokabel Lab para un aprendizaje completo.">
+<link rel="canonical" href="https://imkontext.vokabellab.com/metodologia">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css?v=23">
+<style>
+  /* ── Static page shell ── */
+  .static-wrap {
+    max-width: 780px;
+    margin: 2.5rem auto 4rem;
+    padding: 0 1.5rem;
+  }
+  .static-kicker {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--vl-blue);
+    margin-bottom: .6rem;
+  }
+  .static-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -.02em;
+    margin-bottom: 1.2rem;
+  }
+  .static-lead {
+    font-size: 1.12rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2rem;
+  }
+  .static-section {
+    margin-bottom: 2.8rem;
+  }
+  .static-section h2 {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-bottom: .7rem;
+    border-left: 3px solid var(--vl-blue);
+    padding-left: .75rem;
+  }
+  .static-section p {
+    color: var(--ink-light);
+    line-height: 1.75;
+    margin-bottom: .9rem;
+  }
+  .static-section ul {
+    list-style: none;
+    padding: 0;
+    margin: .5rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+  .static-section ul li {
+    padding-left: 1.2rem;
+    position: relative;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+  .static-section ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--vl-blue);
+    font-size: .85em;
+  }
+
+  /* Modo paso a paso */
+  .method-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin: 1.2rem 0 1.8rem;
+  }
+  .method-step {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--vl-blue);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+  }
+  .method-step-num {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--vl-blue);
+    margin-bottom: .35rem;
+  }
+  .method-step h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: .4rem;
+  }
+  .method-step p {
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* App cards */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin: 1.2rem 0;
+  }
+  .app-card {
+    display: block;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.4rem;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow .18s, border-color .18s;
+  }
+  .app-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--vl-blue);
+  }
+  .app-card-label {
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .4rem;
+  }
+  .app-card-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: .45rem;
+  }
+  .app-card-desc {
+    font-size: .88rem;
+    color: var(--ink-light);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .app-card-arrow {
+    display: inline-block;
+    margin-top: .6rem;
+    font-size: .8rem;
+    color: var(--vl-blue);
+    font-weight: 600;
+  }
+
+  /* Level badges row */
+  .levels-row {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: .6rem 0 1rem;
+  }
+  .level-pill {
+    font-size: .75rem;
+    font-weight: 700;
+    padding: .2rem .65rem;
+    border-radius: 20px;
+    border: 1.5px solid;
+  }
+  .level-pill--a2 { color: var(--a2-clr); border-color: var(--a2-clr); }
+  .level-pill--b1 { color: var(--b1-clr); border-color: var(--b1-clr); }
+  .level-pill--b2 { color: var(--b2-clr); border-color: var(--b2-clr); }
+  .level-pill--c1 { color: var(--c1-clr); border-color: var(--c1-clr); }
+
+  .static-cta {
+    margin-top: 2.5rem;
+    text-align: center;
+    padding: 2rem;
+    background: var(--vl-blue-lt);
+    border-radius: var(--radius);
+    border: 1px solid rgba(36,81,163,.15);
+  }
+  .static-cta p {
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    margin-bottom: 1rem;
+  }
+  .static-cta a {
+    display: inline-block;
+    background: var(--vl-blue);
+    color: #fff;
+    font-weight: 600;
+    font-size: .9rem;
+    letter-spacing: .04em;
+    padding: .7rem 1.6rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: background .15s;
+  }
+  .static-cta a:hover { background: var(--vl-blue-dk); }
+</style>
+</head>
+<body>
+
+<header class="app-header app-is-landing">
+  <nav class="app-nav-shell" aria-label="Navegación principal">
+    <div class="app-nav-inner">
+      <a class="app-nav-logo" href="/" aria-label="Ir a imKontext">
+        <img src="/logo.png?v=3" alt="Logo de imKontext">
+        <span><span class="app-nav-logo-im">im</span> Kontext</span>
+      </a>
+      <div class="app-nav-links">
+        <a href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">Samuel Coach de alemán</a>
+        <span class="app-nav-sep">|</span>
+        <a href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">Vokabel Lab</a>
+        <span class="app-nav-sep">|</span>
+        <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>
+        <span class="app-nav-sep">|</span>
+        <a href="/">imKontext</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="static-wrap">
+
+  <p class="static-kicker">Vokabel Lab · imKontext</p>
+  <h1 class="static-title">Así funciona imKontext</h1>
+  <p class="static-lead">
+    imKontext es la herramienta de Vokabel Lab para aprender alemán con noticias reales.
+    En lugar de listas de vocabulario desconectadas, practicas cada palabra en el contexto
+    en el que aparece en la prensa alemana: Der Spiegel, Die Zeit, F.A.Z., Tagesschau.
+    El vocabulario así aprendido se retiene mucho mejor y resulta inmediatamente útil.
+  </p>
+
+  <!-- ── CÓMO FUNCIONA ── -->
+  <section class="static-section">
+    <h2>El método, paso a paso</h2>
+    <div class="method-steps">
+      <div class="method-step">
+        <p class="method-step-num">Paso 1</p>
+        <h3>Lee el texto</h3>
+        <p>Elige un artículo de actualidad y léelo completo. Las palabras clave aparecen subrayadas para que las identifiques mientras lees.</p>
+      </div>
+      <div class="method-step">
+        <p class="method-step-num">Paso 2</p>
+        <h3>Configura tu práctica</h3>
+        <p>Elige el nivel (A2–C1) y el tipo de ejercicio. Puedes mezclar formatos o centrarte en uno solo según tu objetivo del día.</p>
+      </div>
+      <div class="method-step">
+        <p class="method-step-num">Paso 3</p>
+        <h3>Practica el vocabulario</h3>
+        <p>Trabaja las palabras del texto con cinco formatos distintos. La app registra tu progreso para que sepas qué has trabajado.</p>
+      </div>
+      <div class="method-step">
+        <p class="method-step-num">Paso 4</p>
+        <h3>Repasa y mejora</h3>
+        <p>Cuando termines, revisa los errores y vuelve a intentarlo. Cada sesión te acerca un poco más a la fluidez en alemán.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FORMATOS DE EJERCICIO ── -->
+  <section class="static-section">
+    <h2>Cinco formatos de ejercicio</h2>
+    <p>Cada texto se trabaja con hasta cinco tipos de actividad para reforzar el vocabulario desde distintos ángulos:</p>
+    <ul>
+      <li><strong>Flashcards</strong> — Ves la palabra y decides si la sabías o no. Ideal para una primera pasada rápida.</li>
+      <li><strong>Test de vocabulario</strong> — Elige la traducción correcta entre cuatro opciones. El más clásico y efectivo.</li>
+      <li><strong>Lückentext</strong> — Completa huecos en frases reales del texto. Pone a prueba el vocabulario en contexto directo.</li>
+      <li><strong>Ordenar frases</strong> — Reconstruye una frase del artículo colocando las palabras en el orden correcto.</li>
+      <li><strong>Artículos (der/die/das)</strong> — Elige el artículo correcto de cada sustantivo del texto. El eterno reto del alemán.</li>
+    </ul>
+  </section>
+
+  <!-- ── NIVELES ── -->
+  <section class="static-section">
+    <h2>Niveles disponibles</h2>
+    <div class="levels-row">
+      <span class="level-pill level-pill--a2">A2</span>
+      <span class="level-pill level-pill--b1">B1</span>
+      <span class="level-pill level-pill--b2">B2</span>
+      <span class="level-pill level-pill--c1">C1</span>
+    </div>
+    <p>
+      Cada texto existe en varias versiones adaptadas al nivel. Puedes cambiar de nivel en cualquier momento
+      antes de empezar los ejercicios, o durante la lectura del artículo. Así una misma noticia puede
+      servir tanto para un estudiante de A2 como para alguien que ya lee alemán con soltura.
+    </p>
+  </section>
+
+  <!-- ── ECOSISTEMA ── -->
+  <section class="static-section">
+    <h2>Combínalo con el resto del ecosistema Vokabel Lab</h2>
+    <p>
+      imKontext funciona mejor cuando forma parte de una práctica regular y variada.
+      Estas son las otras herramientas de Vokabel Lab con las que se complementa perfectamente:
+    </p>
+
+    <div class="app-grid">
+      <a class="app-card" href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">
+        <p class="app-card-label">Vokabel Lab</p>
+        <p class="app-card-name">der die das</p>
+        <p class="app-card-desc">
+          Domina el género de los sustantivos alemanes con práctica diaria y repetición espaciada.
+          El complemento ideal para los ejercicios de artículo de imKontext.
+        </p>
+        <span class="app-card-arrow">Ir a der die das →</span>
+      </a>
+
+      <a class="app-card" href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">
+        <p class="app-card-label">Plataforma principal</p>
+        <p class="app-card-name">Vokabel Lab</p>
+        <p class="app-card-desc">
+          La plataforma central de recursos y herramientas para aprender alemán.
+          Cursos, materiales y todo el ecosistema en un mismo lugar.
+        </p>
+        <span class="app-card-arrow">Ir a Vokabel Lab →</span>
+      </a>
+
+      <a class="app-card" href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">
+        <p class="app-card-label">Clases y coaching</p>
+        <p class="app-card-name">Samuel Coach de alemán</p>
+        <p class="app-card-desc">
+          Clases y acompañamiento personalizado con Samuel. Si quieres avanzar más rápido
+          con un coach que conoce cada herramienta de este ecosistema, este es el sitio.
+        </p>
+        <span class="app-card-arrow">Ir a samuelcoachdealeman.com →</span>
+      </a>
+    </div>
+
+    <p>
+      La combinación más efectiva: usa <strong>imKontext</strong> para el vocabulario en contexto,
+      <strong>der die das</strong> para fijar el género de los sustantivos,
+      y <strong>Samuel Coach de alemán</strong> si quieres acelerar el proceso con acompañamiento personal.
+    </p>
+  </section>
+
+  <div class="static-cta">
+    <p>¿Listo para practicar con una noticia real de hoy?</p>
+    <a href="/">Empezar en imKontext →</a>
+  </div>
+
+</main>
+
+<div class="ln-bottom-bar">
+  <a class="ln-contact-btn" href="/metodologia">Metodología</a>
+  <span class="ln-sep">·</span>
+  <a class="ln-contact-btn" href="mailto:www.vokabellab@pm.me">Contacto</a>
+  <span class="ln-sep">·</span>
+  <a class="ln-contact-btn" href="/legal">Legal</a>
+</div>
+
+</body>
+</html>
