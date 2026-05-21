@@ -437,6 +437,10 @@ input, select { font-family: inherit; }
   }
 }
 
+/* Non-landing: hide nav links from header (all viewports — they live in the footer) */
+.app-header:not(.app-is-landing) .app-nav-links,
+.app-header:not(.app-is-landing) .app-nav-dashboard { display: none; }
+
 /* Mobile — in-app: compact single row */
 @media (max-width: 640px) {
   .app-header:not(.app-is-landing) .app-nav-inner {
@@ -446,10 +450,62 @@ input, select { font-family: inherit; }
     padding: 6px 16px;
     gap: 8px;
   }
-  .app-header:not(.app-is-landing) .app-nav-links { display: none; }
   .app-header:not(.app-is-landing) .app-nav-logo img { height: 28px; }
   .app-header:not(.app-is-landing) .app-nav-logo span { font-size: .95rem; }
-  .app-header:not(.app-is-landing) .app-nav-dashboard::after { display: none; }
+}
+
+/* ── APP FOOTER — nav links shown on all non-landing screens ─── */
+#app-footer {
+  display: none;
+  background: var(--ink);
+  border-top: 3px double var(--ink);
+}
+
+.app-footer-nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: .65rem 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.app-footer-nav a,
+.app-footer-dashboard {
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cream-dark);
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: color .15s;
+}
+
+.app-footer-nav a:hover { color: #fff; }
+
+.app-footer-nav .nav-active { color: var(--vl-blue); }
+
+.app-footer-sep {
+  color: rgba(255,255,255,.2);
+  font-size: .75rem;
+}
+
+.app-footer-dashboard {
+  color: rgba(255,255,255,.35);
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .app-footer-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: .75rem 16px;
+  }
+  .app-footer-sep { display: none; }
 }
 
 /* ── CARD (main content wrapper) ────────────────────────────── */

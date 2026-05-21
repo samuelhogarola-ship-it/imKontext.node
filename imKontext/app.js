@@ -108,6 +108,9 @@ async function showScreen(name) {
   $('main-card').classList.toggle('is-textos', name === 'textos');
   $('app-header').classList.toggle('app-is-landing', name === 'landing');
 
+  const footer = $('app-footer');
+  if (footer) footer.style.display = name === 'landing' ? 'none' : 'block';
+
   // hide loading/error when showing a real screen
   $('loading').style.display = 'none';
   $('error-msg').textContent = '';
@@ -141,6 +144,8 @@ function showLanding() {
   $('main-app').style.display = 'none';
   screens.landing.style.display = '';
   $('app-header').classList.add('app-is-landing');
+  const footer = $('app-footer');
+  if (footer) footer.style.display = 'none';
   updateSEOMeta({
     title: 'APP Vokabel Lab imKontext',
     description: 'Aprende alemán con textos de actualidad. Practica vocabulario real con imKontext de Vokabel Lab.',
@@ -505,6 +510,26 @@ document.getElementById('nav-dashboard').addEventListener('click', e => {
   e.preventDefault();
   alert(`El dashboard estará disponible próximamente. Si lo necesitas antes o quieres avisarnos de algo, escríbenos a ${SUPPORT_EMAIL}.`);
 });
+
+// Footer nav links
+const footerImkontext = document.getElementById('footer-imkontext-link');
+if (footerImkontext) {
+  footerImkontext.addEventListener('click', e => {
+    e.preventDefault();
+    selectedTopic = null;
+    history.pushState({ screen: 'landing' }, '', '/');
+    showLanding();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+const footerDashboard = document.getElementById('footer-dashboard');
+if (footerDashboard) {
+  footerDashboard.addEventListener('click', e => {
+    e.preventDefault();
+    alert(`El dashboard estará disponible próximamente. Si lo necesitas antes o quieres avisarnos de algo, escríbenos a ${SUPPORT_EMAIL}.`);
+  });
+}
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2b — DETALLE DE TEXTO
