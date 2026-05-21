@@ -523,13 +523,6 @@ if (footerImkontext) {
   });
 }
 
-const footerDashboard = document.getElementById('footer-dashboard');
-if (footerDashboard) {
-  footerDashboard.addEventListener('click', e => {
-    e.preventDefault();
-    alert(`El dashboard estará disponible próximamente. Si lo necesitas antes o quieres avisarnos de algo, escríbenos a ${SUPPORT_EMAIL}.`);
-  });
-}
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2b — DETALLE DE TEXTO
