@@ -1637,28 +1637,29 @@ body.reader-mode-active .txdet-article p:last-child {
 .db-stat-col:last-child  { border-right: none; }
 .db-stat-col--circle {
   display: flex;
-  flex-direction: column;
-  gap: .45rem;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: .9rem;
 }
 
 .db-global-circle {
-  width: 64px;
-  height: 64px;
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
-  border: 2.5px solid var(--border);
+  border: 2.5px solid var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: .88rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--ink);
   line-height: 1;
   flex-shrink: 0;
 }
-.db-global-circle.db-score--good { border-color: var(--a2-clr); color: var(--a2-clr); }
-.db-global-circle.db-score--ok   { border-color: var(--vl-yellow); color: #9a6a00; }
-.db-global-circle.db-score--low  { border-color: var(--border); color: var(--muted); }
+.db-global-circle.db-score--good,
+.db-global-circle.db-score--ok,
+.db-global-circle.db-score--low { border-color: var(--ink); color: var(--ink); }
 
 .db-stat-num {
   display: block;
