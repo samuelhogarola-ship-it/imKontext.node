@@ -589,11 +589,12 @@ async function showDashboard() {
     const pct   = e.total > 0 ? Math.round((e.done / e.total) * 100) : 0;
     const title = e.text?.title ? escapeHtml(e.text.title) : `—`;
     const num   = String(i + 1).padStart(2, '0');
+    const scoreClass = pct >= DASHBOARD_CONFIG.progressThresholds.good ? 'db-score--good'
+                     : pct >= DASHBOARD_CONFIG.progressThresholds.ok   ? 'db-score--ok'
+                     : 'db-score--low';
 
-    const row = document.createElement('button');
-    row.type = 'button';
+    const row = document.createElement('div');
     row.className = 'db-rank-row';
-    row.setAttribute('aria-label', `Ir al texto: ${e.text?.title || title}`);
     row.innerHTML = `
       <span class="db-rank-num">${num}</span>
       <span class="db-rank-body">
@@ -606,17 +607,22 @@ async function showDashboard() {
           <span class="db-bar-label">${e.done} / ${e.total}</span>
         </span>
       </span>
-      <span class="db-rank-score">${pct}%</span>
+      <span class="db-rank-score ${scoreClass}">${pct}%</span>
+      <button class="db-rank-reset" type="button" aria-label="Reiniciar progreso">×</button>
     `;
 
-    if (e.text) {
-      row.addEventListener('click', () => {
-        selectedLevel = e.level;
-        selectText(e.text);
-      });
-    } else {
-      row.addEventListener('click', () => goToTextos({ pushState: true }));
-    }
+    const goToText = e.text
+      ? () => { selectedLevel = e.level; selectText(e.text); }
+      : () => goToTextos({ pushState: true });
+
+    row.addEventListener('click', goToText);
+
+    row.querySelector('.db-rank-reset').addEventListener('click', ev => {
+      ev.stopPropagation();
+      localStorage.removeItem(e.key);
+      localStorage.removeItem(`queue_${e.textId}_${e.level}`);
+      showDashboard();
+    });
 
     listEl.appendChild(row);
   });

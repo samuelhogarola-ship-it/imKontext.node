@@ -1698,8 +1698,8 @@ body.reader-mode-active .txdet-article p:last-child {
 
 .db-rank-row {
   display: grid;
-  grid-template-columns: 2.2ch 1fr auto;
-  gap: .5rem 1rem;
+  grid-template-columns: 2.2ch 1fr auto auto;
+  gap: .5rem .75rem;
   align-items: center;
   padding: .9rem 0;
   border-bottom: 1px solid var(--border-light);
@@ -1773,15 +1773,36 @@ body.reader-mode-active .txdet-article p:last-child {
 }
 
 .db-rank-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--ink);
-  text-align: right;
-  align-self: start;
-  padding-top: .05rem;
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  line-height: 1;
+  text-align: center;
+  transition: border-color var(--transition), color var(--transition);
+}
+.db-score--good { border-color: var(--a2-clr); color: var(--a2-clr); }
+.db-score--ok   { border-color: var(--vl-yellow); color: #9a6a00; }
+.db-score--low  { border-color: var(--border); color: var(--muted); }
+
+.db-rank-reset {
+  font-size: .95rem;
+  color: var(--border);
+  padding: .3rem .45rem;
+  border-radius: var(--radius-sm);
+  align-self: center;
+  transition: color var(--transition), background var(--transition);
   line-height: 1;
 }
+.db-rank-reset:hover { color: #c0392b; background: #fef2f2; }
 
 /* ═══════════════════════════════════════════════════════════════
    ANIMATIONS
