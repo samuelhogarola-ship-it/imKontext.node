@@ -47,6 +47,7 @@ const screens = {
   activity:  $('screen-activity'),
   ejercicio: $('screen-ejercicio'),
   resultado: $('screen-resultado'),
+  dashboard: $('screen-dashboard'),
 };
 
 function setReadingMode(active) {
@@ -101,7 +102,7 @@ async function showScreen(name) {
   $('main-app').style.display = name === 'landing' ? 'none' : 'block';
   screens.landing.style.display = name === 'landing' ? '' : 'none';
 
-  ['textos','content','activity','ejercicio','resultado'].forEach(s => {
+  ['textos','content','activity','ejercicio','resultado','dashboard'].forEach(s => {
     const el = screens[s];
     if (el) el.style.display = s === name ? '' : 'none';
   });
@@ -505,10 +506,110 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   });
 });
 
-// Nav: "Dashboard" — placeholder hasta que exista la ruta
-document.getElementById('nav-dashboard').addEventListener('click', e => {
+// Nav: "Dashboard"
+document.getElementById('nav-dashboard').addEventListener('click', async e => {
   e.preventDefault();
-  alert(`El dashboard estará disponible próximamente. Si lo necesitas antes o quieres avisarnos de algo, escríbenos a ${SUPPORT_EMAIL}.`);
+  await showDashboard();
+});
+
+/* ══════════════════════════════════════════════════════════════
+   PANTALLA — DASHBOARD
+══════════════════════════════════════════════════════════════ */
+function parseDashboardEntries() {
+  const entries = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key.startsWith('progress_')) continue;
+    try {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (!data || typeof data.done !== 'number') continue;
+      const withoutPrefix = key.slice('progress_'.length);
+      const lastUnderscore = withoutPrefix.lastIndexOf('_');
+      const textId = withoutPrefix.slice(0, lastUnderscore);
+      const level  = withoutPrefix.slice(lastUnderscore + 1);
+      if (!textId || !level) continue;
+      const text = allTexts.find(t => String(t.id) === textId) || null;
+      entries.push({ key, textId, level, done: data.done || 0, total: data.total || 0, text });
+    } catch {}
+  }
+  return entries;
+}
+
+async function showDashboard() {
+  if (!allTexts.length) {
+    try { allTexts = await apiFetch('/api/texts'); } catch {}
+  }
+
+  const entries = parseDashboardEntries();
+  const empty   = $('db-empty');
+  const content = $('db-content');
+
+  if (!entries.length) {
+    empty.style.display   = 'block';
+    content.style.display = 'none';
+    showScreen('dashboard');
+    return;
+  }
+
+  empty.style.display   = 'none';
+  content.style.display = 'block';
+
+  const totalDone  = entries.reduce((s, e) => s + e.done,  0);
+  const totalWords = entries.reduce((s, e) => s + e.total, 0);
+  const globalPct  = totalWords > 0 ? Math.round((totalDone / totalWords) * 100) : 0;
+  const activeTexts = new Set(entries.map(e => e.textId)).size;
+
+  $('db-stats-grid').innerHTML = `
+    <div class="db-stat-card">
+      <span class="db-stat-val">${totalDone}</span>
+      <span class="db-stat-lbl">Palabras practicadas</span>
+    </div>
+    <div class="db-stat-card">
+      <span class="db-stat-val">${activeTexts}</span>
+      <span class="db-stat-lbl">Textos activos</span>
+    </div>
+    <div class="db-stat-card">
+      <span class="db-stat-val">${globalPct}%</span>
+      <span class="db-stat-lbl">Progreso global</span>
+    </div>
+  `;
+
+  const levelOrder = { a2: 0, b1: 1, b2: 2, c1: 3 };
+  entries.sort((a, b) => {
+    const ta = a.text?.title || a.textId;
+    const tb = b.text?.title || b.textId;
+    if (ta !== tb) return ta.localeCompare(tb, 'es');
+    return (levelOrder[a.level] ?? 9) - (levelOrder[b.level] ?? 9);
+  });
+
+  $('db-text-list').innerHTML = entries.map(e => {
+    const pct   = e.total > 0 ? Math.round((e.done / e.total) * 100) : 0;
+    const title = e.text?.title ? escapeHtml(e.text.title) : `Texto ${e.textId.slice(0, 8)}…`;
+    return `
+      <div class="db-text-row">
+        <div class="db-text-info">
+          <span class="tx-lvl-badge tx-lvl-badge--${e.level}">${e.level.toUpperCase()}</span>
+          <span class="db-text-title">${title}</span>
+        </div>
+        <div class="db-text-progress">
+          <div class="db-progress-bar">
+            <div class="db-progress-fill" style="width:${pct}%"></div>
+          </div>
+          <span class="db-progress-pct">${e.done}/${e.total} · ${pct}%</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  showScreen('dashboard');
+}
+
+document.getElementById('btn-volver-from-dashboard').addEventListener('click', async () => {
+  await goToTextos({ pushState: true });
+});
+
+document.getElementById('btn-dashboard-go-textos').addEventListener('click', async () => {
+  await goToTextos({ pushState: true });
 });
 
 // Footer nav links

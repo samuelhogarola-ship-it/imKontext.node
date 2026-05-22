@@ -392,6 +392,30 @@
       <button class="btn-terminar" id="btn-terminar">Terminar test</button>
     </div>
 
+    <!-- ══════════════════════════════════════════════
+         PANTALLA — DASHBOARD
+    ══════════════════════════════════════════════ -->
+    <div id="screen-dashboard" style="display:none">
+      <div class="act-header">
+        <button class="txdet-back-btn" id="btn-volver-from-dashboard">← Volver</button>
+        <div class="txdet-kicker">Tu progreso</div>
+        <h2 class="act-title">Dashboard</h2>
+      </div>
+
+      <div class="db-empty" id="db-empty" style="display:none">
+        <p>Todavía no tienes sesiones registradas. ¡Empieza a practicar para ver tu progreso aquí!</p>
+        <button class="btn-main-solo db-empty-btn" id="btn-dashboard-go-textos">Ir a los textos →</button>
+      </div>
+
+      <div class="db-content" id="db-content" style="display:none">
+        <div class="db-stats-grid" id="db-stats-grid"></div>
+        <div class="db-section-head">
+          <h3 class="db-section-title">Progreso por texto</h3>
+        </div>
+        <div class="db-text-list" id="db-text-list"></div>
+      </div>
+    </div>
+
     <!-- ── RESULTADO ── -->
     <div id="screen-resultado" style="display:none">
       <p style="color:var(--muted);font-size:1rem">Puntuación final</p>
