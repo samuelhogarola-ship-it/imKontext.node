@@ -23,7 +23,7 @@
 <meta name="twitter:description" id="tw-description" content="Lee noticias reales en alemán y practica el vocabulario en contexto. Niveles A2–C1.">
 <meta name="twitter:image" content="https://imkontext.vokabellab.com/og-preview.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=23">
+<link rel="stylesheet" href="/styles.css?v=26">
 </head>
 <body>
 
@@ -390,6 +390,30 @@
         <button class="btn-main" id="btn-siguiente" disabled>Siguiente →</button>
       </div>
       <button class="btn-terminar" id="btn-terminar">Terminar test</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         PANTALLA — DASHBOARD
+    ══════════════════════════════════════════════ -->
+    <div id="screen-dashboard" style="display:none">
+      <div class="act-header">
+        <button class="txdet-back-btn" id="btn-volver-from-dashboard">← Volver</button>
+        <div class="txdet-kicker">Tu progreso</div>
+        <h2 class="act-title">Dashboard</h2>
+      </div>
+
+      <div class="db-empty" id="db-empty" style="display:none">
+        <p>Todavía no tienes sesiones registradas. ¡Empieza a practicar para ver tu progreso aquí!</p>
+        <button class="btn-main-solo db-empty-btn" id="btn-dashboard-go-textos">Ir a los textos →</button>
+      </div>
+
+      <div class="db-content" id="db-content" style="display:none">
+        <div class="db-stats-strip" id="db-stats-grid"></div>
+        <div class="db-ranking-head">
+          <span class="db-ranking-label">Progreso por texto</span>
+        </div>
+        <div class="db-ranking" id="db-text-list"></div>
+      </div>
     </div>
 
     <!-- ── RESULTADO ── -->

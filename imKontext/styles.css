@@ -46,6 +46,8 @@ body {
   color: var(--ink);
   line-height: 1.6;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 body.reader-mode-active {
   overflow: hidden;
@@ -325,7 +327,7 @@ input, select { font-family: inherit; }
 /* ═══════════════════════════════════════════════════════════════
    APP HEADER — editorial newspaper navbar
 ═══════════════════════════════════════════════════════════════ */
-#main-app { display: none; }
+#main-app { display: none; flex: 1; }
 
 .app-header {
   background: var(--cream);
@@ -476,6 +478,8 @@ input, select { font-family: inherit; }
   display: none;
   background: var(--ink);
   border-top: 3px double var(--ink);
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .app-footer-nav {
@@ -1587,6 +1591,247 @@ body.reader-mode-active .txdet-article p:last-child {
   padding: .78rem 1.5rem; border-radius: var(--radius);
   width: 100%; max-width: 320px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════════════════════ */
+/* ══ DASHBOARD ══════════════════════════════════════════════════ */
+#screen-dashboard {
+  animation: fadeUp .3s ease both;
+}
+
+.app-nav-dashboard {
+  cursor: pointer !important;
+}
+.app-nav-dashboard::after {
+  display: none !important;
+}
+.app-nav-dashboard:hover {
+  color: var(--vl-blue) !important;
+}
+
+/* Empty state */
+.db-empty {
+  text-align: center;
+  padding: 3.5rem 1rem;
+  color: var(--muted);
+}
+.db-empty p { margin-bottom: 1.5rem; font-size: .95rem; }
+.db-empty-btn { max-width: 240px; margin: 0 auto; }
+
+/* ── Stats strip — newspaper data bar ── */
+.db-stats-strip {
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 1.3rem 0 1.1rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.db-stat-col {
+  padding: 0 1.25rem;
+  border-right: 1px solid var(--border);
+}
+.db-stat-col:first-child { padding-left: 0; }
+.db-stat-col:last-child  { border-right: none; }
+.db-stat-col--circle {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: .9rem;
+}
+
+.db-global-circle {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.db-global-circle.db-score--good,
+.db-global-circle.db-score--ok,
+.db-global-circle.db-score--low { border-color: var(--ink); color: var(--ink); }
+
+.db-stat-num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -.02em;
+  margin-bottom: .35rem;
+}
+
+.db-stat-lbl {
+  display: block;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .db-stats-strip { grid-template-columns: 1fr 1fr; }
+  .db-stat-col { padding: 0 .75rem; }
+  .db-stat-col:nth-child(2) { border-right: none; }
+  .db-stat-col:nth-child(3) {
+    grid-column: 1 / -1;
+    padding: .9rem 0 0;
+    margin-top: .9rem;
+    border-top: 1px solid var(--border-light);
+    border-right: none;
+  }
+}
+
+/* ── Section label with rule ── */
+.db-ranking-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding-bottom: .6rem;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 0;
+}
+.db-ranking-head::after {
+  content: '';
+  display: block;
+  flex: 1;
+  height: 0;
+}
+.db-ranking-label {
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Ranking rows ── */
+.db-ranking {
+  display: flex;
+  flex-direction: column;
+}
+
+.db-rank-row {
+  display: grid;
+  grid-template-columns: 2.2ch 1fr auto auto;
+  gap: .5rem .75rem;
+  align-items: center;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background var(--transition);
+  border-radius: 0;
+}
+.db-rank-row:hover { background: rgba(26,24,20,.03); }
+.db-rank-row:last-child { border-bottom: none; }
+
+.db-rank-num {
+  font-family: var(--font-display);
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--border);
+  align-self: start;
+  padding-top: .15rem;
+  line-height: 1;
+}
+
+.db-rank-body {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  min-width: 0;
+}
+
+.db-rank-meta {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.db-rank-title {
+  font-size: .88rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.db-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+}
+
+.db-bar {
+  flex: 1;
+  height: 2px;
+  background: var(--cream-dark);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.db-bar-fill {
+  height: 100%;
+  background: var(--ink-light);
+  border-radius: 1px;
+  transition: width .5s ease;
+}
+
+.db-bar-label {
+  font-size: .68rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.db-rank-score {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--muted);
+  flex-shrink: 0;
+  line-height: 1;
+  text-align: center;
+  transition: border-color var(--transition), color var(--transition);
+}
+.db-score--good { border-color: var(--a2-clr); color: var(--a2-clr); }
+.db-score--ok   { border-color: var(--vl-yellow); color: #9a6a00; }
+.db-score--low  { border-color: var(--border); color: var(--muted); }
+
+.db-rank-reset {
+  font-size: .95rem;
+  color: var(--border);
+  padding: .3rem .45rem;
+  border-radius: var(--radius-sm);
+  align-self: center;
+  transition: color var(--transition), background var(--transition);
+  line-height: 1;
+}
+.db-rank-reset:hover { color: #c0392b; background: #fef2f2; }
 
 /* ═══════════════════════════════════════════════════════════════
    ANIMATIONS
