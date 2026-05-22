@@ -559,6 +559,10 @@ async function showDashboard() {
   const globalPct  = totalWords > 0 ? Math.round((totalDone / totalWords) * 100) : 0;
   const activeTexts = new Set(entries.map(e => e.textId)).size;
 
+  const globalScoreClass = globalPct >= DASHBOARD_CONFIG.progressThresholds.good ? 'db-score--good'
+                         : globalPct >= DASHBOARD_CONFIG.progressThresholds.ok   ? 'db-score--ok'
+                         : 'db-score--low';
+
   $('db-stats-grid').innerHTML = `
     <div class="db-stat-col">
       <span class="db-stat-num">${totalDone}</span>
@@ -568,8 +572,8 @@ async function showDashboard() {
       <span class="db-stat-num">${activeTexts}</span>
       <span class="db-stat-lbl">Textos<br>activos</span>
     </div>
-    <div class="db-stat-col">
-      <span class="db-stat-num">${globalPct}%</span>
+    <div class="db-stat-col db-stat-col--circle">
+      <span class="db-global-circle ${globalScoreClass}">${globalPct}%</span>
       <span class="db-stat-lbl">Progreso<br>global</span>
     </div>
   `;
