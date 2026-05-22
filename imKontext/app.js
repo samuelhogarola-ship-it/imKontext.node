@@ -560,17 +560,17 @@ async function showDashboard() {
   const activeTexts = new Set(entries.map(e => e.textId)).size;
 
   $('db-stats-grid').innerHTML = `
-    <div class="db-stat-card">
-      <span class="db-stat-val">${totalDone}</span>
-      <span class="db-stat-lbl">Palabras practicadas</span>
+    <div class="db-stat-col">
+      <span class="db-stat-num">${totalDone}</span>
+      <span class="db-stat-lbl">Palabras<br>practicadas</span>
     </div>
-    <div class="db-stat-card">
-      <span class="db-stat-val">${activeTexts}</span>
-      <span class="db-stat-lbl">Textos activos</span>
+    <div class="db-stat-col">
+      <span class="db-stat-num">${activeTexts}</span>
+      <span class="db-stat-lbl">Textos<br>activos</span>
     </div>
-    <div class="db-stat-card">
-      <span class="db-stat-val">${globalPct}%</span>
-      <span class="db-stat-lbl">Progreso global</span>
+    <div class="db-stat-col">
+      <span class="db-stat-num">${globalPct}%</span>
+      <span class="db-stat-lbl">Progreso<br>global</span>
     </div>
   `;
 
@@ -582,24 +582,44 @@ async function showDashboard() {
     return (levelOrder[a.level] ?? 9) - (levelOrder[b.level] ?? 9);
   });
 
-  $('db-text-list').innerHTML = entries.map(e => {
+  const listEl = $('db-text-list');
+  listEl.innerHTML = '';
+
+  entries.forEach((e, i) => {
     const pct   = e.total > 0 ? Math.round((e.done / e.total) * 100) : 0;
-    const title = e.text?.title ? escapeHtml(e.text.title) : `Texto ${e.textId.slice(0, 8)}…`;
-    return `
-      <div class="db-text-row">
-        <div class="db-text-info">
+    const title = e.text?.title ? escapeHtml(e.text.title) : `—`;
+    const num   = String(i + 1).padStart(2, '0');
+
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'db-rank-row';
+    row.setAttribute('aria-label', `Ir al texto: ${e.text?.title || title}`);
+    row.innerHTML = `
+      <span class="db-rank-num">${num}</span>
+      <span class="db-rank-body">
+        <span class="db-rank-meta">
           <span class="tx-lvl-badge tx-lvl-badge--${e.level}">${e.level.toUpperCase()}</span>
-          <span class="db-text-title">${title}</span>
-        </div>
-        <div class="db-text-progress">
-          <div class="db-progress-bar">
-            <div class="db-progress-fill" style="width:${pct}%"></div>
-          </div>
-          <span class="db-progress-pct">${e.done}/${e.total} · ${pct}%</span>
-        </div>
-      </div>
+          <span class="db-rank-title">${title}</span>
+        </span>
+        <span class="db-bar-wrap">
+          <span class="db-bar"><span class="db-bar-fill" style="width:${pct}%"></span></span>
+          <span class="db-bar-label">${e.done} / ${e.total}</span>
+        </span>
+      </span>
+      <span class="db-rank-score">${pct}%</span>
     `;
-  }).join('');
+
+    if (e.text) {
+      row.addEventListener('click', () => {
+        selectedLevel = e.level;
+        selectText(e.text);
+      });
+    } else {
+      row.addEventListener('click', () => goToTextos({ pushState: true }));
+    }
+
+    listEl.appendChild(row);
+  });
 
   showScreen('dashboard');
 }
