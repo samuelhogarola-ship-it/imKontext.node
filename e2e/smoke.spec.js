@@ -24,6 +24,25 @@ test('can navigate to text list and see texts', async ({ page }) => {
   await expect(anyCard).toBeVisible({ timeout: 10_000 });
 });
 
+test('category filter shows all texts and filters client-side', async ({ page }) => {
+  await page.goto('/textos');
+
+  await expect(page.locator('#screen-textos')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Todas' })).toBeVisible();
+  await expect(page.getByText('Neue Regeln im Klassenzimmer')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Tecnología' }).click();
+
+  await expect(page.getByText('Künstliche Intelligenz im Alltag')).toBeVisible();
+  await expect(page.getByText('Die Energiewende in Deutschland')).toHaveCount(0);
+  await expect(page.getByText('Neue Regeln im Klassenzimmer')).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Todas' }).click();
+
+  await expect(page.getByText('Die Energiewende in Deutschland')).toBeVisible();
+  await expect(page.getByText('Neue Regeln im Klassenzimmer')).toBeVisible();
+});
+
 test('can open a free text and reach the activity screen', async ({ page }) => {
   await page.goto('/textos');
 

@@ -4,6 +4,7 @@
     "title": "Die Energiewende in Deutschland",
     "slug": "energiewende-deutschland",
     "topic": "Umwelt",
+    "categoria": "medioambiente",
     "access_status": "free",
     "published_at": "2026-05-01T00:00:00Z",
     "hasLoadedVocabulary": true,
@@ -15,6 +16,7 @@
     "title": "Künstliche Intelligenz im Alltag",
     "slug": "ki-im-alltag",
     "topic": "Technologie",
+    "categoria": "tecnologia",
     "access_status": "free",
     "published_at": "2026-04-01T00:00:00Z",
     "hasLoadedVocabulary": true,
@@ -26,10 +28,22 @@
     "title": "Der Wohnungsmarkt in Berlin",
     "slug": "wohnungsmarkt-berlin",
     "topic": "Gesellschaft",
+    "categoria": "sociedad",
     "access_status": "premium",
     "published_at": "2026-03-01T00:00:00Z",
     "hasLoadedVocabulary": false,
     "levels": ["B2", "C1"],
     "previewContent": "Die Mieten in Berlin steigen weiter und der Markt bleibt angespannt."
+  },
+  {
+    "id": "text-004",
+    "title": "Neue Regeln im Klassenzimmer",
+    "slug": "neue-regeln-im-klassenzimmer",
+    "topic": "Bildung",
+    "access_status": "free",
+    "published_at": "2026-02-01T00:00:00Z",
+    "hasLoadedVocabulary": true,
+    "levels": ["A2"],
+    "previewContent": "Viele Schulen in Deutschland testen neue Regeln fuer Handys und Hausaufgaben."
   }
 ]

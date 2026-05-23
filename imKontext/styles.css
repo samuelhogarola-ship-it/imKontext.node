@@ -2174,6 +2174,44 @@ body.reader-mode-active .txdet-article p:last-child {
   flex-direction: column;
   gap: .55rem;
 }
+.txsel-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .85rem;
+  margin-top: 1rem;
+}
+.txsel-page-status {
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.txsel-page-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--vl-blue);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all var(--transition);
+}
+.txsel-page-btn:hover:not(:disabled) {
+  border-color: var(--ink-light);
+  background: var(--cream);
+  box-shadow: var(--shadow);
+}
+.txsel-page-btn:disabled {
+  opacity: .4;
+  color: var(--muted);
+  cursor: not-allowed;
+}
 @media (max-width: 640px) {
   .tx-featured-card {
     align-items: flex-start;
@@ -2503,6 +2541,9 @@ body.reader-mode-active .txdet-article p:last-child {
     width: 100%;
   }
   .txsel-search-label { display: block; }
+  .txsel-pagination {
+    justify-content: space-between;
+  }
 }
 
 /* ── tx-row mobile: 2-line layout to prevent horizontal overflow ── */
