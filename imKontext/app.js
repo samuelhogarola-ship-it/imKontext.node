@@ -26,6 +26,8 @@ let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
 let selectedLevel  = 'b1';
 let selectedTopic  = null; // null = all topics
+let selectedCategory = null; // null = all categories
+let currentTextsPage = 0;
 let selectedModos  = [];  // array — supports multi-select
 let currentVocab     = [];
 let currentTextVocab = [];   // linked vocab for current text version (reader underlines)
@@ -35,6 +37,7 @@ let score          = { correct: 0, wrong: 0 };
 let wrongWords     = [];  // words answered incorrectly in current session
 let numPalabras    = 0;
 let isReaderModeActive = false;
+const TEXTS_PER_PAGE = 10;
 
 /* ── DOM REFS ────────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
@@ -48,6 +51,22 @@ const screens = {
   ejercicio: $('screen-ejercicio'),
   resultado: $('screen-resultado'),
   dashboard: $('screen-dashboard'),
+};
+
+const CATEGORY_LABELS = {
+  tecnologia: 'Tecnología',
+  sociedad: 'Sociedad',
+  deporte: 'Deporte',
+  movilidad: 'Movilidad',
+  medioambiente: 'Medioambiente',
+  salud: 'Salud',
+  educacion: 'Educación',
+  trabajo: 'Trabajo',
+  ciencia: 'Ciencia',
+  cultura: 'Cultura',
+  internacional: 'Internacional',
+  politica: 'Política',
+  economia: 'Economía',
 };
 
 function setReadingMode(active) {
@@ -204,6 +223,7 @@ window.addEventListener('popstate', async () => {
     await openTextBySlug(slug);
   } else {
     selectedTopic = null;
+    selectedCategory = null;
     showLanding();
   }
 });
@@ -228,6 +248,7 @@ async function goToTextos({ pushState: doPush = true } = {}) {
     canonical: window.location.origin + '/textos'
   });
   showScreen('textos');
+  currentTextsPage = 0;
 
   // If already loaded, just render
   if (allTexts.length > 0) {
@@ -245,7 +266,7 @@ async function goToTextos({ pushState: doPush = true } = {}) {
     allTexts = await apiFetch('/api/texts');
 
     buildTopicChips();
-    renderTextGrid(allTexts);
+    renderTextGrid(getFilteredTexts());
   } catch (err) {
     console.error(err);
     $('txsel-loading').style.display = 'none';
@@ -276,6 +297,10 @@ function renderTextGrid(list) {
 
   const featured = getFeaturedText(sorted);
   const rest = featured ? sorted.filter(text => text.id !== featured.id) : sorted;
+  const totalPages = Math.max(1, Math.ceil(rest.length / TEXTS_PER_PAGE));
+  currentTextsPage = Math.min(currentTextsPage, totalPages - 1);
+  const startIdx = currentTextsPage * TEXTS_PER_PAGE;
+  const visibleTexts = rest.slice(startIdx, startIdx + TEXTS_PER_PAGE);
 
   if (featured) {
     const featuredWrap = document.createElement('section');
@@ -306,34 +331,13 @@ function renderTextGrid(list) {
     grid.appendChild(featuredWrap);
   }
 
-  const grouped = {};
-  rest.forEach(text => {
-    const key = (text.topic || 'Otros').trim() || 'Otros';
-    if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(text);
+  const listEl = document.createElement('div');
+  listEl.className = 'tx-topic-list';
+  visibleTexts.forEach((item, index) => {
+    listEl.appendChild(createTextRow(item, startIdx + index + 1));
   });
-
-  Object.entries(grouped).forEach(([topic, texts]) => {
-    const section = document.createElement('section');
-    section.className = 'tx-topic-section';
-
-    const heading = document.createElement('div');
-    heading.className = 'tx-topic-heading';
-    heading.innerHTML = `
-      <h3 class="tx-topic-title">${escapeHtml(topic)}</h3>
-      <span class="tx-topic-count">${texts.length} texto${texts.length === 1 ? '' : 's'}</span>
-    `;
-    section.appendChild(heading);
-
-    const listEl = document.createElement('div');
-    listEl.className = 'tx-topic-list';
-    texts.forEach((item, index) => {
-      listEl.appendChild(createTextRow(item, index + 1));
-    });
-
-    section.appendChild(listEl);
-    grid.appendChild(section);
-  });
+  grid.appendChild(listEl);
+  renderTextsPagination(rest.length);
 }
 
 function createTextRow(text, position) {
@@ -444,51 +448,121 @@ function renderFeaturedDescription(text) {
 function getFilteredTexts() {
   const q = $('txsel-search').value.toLowerCase().trim();
   let list = allTexts;
+  if (selectedCategory) {
+    list = list.filter(t => t.categoria === selectedCategory);
+  }
   if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
-  if (selectedTopic) list = list.filter(t => (t.topic || 'Otros').trim() === selectedTopic);
   return list;
+}
+
+function renderTextsPagination(totalTexts) {
+  const container = $('txsel-pagination');
+  if (!container) return;
+
+  if (totalTexts <= TEXTS_PER_PAGE) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const totalPages = Math.ceil(totalTexts / TEXTS_PER_PAGE);
+  const start = currentTextsPage * TEXTS_PER_PAGE + 1;
+  const end = Math.min(totalTexts, start + TEXTS_PER_PAGE - 1);
+
+  container.style.display = 'flex';
+  container.innerHTML = `
+    <button
+      class="txsel-page-btn"
+      id="txsel-page-prev"
+      type="button"
+      aria-label="Ver textos anteriores"
+      ${currentTextsPage === 0 ? 'disabled' : ''}
+    >
+      ←
+    </button>
+    <p class="txsel-page-status">${start}-${end} de ${totalTexts}</p>
+    <button
+      class="txsel-page-btn"
+      id="txsel-page-next"
+      type="button"
+      aria-label="Ver más textos"
+      ${currentTextsPage >= totalPages - 1 ? 'disabled' : ''}
+    >
+      →
+    </button>
+  `;
+
+  $('txsel-page-prev')?.addEventListener('click', () => {
+    if (currentTextsPage === 0) return;
+    currentTextsPage -= 1;
+    renderTextGrid(getFilteredTexts());
+  });
+
+  $('txsel-page-next')?.addEventListener('click', () => {
+    if (currentTextsPage >= totalPages - 1) return;
+    currentTextsPage += 1;
+    renderTextGrid(getFilteredTexts());
+  });
 }
 
 function buildTopicChips() {
   const container = $('txsel-topic-filter');
-  if (!container || !allTexts.length) return;
+  if (!container) return;
+  const categories = [...new Set(
+    allTexts
+      .map(text => text.categoria)
+      .filter(Boolean)
+  )].sort((a, b) => getCategoryLabel(a).localeCompare(getCategoryLabel(b), 'es'));
 
-  const topics = [...new Set(allTexts.map(t => (t.topic || 'Otros').trim()))].sort();
   container.innerHTML = '';
 
-  const makeChip = (label, topic) => {
+  if (categories.length === 0) {
+    return;
+  }
+
+  const options = [{ value: null, label: 'Todas' }, ...categories.map(value => ({
+    value,
+    label: getCategoryLabel(value),
+  }))];
+
+  options.forEach(({ value, label }) => {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'txsel-topic-chip';
     btn.textContent = label;
-    if (topic) btn.dataset.topic = topic;
+    btn.dataset.category = value || '';
+    btn.classList.toggle('active', value === selectedCategory || (!value && !selectedCategory));
     btn.addEventListener('click', () => {
-      selectedTopic = (topic && selectedTopic !== topic) ? topic : null;
+      if (selectedCategory === value) return;
+      selectedCategory = value;
+      currentTextsPage = 0;
       updateTopicChips();
       renderTextGrid(getFilteredTexts());
     });
-    return btn;
-  };
-
-  container.appendChild(makeChip('Todos'));
-  topics.forEach(t => container.appendChild(makeChip(t, t)));
-  updateTopicChips();
+    container.appendChild(btn);
+  });
 }
 
 function updateTopicChips() {
-  document.querySelectorAll('.txsel-topic-chip').forEach(chip => {
-    const isAll = !chip.dataset.topic;
-    chip.classList.toggle('active', isAll ? selectedTopic === null : chip.dataset.topic === selectedTopic);
+  document.querySelectorAll('#txsel-topic-filter .txsel-topic-chip').forEach(chip => {
+    const value = chip.dataset.category || null;
+    chip.classList.toggle('active', value === selectedCategory || (!value && !selectedCategory));
   });
+}
+
+function getCategoryLabel(slug) {
+  return CATEGORY_LABELS[slug] || slug;
 }
 
 // Live search
 $('txsel-search').addEventListener('input', () => {
+  currentTextsPage = 0;
   renderTextGrid(getFilteredTexts());
 });
 
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
+  selectedCategory = null;
   history.pushState({ screen: 'landing' }, '', '/');
   showLanding();
 });
@@ -500,6 +574,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
   el.addEventListener('click', e => {
     e.preventDefault();
     selectedTopic = null;
+    selectedCategory = null;
     history.pushState({ screen: 'landing' }, '', '/');
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -643,16 +718,18 @@ document.getElementById('btn-dashboard-go-textos').addEventListener('click', asy
 });
 
 // Footer nav links
-const footerImkontext = document.getElementById('footer-imkontext-link');
-if (footerImkontext) {
+['footer-imkontext-link', 'footer-imkontext-brand'].forEach(id => {
+  const footerImkontext = document.getElementById(id);
+  if (!footerImkontext) return;
   footerImkontext.addEventListener('click', e => {
     e.preventDefault();
     selectedTopic = null;
+    selectedCategory = null;
     history.pushState({ screen: 'landing' }, '', '/');
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-}
+});
 
 
 /* ══════════════════════════════════════════════════════════════
