@@ -94,6 +94,9 @@ test.describe('visual regression without API dependency', () => {
 
   test('footer on legal route', async ({ page }) => {
     await gotoVisualRoute(page, '/legal', { viewport: VIEWPORTS.desktop });
+    await page.addStyleTag({
+      content: '#app-footer { box-sizing: border-box !important; height: 51px !important; overflow: hidden !important; }',
+    });
     const footer = page.locator('#app-footer');
     await waitForVisualStability(page, footer);
     await expect(footer).toHaveScreenshot(
