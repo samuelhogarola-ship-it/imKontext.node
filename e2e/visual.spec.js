@@ -13,7 +13,7 @@ function screenshotOptions(localOptions = {}) {
     animations: 'disabled',
     caret: 'hide',
     scale: 'css',
-    ...(process.env.CI ? {} : localOptions),
+    ...localOptions,
   };
 }
 
