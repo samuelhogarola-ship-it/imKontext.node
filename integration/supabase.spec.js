@@ -19,6 +19,8 @@ test('GET /api/texts returns a non-empty array with the expected shape', async (
     expect(t).toHaveProperty('id');
     expect(t).toHaveProperty('slug');
     expect(t).toHaveProperty('title');
+    expect(t).toHaveProperty('topic');
+    expect(t).toHaveProperty('categoria');
     expect(t).toHaveProperty('access_status');
     expect(Array.isArray(t.levels)).toBe(true);
   }

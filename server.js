@@ -60,7 +60,7 @@ app.get("/api/texts", async (req, res) => {
   try {
     const [texts, versions, vocabLinks] = await Promise.all([
       supabaseFetch(
-        "texts?select=id,title,slug,topic,access_status,published_at&order=published_at.desc.nullslast,id.desc"
+        "texts?select=id,title,slug,topic,categoria,access_status,published_at&order=published_at.desc.nullslast,id.desc"
       ),
       supabaseFetch("text_versions?select=id,text_id,level,content"),
       supabaseFetch("text_version_vocabulary?select=text_version_id")
