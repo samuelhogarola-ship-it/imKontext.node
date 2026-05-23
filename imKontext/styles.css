@@ -62,7 +62,8 @@ input, select { font-family: inherit; }
 ═══════════════════════════════════════════════════════════════ */
 #screen-landing {
   position: relative;
-  min-height: 100dvh;
+  flex: 1;
+  min-height: 0;
   background: var(--cream);
   overflow: hidden;
   display: flex;
@@ -265,6 +266,50 @@ input, select { font-family: inherit; }
   }
   .ln-portada {
     padding-top: clamp(1.9rem, 3.5vw, 2.8rem);
+  }
+}
+
+@media (min-width: 641px) and (max-height: 860px) {
+  .ln-center {
+    padding-top: .5rem;
+    padding-bottom: .35rem;
+  }
+  .ln-hero {
+    gap: .45rem;
+  }
+  .ln-logo-img {
+    max-width: 230px;
+  }
+  .ln-portada {
+    padding: 1rem 1.8rem .9rem;
+  }
+  .ln-edition-bar {
+    margin-bottom: .35rem;
+    padding-bottom: .4rem;
+  }
+  .ln-portada-kicker {
+    margin-bottom: .35rem;
+  }
+  .ln-portada-rule {
+    margin: .35rem auto .5rem;
+  }
+  .ln-portada-deck {
+    margin-bottom: .7rem;
+  }
+  .ln-tag-row {
+    margin-bottom: .7rem;
+  }
+  .ln-btn-entrar {
+    margin-bottom: .45rem;
+    padding: .7rem 2rem;
+  }
+  .ln-footer-line {
+    font-size: .72rem;
+    letter-spacing: .18em;
+  }
+  .ln-bottom-bar {
+    padding-top: .45rem;
+    padding-bottom: .45rem;
   }
 }
 
