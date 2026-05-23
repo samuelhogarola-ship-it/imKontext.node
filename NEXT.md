@@ -7,6 +7,10 @@ Polish editorial visual system en toda la app (landing, app principal y páginas
 
 ## Tareas pendientes
 
+### Footer
+- [ ] Añadir enlace **web fuengirola** al footer (`#app-footer` y páginas estáticas)
+- [ ] Cargar la plantilla del footer desde un archivo en `core/` en lugar de duplicarla en cada HTML
+
 ### Tests E2E
 - [ ] Añadir test para el flujo **"Repasar solo errores"**:
   responder mal → terminar → botón "Repasar errores" → nuevo ejercicio arranca
