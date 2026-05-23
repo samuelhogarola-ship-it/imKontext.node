@@ -1,0 +1,154 @@
+import { test, expect } from '@playwright/test';
+import { mockApi } from './helpers/mock-api.js';
+import {
+  VIEWPORTS,
+  disableAnimations,
+  installDeterministicVisualState,
+  prepareVisualPage,
+  waitForVisualStability,
+} from './helpers/visual.js';
+
+async function gotoVisualRoute(page, route, { mock = false, viewport = VIEWPORTS.desktop } = {}) {
+  await prepareVisualPage(page, viewport);
+  await installDeterministicVisualState(page);
+  if (mock) {
+    await mockApi(page);
+  }
+  await page.goto(route);
+  await disableAnimations(page);
+}
+
+async function openFeaturedCard(page) {
+  await expect(page.locator('#screen-textos')).toBeVisible({ timeout: 10_000 });
+  const featuredCard = page.locator('[data-testid="featured-card"]').first();
+  await expect(featuredCard).toBeVisible({ timeout: 10_000 });
+  return featuredCard;
+}
+
+async function reachExercise(page, mode = 'test') {
+  const featuredCard = await openFeaturedCard(page);
+  await featuredCard.click();
+  await expect(page.locator('#screen-content')).toBeVisible();
+  await page.locator('#btn-ir-actividad').click();
+  await expect(page.locator('#screen-activity')).toBeVisible();
+  await page.locator(`#practice-selector [data-modo="${mode}"]`).click();
+  await page.evaluate(() => {
+    EXERCISE_CONFIG.autoNextDelay = 999;
+  });
+  await page.locator('#btn-empezar').click();
+  await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+}
+
+test.describe('visual regression', () => {
+  test('home page desktop screenshot', async ({ page }) => {
+    await gotoVisualRoute(page, '/', { viewport: VIEWPORTS.desktop });
+    const landing = page.locator('#screen-landing');
+    await waitForVisualStability(page, landing);
+    await expect(landing).toHaveScreenshot('home-desktop.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('home page mobile screenshot', async ({ page }) => {
+    await gotoVisualRoute(page, '/', { viewport: VIEWPORTS.mobile });
+    const landing = page.locator('#screen-landing');
+    await waitForVisualStability(page, landing);
+    await expect(landing).toHaveScreenshot('home-mobile.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('footer on home route', async ({ page }) => {
+    await gotoVisualRoute(page, '/', { viewport: VIEWPORTS.desktop });
+    const footer = page.locator('.ln-bottom-bar');
+    await waitForVisualStability(page, footer);
+    await expect(footer).toHaveScreenshot('footer-home.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('footer on metodologia route', async ({ page }) => {
+    await gotoVisualRoute(page, '/metodologia', { viewport: VIEWPORTS.desktop });
+    const footer = page.locator('#app-footer');
+    await waitForVisualStability(page, footer);
+    await expect(footer).toHaveScreenshot('footer-metodologia.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('footer on legal route', async ({ page }) => {
+    await gotoVisualRoute(page, '/legal', { viewport: VIEWPORTS.desktop });
+    const footer = page.locator('#app-footer');
+    await waitForVisualStability(page, footer);
+    await expect(footer).toHaveScreenshot('footer-legal.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('featured card section', async ({ page }) => {
+    await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
+    const featuredCard = page.locator('[data-testid="featured-card"]').first();
+    await waitForVisualStability(page, featuredCard);
+    await expect(featuredCard).toHaveScreenshot('featured-card.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('stats dashboard', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('progress_text-001_b1', JSON.stringify({ total: 6, done: 4 }));
+      localStorage.setItem('progress_text-002_b2', JSON.stringify({ total: 6, done: 2 }));
+    });
+    await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
+    await page.locator('#nav-dashboard').click();
+    const dashboard = page.locator('#db-content');
+    await expect(dashboard).toBeVisible({ timeout: 10_000 });
+    await waitForVisualStability(page, dashboard);
+    await expect(dashboard).toHaveScreenshot('stats-dashboard.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('practice feedback correct answer state', async ({ page }) => {
+    await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
+    await reachExercise(page, 'test');
+    const answer = await page.evaluate(() => ({
+      correct: queue[currentIdx]?.spanish || '',
+    }));
+    await page.locator('.opcion', { hasText: answer.correct }).click();
+    const exercise = page.locator('#screen-ejercicio');
+    await expect(page.locator('#respuesta-feedback')).toHaveClass(/correct/);
+    await waitForVisualStability(page, exercise);
+    await expect(exercise).toHaveScreenshot('practice-feedback-correct.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+
+  test('practice feedback incorrect answer state', async ({ page }) => {
+    await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
+    await reachExercise(page, 'test');
+    const answer = await page.evaluate(() => {
+      const correct = queue[currentIdx]?.spanish || '';
+      const wrong = Array.from(document.querySelectorAll('.opcion'))
+        .map(option => option.textContent || '')
+        .find(option => option !== correct) || '';
+      return { wrong };
+    });
+    await page.locator('.opcion', { hasText: answer.wrong }).click();
+    const exercise = page.locator('#screen-ejercicio');
+    await expect(page.locator('#respuesta-feedback')).toHaveClass(/wrong/);
+    await waitForVisualStability(page, exercise);
+    await expect(exercise).toHaveScreenshot('practice-feedback-incorrect.png', {
+      animations: 'disabled',
+      caret: 'hide',
+    });
+  });
+});

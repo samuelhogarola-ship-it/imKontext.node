@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
+  snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}',
   timeout: 20_000,
   retries: 1,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
