@@ -643,8 +643,9 @@ document.getElementById('btn-dashboard-go-textos').addEventListener('click', asy
 });
 
 // Footer nav links
-const footerImkontext = document.getElementById('footer-imkontext-link');
-if (footerImkontext) {
+['footer-imkontext-link', 'footer-imkontext-brand'].forEach(id => {
+  const footerImkontext = document.getElementById(id);
+  if (!footerImkontext) return;
   footerImkontext.addEventListener('click', e => {
     e.preventDefault();
     selectedTopic = null;
@@ -652,7 +653,7 @@ if (footerImkontext) {
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-}
+});
 
 
 /* ══════════════════════════════════════════════════════════════
