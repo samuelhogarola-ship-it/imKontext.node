@@ -174,6 +174,12 @@ app.get("/api/vocabulario", async (req, res) => {
 app.get('/textos', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
 app.get('/textos/:slug', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
 
+// Fuengirola Studio standalone routes
+app.get('/webfuengirola', (req, res) => res.redirect(301, '/fuengirola-studio'));
+app.get('/privacidad', (req, res) => res.sendFile(path.join(frontendDir, 'legal.html')));
+app.get('/terminos', (req, res) => res.sendFile(path.join(frontendDir, 'legal.html')));
+app.get('/contacto', (req, res) => res.sendFile(path.join(frontendDir, 'metodologia.html')));
+
 app.use(express.static(frontendDir, {
   extensions: ["html"]
 }));
