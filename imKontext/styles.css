@@ -598,6 +598,9 @@ input, select { font-family: inherit; }
   color: var(--ink);
 }
 
+/* .app-footer-nav a (0-1-1) beats .app-footer-brand (0-1-0) — restore none */
+.app-footer-nav .app-footer-brand { text-transform: none; }
+
 .app-footer-brand img {
   height: 28px;
   width: auto;
