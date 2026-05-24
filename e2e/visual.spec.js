@@ -20,6 +20,10 @@ function screenshotOptions(localOptions = {}) {
 async function gotoVisualRoute(page, route, { mock = false, viewport = VIEWPORTS.desktop } = {}) {
   await prepareVisualPage(page, viewport);
   await installDeterministicVisualState(page);
+  // Dismiss cookie banner so it never overlaps visual snapshots
+  await page.addInitScript(() => {
+    localStorage.setItem('cookie_consent_decision', 'accepted');
+  });
   if (mock) {
     await mockApi(page);
   }
