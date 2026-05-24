@@ -1,0 +1,106 @@
+/* ═══════════════════════════════════════════════════════════════
+   fuengirola-studio.css
+   Styles specific to the /fuengirola-studio standalone landing.
+   Loaded only on that page — no impact on index.html or the app.
+   Depends on design tokens from styles.css (:root).
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Static page shell ──────────────────────────────────────── */
+.static-wrap         { max-width: 780px; margin: 2.5rem auto 4rem; padding: 0 1.5rem; }
+.static-kicker       { font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--vl-blue); margin-bottom: .6rem; }
+.static-title        { font-family: var(--font-display); font-size: clamp(2rem,5vw,3rem); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; margin-bottom: 1.2rem; }
+.static-lead         { font-size: 1.12rem; color: var(--ink-light); line-height: 1.7; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+.static-section      { margin-bottom: 2.8rem; }
+.static-section h2   { font-family: var(--font-display); font-size: 1.45rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: .9rem; }
+.static-section p    { color: var(--ink-light); line-height: 1.75; margin-bottom: .9rem; }
+.static-section p:last-child { margin-bottom: 0; }
+.static-cta          { margin-top: 3rem; padding: 2rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+.static-cta p        { font-size: 1.05rem; color: var(--ink-light); margin-bottom: 1rem; }
+.static-cta a        { display: inline-block; background: var(--primary); color: #fff; font-weight: 600; font-size: .9rem; letter-spacing: .04em; padding: .7rem 1.6rem; border-radius: 999px; text-decoration: none; transition: background .15s, box-shadow .15s; box-shadow: 0 8px 20px rgba(30,58,138,.16); }
+.static-cta a:hover  { background: var(--vl-blue-dk); box-shadow: 0 12px 24px rgba(30,58,138,.22); }
+
+/* ── 2×2 service carousel ───────────────────────────────────── */
+.wf-carousel          { position: relative; margin-top: 1.2rem; }
+.wf-carousel-viewport { overflow: hidden; border-radius: 10px; }
+.wf-carousel-track    { display: flex; transition: transform .4s ease; }
+.wf-slide             { flex: 0 0 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.wf-card              { padding: 1.6rem 1.4rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.wf-card-icon         { font-size: 2rem; display: block; margin-bottom: .7rem; }
+.wf-card h3           { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; color: var(--ink); }
+.wf-card p            { font-size: .9rem; color: var(--ink-light); line-height: 1.6; margin: 0; }
+.wf-controls          { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; }
+.wf-btn               { background: none; border: 1px solid var(--border); border-radius: 999px; width: 36px; height: 36px; cursor: pointer; font-size: 1rem; color: var(--ink-light); display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s; flex-shrink: 0; }
+.wf-btn:hover         { background: var(--primary); color: #fff; border-color: var(--primary); }
+.wf-dots              { display: flex; gap: .4rem; }
+.wf-dot               { width: 7px; height: 7px; border-radius: 50%; background: var(--border); border: none; padding: 0; cursor: pointer; transition: background .2s; }
+.wf-dot.active        { background: var(--vl-blue); }
+.wf-title-row         { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+.wf-title-row .static-title { margin-bottom: 0; }
+.wf-logo              { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; flex-shrink: 0; }
+
+/* ── Page footer ─────────────────────────────────────────────── */
+.fs-footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.fs-footer-nav {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: .65rem 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.fs-footer-nav a {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: color .15s, background .15s;
+  border-radius: 999px;
+}
+
+.fs-footer-nav a:hover       { color: var(--primary); background: rgba(30,58,138,.06); }
+.fs-footer-nav a.nav-active  { color: var(--vl-blue); }
+
+.fs-footer-copy {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .6rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+  color: var(--muted);
+  opacity: .65;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .fs-footer-copy { display: none; }
+}
+
+.fs-footer-sep {
+  color: var(--border);
+  font-size: .75rem;
+}
+
+@media (max-width: 640px) {
+  .fs-footer-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: .75rem 16px;
+  }
+  .fs-footer-sep { display: none; }
+}
