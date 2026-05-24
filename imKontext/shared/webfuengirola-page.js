@@ -10,6 +10,7 @@
 
   var PAGE_HTML = '\
 <p class="static-kicker">Vokabel Lab · Ecosistema</p>\
+<img class="wf-logo" src="/logo-wf.webp" alt="Web Fuengirola Studio">\
 <h1 class="static-title">Web Fuengirola Studio</h1>\
 <p class="static-lead">Diseño web y SEO local en Fuengirola, Costa del Sol. Webs rápidas, modernas y adaptadas al móvil para tiendas, restaurantes, clínicas, autónomos y negocios de la Costa del Sol. <strong>Webs publicadas en 48 horas.</strong></p>\
 \
