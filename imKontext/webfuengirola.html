@@ -47,17 +47,12 @@
     font-size: 1.45rem;
     font-weight: 700;
     letter-spacing: -.01em;
-    margin-bottom: .7rem;
+    margin-bottom: .9rem;
   }
-  .static-section p, .static-section ul {
+  .static-section p {
     color: var(--ink-light);
     line-height: 1.75;
   }
-  .static-section ul {
-    padding-left: 1.4rem;
-    margin-top: .5rem;
-  }
-  .static-section li { margin-bottom: .5rem; }
   .static-cta {
     margin-top: 3rem;
     padding: 2rem;
@@ -86,35 +81,83 @@
   }
   .static-cta a:hover { background: var(--vl-blue-dk); box-shadow: 0 12px 24px rgba(30,58,138,.22); }
 
-  /* ── Service cards ── */
-  .service-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
+  /* ── Service carousel ── */
+  .carousel-wrap {
+    position: relative;
     margin-top: 1.2rem;
   }
+  .carousel-viewport {
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .carousel-track {
+    display: flex;
+    transition: transform .35s ease;
+  }
   .service-card {
-    padding: 1.2rem 1rem;
+    flex: 0 0 100%;
+    padding: 1.8rem 1.6rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
+    box-sizing: border-box;
   }
   .service-card-icon {
-    font-size: 1.5rem;
-    margin-bottom: .5rem;
+    font-size: 2rem;
+    margin-bottom: .7rem;
+    display: block;
   }
   .service-card h3 {
-    font-size: .95rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
     font-weight: 700;
-    margin-bottom: .3rem;
+    margin-bottom: .5rem;
     color: var(--ink);
   }
   .service-card p {
-    font-size: .82rem;
+    font-size: .95rem;
     color: var(--ink-light);
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
   }
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+  .carousel-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+    flex-shrink: 0;
+  }
+  .carousel-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .carousel-btn:disabled { opacity: .3; cursor: default; }
+  .carousel-dots {
+    display: flex;
+    gap: .4rem;
+  }
+  .carousel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background .2s;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .carousel-dot.active { background: var(--vl-blue); }
 </style>
 </head>
 <body>
@@ -162,27 +205,43 @@
 
   <!-- ── SERVICIOS ── -->
   <section class="static-section">
-    <h2>Servicios</h2>
-    <div class="service-grid">
-      <div class="service-card">
-        <div class="service-card-icon">🖥️</div>
-        <h3>Diseño web</h3>
-        <p>Webs rápidas, modernas y adaptadas al móvil.</p>
+    <h2>Diseño web, SEO local y mucho más para negocios en Fuengirola</h2>
+
+    <div class="carousel-wrap" id="services-carousel">
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="carousel-track">
+
+          <div class="service-card">
+            <span class="service-card-icon">🖥️</span>
+            <h3>Diseño web profesional</h3>
+            <p>Webs rápidas, modernas y adaptadas a móvil para negocios locales. Publicadas en 48 horas desde 300&nbsp;€ + IVA.</p>
+          </div>
+
+          <div class="service-card">
+            <span class="service-card-icon">📍</span>
+            <h3>SEO local en Fuengirola</h3>
+            <p>Posicionamiento en Google para aparecer cuando alguien busca tu servicio en Fuengirola y la Costa del Sol.</p>
+          </div>
+
+          <div class="service-card">
+            <span class="service-card-icon">📱</span>
+            <h3>Community Manager</h3>
+            <p>Gestión profesional de redes sociales: contenido, publicaciones y estrategia adaptada al negocio local.</p>
+          </div>
+
+          <div class="service-card">
+            <span class="service-card-icon">🔧</span>
+            <h3>Mantenimiento web</h3>
+            <p>Actualizaciones, seguridad, copias de seguridad y soporte continuo para que la web siempre funcione.</p>
+          </div>
+
+        </div>
       </div>
-      <div class="service-card">
-        <div class="service-card-icon">📍</div>
-        <h3>SEO local</h3>
-        <p>Posicionamiento en Google para búsquedas en la costa.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-card-icon">📱</div>
-        <h3>Community Manager</h3>
-        <p>Gestión de redes sociales para tu negocio.</p>
-      </div>
-      <div class="service-card">
-        <div class="service-card-icon">🔧</div>
-        <h3>Mantenimiento web</h3>
-        <p>Actualizaciones, seguridad y copias de seguridad.</p>
+
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="carousel-prev" aria-label="Anterior">←</button>
+        <button class="carousel-btn" id="carousel-next" aria-label="Siguiente">→</button>
+        <div class="carousel-dots" id="carousel-dots" aria-hidden="true"></div>
       </div>
     </div>
   </section>
@@ -196,6 +255,46 @@
 
 <footer id="app-footer" style="display: block;"></footer>
 <script src="/shared/app-footer.js?v=1"></script>
+<script>
+(function () {
+  var track = document.getElementById('carousel-track');
+  var dotsContainer = document.getElementById('carousel-dots');
+  var btnPrev = document.getElementById('carousel-prev');
+  var btnNext = document.getElementById('carousel-next');
+  var cards = track.querySelectorAll('.service-card');
+  var total = cards.length;
+  var current = 0;
+
+  // Build dots
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ir a servicio ' + (i + 1));
+    dot.dataset.index = i;
+    dotsContainer.appendChild(dot);
+  }
+  var dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(index, total - 1));
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function (d, i) {
+      d.classList.toggle('active', i === current);
+    });
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+  }
+
+  btnPrev.addEventListener('click', function () { goTo(current - 1); });
+  btnNext.addEventListener('click', function () { goTo(current + 1); });
+  dotsContainer.addEventListener('click', function (e) {
+    var dot = e.target.closest('.carousel-dot');
+    if (dot) goTo(Number(dot.dataset.index));
+  });
+
+  goTo(0);
+})();
+</script>
 
 </body>
 </html>
