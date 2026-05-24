@@ -1,0 +1,97 @@
+/* ═══════════════════════════════════════════════════════════════
+   cookie-banner.css — consent banner, all pages
+   Fully isolated: no dependency on styles.css tokens.
+═══════════════════════════════════════════════════════════════ */
+
+.cookie-banner-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100%;
+  max-width: 400px;
+  z-index: 999999;
+  display: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cookie-banner-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  border: 1px solid #eef2f5;
+  text-align: center;
+}
+
+.cookie-banner-img-container { margin-bottom: 15px; }
+
+.cookie-banner-img {
+  max-height: 90px;
+  width: auto;
+  object-fit: contain;
+}
+
+.cookie-banner-card h2 {
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: .5px;
+}
+
+.cookie-banner-card p {
+  color: #555555;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+
+.cookie-link {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.cookie-banner-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.cookie-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .2s ease;
+}
+
+.btn-cookie-secondary           { background-color: #7a828a; color: #fff; }
+.btn-cookie-secondary:hover     { background-color: #626970; }
+.btn-cookie-primary             { background-color: #5cb0e6; color: #fff; }
+.btn-cookie-primary:hover       { background-color: #429ad2; }
+
+.cookie-banner-footer { margin-top: 10px; }
+
+.cookie-config-link {
+  font-size: 11px;
+  color: #333;
+  text-decoration: underline;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+
+@media (max-width: 480px) {
+  .cookie-banner-wrapper {
+    bottom: 0;
+    right: 0;
+    max-width: 100%;
+  }
+  .cookie-banner-card {
+    border-radius: 12px 12px 0 0;
+  }
+}
