@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   cookie-banner.css — consent banner, all pages
+   cookie-banner-core.css — shared consent banner styles
    Fully isolated: no dependency on styles.css tokens.
+   Works for any app that loads cookie-banner-core.js.
 ═══════════════════════════════════════════════════════════════ */
 
 .cookie-banner-wrapper {

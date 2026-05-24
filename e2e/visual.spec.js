@@ -22,7 +22,7 @@ async function gotoVisualRoute(page, route, { mock = false, viewport = VIEWPORTS
   await installDeterministicVisualState(page);
   // Dismiss cookie banner so it never overlaps visual snapshots
   await page.addInitScript(() => {
-    localStorage.setItem('cookie_consent_decision', 'accepted');
+    localStorage.setItem('imkontext_cookie_consent', 'accepted');
   });
   if (mock) {
     await mockApi(page);
