@@ -14,7 +14,7 @@
     '  <span class="app-footer-sep">|</span>',
     '  <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>',
     '  <span class="app-footer-sep">|</span>',
-    '  <a href="https://www.webfuengirola.com/" target="_blank" rel="noreferrer">Web Fuengirola Studio</a>',
+    '  <a href="/webfuengirola">Web Fuengirola Studio</a>',
     '  <span class="app-footer-sep">|</span>',
     '  <a href="/" class="nav-active">im Kontext</a>',
     '</nav>',
