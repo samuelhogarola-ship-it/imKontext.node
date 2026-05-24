@@ -598,6 +598,9 @@ input, select { font-family: inherit; }
   color: var(--ink);
 }
 
+/* Override the .app-footer-nav a uppercase rule for the brand element */
+.app-footer-nav .app-footer-brand { text-transform: none; }
+
 .app-footer-brand img {
   height: 28px;
   width: auto;
