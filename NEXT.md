@@ -7,10 +7,6 @@ Polish editorial visual system en toda la app (landing, app principal y páginas
 
 ## Tareas pendientes
 
-### Footer
-- [ ] Añadir enlace **web fuengirola** al footer (`#app-footer` y páginas estáticas)
-- [ ] Cargar la plantilla del footer desde un archivo en `core/` en lugar de duplicarla en cada HTML
-
 ### Tests E2E
 - [ ] Añadir test para el flujo **"Repasar solo errores"**:
   responder mal → terminar → botón "Repasar errores" → nuevo ejercicio arranca
@@ -31,6 +27,8 @@ Polish editorial visual system en toda la app (landing, app principal y páginas
 - [x] CI en GitHub Actions (solo suite mockeada)
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
 - [x] Footer compartido visible en `/`, `/metodologia` y `/legal`
+- [x] Enlace **Web Fuengirola Studio** añadido al footer en todas las páginas
+- [x] `shared/app-footer.js` — plantilla de footer como módulo core; metodologia y legal la cargan dinámicamente
 - [x] Landing ajustada para mostrar el footer sin scroll y CTA actualizado a "Empieza ahora"
 - [x] `data-testid` en elementos dinámicos (`featured-card`, `text-row`, `palabra-token`)
 - [x] Nav links movidos a footer en páginas internas (PR #39)
