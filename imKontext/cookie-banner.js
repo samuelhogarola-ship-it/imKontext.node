@@ -7,7 +7,7 @@
     // are queued before the script tag is injected (Consent Mode v2).
     if (window.GoogleAnalyticsCore) {
       GoogleAnalyticsCore.init({
-        measurementId: 'G-XXXXXXXXXX', // TODO: reemplazar con el Measurement ID de GA4
+        measurementId: 'G-KT1FWQKQEX',
       });
     }
 
