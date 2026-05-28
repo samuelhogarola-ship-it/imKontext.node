@@ -8,6 +8,7 @@
     if (window.GoogleAnalyticsCore) {
       GoogleAnalyticsCore.init({
         measurementId: 'G-KT1FWQKQEX',
+        preferencesKey: 'imkontext_cookie_consent_preferences',
       });
     }
 
