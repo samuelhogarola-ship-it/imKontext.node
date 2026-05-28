@@ -10,7 +10,10 @@
      2. gtag('consent', 'default', ...) — BEFORE the script tag
      3. <script async gtag.js> injected regardless of consent
      4. gtag('config', measurementId)
-     Google can model conversions even before consent is given.
+     No personal data is sent while analytics_storage is denied.
+     → On grantConsent(): consent update + fresh page_view so the current
+        page is captured under granted state (the initial page_view fired
+        while analytics_storage was still 'denied').
 
    Conservative (loadBeforeConsent: false)
      "Basic/manual" consent mode — no script touches the network
@@ -35,9 +38,10 @@
 (function () {
   'use strict';
 
-  var _config      = null;
-  var _initialized = false;
-  var _scriptLoaded = false;
+  var _config                = null;
+  var _initialized           = false;
+  var _scriptLoaded          = false;
+  var _initialConsentGranted = false; // true when init() ran with consent already stored
 
   function getStorage() {
     try { return window.localStorage; } catch (_) { return null; }
@@ -76,8 +80,11 @@
   }
 
   function loadScript(measurementId) {
+    if (document.querySelector('script[data-google-analytics-core]')) return;
+
     var script = document.createElement('script');
     script.async = true;
+    script.dataset.googleAnalyticsCore = 'true';
     script.src = 'https://www.googletagmanager.com/gtag/js?id=' + measurementId;
     document.head.appendChild(script);
   }
@@ -85,7 +92,8 @@
   function activateTracking() {
     loadScript(_config.measurementId);
     window.gtag('config', _config.measurementId, {
-      send_page_view: _config.sendPageView !== false
+      send_page_view: _config.sendPageView !== false,
+      anonymize_ip:   true
     });
     _scriptLoaded = true;
   }
@@ -111,6 +119,8 @@
     setupDataLayer();
     applyConsentDefault(alreadyConsented);
 
+    _initialConsentGranted = alreadyConsented;
+
     if (loadEarly) {
       // Advanced mode: load now, Consent Mode v2 handles the rest
       activateTracking();
@@ -135,11 +145,26 @@
 
   function grantConsent() {
     if (!_initialized || typeof window.gtag !== 'function') return;
+
+    // Consent update MUST be queued before activateTracking() so that
+    // gtag('config', ...) and the initial page_view fire under 'granted',
+    // not under the previous 'denied' default.
+    window.gtag('consent', 'update', { analytics_storage: 'granted' });
+
     if (!_scriptLoaded) {
       // Conservative mode: first grant → load script now
       activateTracking();
+    } else if (_config.sendPageView !== false && !_initialConsentGranted) {
+      // Advanced mode: the initial page_view fired under analytics_storage: 'denied'.
+      // Fire a fresh one now so this session is captured under granted state.
+      // Flip the flag immediately so repeated grantConsent() calls are idempotent.
+      _initialConsentGranted = true;
+      window.gtag('event', 'page_view', {
+        page_location: window.location.href,
+        page_title:    document.title
+      });
     }
-    window.gtag('consent', 'update', { analytics_storage: 'granted' });
+
     if (_config && _config.debug) console.log('[GoogleAnalyticsCore] consent granted');
   }
 
@@ -164,9 +189,10 @@
 
   // Visible for testing — resets module state so tests can re-init cleanly
   function _reset() {
-    _config       = null;
-    _initialized  = false;
-    _scriptLoaded = false;
+    _config                = null;
+    _initialized           = false;
+    _scriptLoaded          = false;
+    _initialConsentGranted = false;
   }
 
   window.GoogleAnalyticsCore = {
