@@ -1,7 +1,7 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Polish editorial visual system en toda la app (landing, app principal y páginas estáticas), sin tocar lógica ni layout. Después queda como gap principal el E2E de "Repasar solo errores".
+Google Analytics integrado y CI verde. Próximo foco: merge PR #55 (GA) y retomar polish editorial visual y el E2E de "Repasar solo errores".
 
 ---
 
@@ -26,6 +26,9 @@ Polish editorial visual system en toda la app (landing, app principal y páginas
 - [x] Suite de integración Supabase separada (`npm run test:integration`)
 - [x] CI en GitHub Actions (solo suite mockeada)
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
+- [x] Google Analytics GA4 (G-KT1FWQKQEX) integrado con Consent Mode v2 — PR #55, CI ✅
+- [x] Snapshots visuales regenerados en Linux (ubuntu-latest) para evitar drift macOS/CI
+- [x] Workflow `update-snapshots.yml` añadido para regenerar baselines en Linux cuando sea necesario
 - [x] Footer compartido visible en `/`, `/metodologia` y `/legal`
 - [x] Enlace **Web Fuengirola Studio** añadido al footer en todas las páginas
 - [x] `shared/app-footer.js` — plantilla de footer como módulo core; metodologia y legal la cargan dinámicamente

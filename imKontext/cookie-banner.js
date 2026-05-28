@@ -1,8 +1,16 @@
-/* imKontext cookie consent config — delegates to CookieBannerCore */
+/* imKontext cookie consent + analytics config */
 (function () {
   'use strict';
 
   function init() {
+    // GA must initialise BEFORE the banner so gtag consent defaults
+    // are queued before the script tag is injected (Consent Mode v2).
+    if (window.GoogleAnalyticsCore) {
+      GoogleAnalyticsCore.init({
+        measurementId: 'G-KT1FWQKQEX',
+      });
+    }
+
     CookieBannerCore.init({
       storageKey:  'imkontext_cookie_consent',
       imageSrc:    '/imK.cookie.webp',
@@ -17,6 +25,17 @@
       configLabel: 'CONFIGURACIÓN DE COOKIES',
       policyUrl:   '/legal',
       configUrl:   '/legal',
+      onAccept: function (prefs) {
+        if (prefs.analiticas && window.GoogleAnalyticsCore) GoogleAnalyticsCore.grantConsent();
+      },
+      onReject: function () {
+        if (window.GoogleAnalyticsCore) GoogleAnalyticsCore.revokeConsent();
+      },
+      onSaveConfig: function (prefs) {
+        if (!window.GoogleAnalyticsCore) return;
+        if (prefs.analiticas) GoogleAnalyticsCore.grantConsent();
+        else                  GoogleAnalyticsCore.revokeConsent();
+      },
     });
   }
 
