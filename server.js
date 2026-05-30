@@ -8,10 +8,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const frontendDir = path.join(__dirname, "imKontext");
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL =
+  process.env.SUPABASE_URL || "https://fvhxbbhxucwawypfzikf.supabase.co";
 const SUPABASE_ANON =
   process.env.SUPABASE_ANON_KEY ||
-  process.env.SUPABASE_ANON;
+  process.env.SUPABASE_ANON ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2aHhiYmh4dWN3YXd5cGZ6aWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzEzMzEsImV4cCI6MjA5MDgwNzMzMX0.LBSbe0SGXM5mGB9Ym6ljLUyI1Tug7yP9YNFlROE6kRE";
 
 app.disable("x-powered-by");
 
