@@ -19,6 +19,12 @@ backend/node.tar.gz
 .env.local
 backend/.env
 
+# Database backups
+backups/
+backups/*.sql
+backups/*.dump
+backups/*.backup
+
 # Generated or transient backend artifacts
 backend/convertir/
 backend/procesados/

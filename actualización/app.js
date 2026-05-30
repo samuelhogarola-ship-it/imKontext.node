@@ -4,10 +4,13 @@
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── SUPABASE CONFIG ─────────────────────────────────────────── */
-const SUPABASE_URL  = 'https://fvhxbbhxucwawypfzikf.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2aHhiYmh4dWN3YXd5cGZ6aWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzEzMzEsImV4cCI6MjA5MDgwNzMzMX0.LBSbe0SGXM5mGB9Ym6ljLUyI1Tug7yP9YNFlROE6kRE';
+const SUPABASE_URL  = window.__IMKONTEXT_SUPABASE_URL__ || '';
+const SUPABASE_ANON = window.__IMKONTEXT_SUPABASE_ANON__ || '';
 
 async function sbFetch(path) {
+  if (!SUPABASE_URL || !SUPABASE_ANON) {
+    throw new Error('Falta configurar Supabase para esta demo legacy.');
+  }
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       'apikey': SUPABASE_ANON,
