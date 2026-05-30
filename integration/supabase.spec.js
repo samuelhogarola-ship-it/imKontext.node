@@ -1,10 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-test.skip(
-  !process.env.SUPABASE_URL || !(process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_ANON),
-  'Requires SUPABASE_URL and SUPABASE_ANON_KEY (or SUPABASE_ANON) to run against a real Supabase project.'
-);
-
 test('GET /api/health confirms Supabase is configured', async ({ request }) => {
   const res = await request.get('/api/health');
   expect(res.ok()).toBe(true);
