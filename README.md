@@ -57,6 +57,7 @@ La app consulta Supabase desde servidor. Variables soportadas:
 - `PORT`
 
 `SUPABASE_ANON` se acepta como alias de compatibilidad si no se usa `SUPABASE_ANON_KEY`.
+`SUPABASE_URL` y `SUPABASE_ANON_KEY` ya no tienen fallbacks hardcodeados: hay que configurarlos en cada entorno. Esto facilita apuntar todas las apps VokabelWorld a un único proyecto Supabase sin arrastrar credenciales del proyecto antiguo.
 
 ## Arranque local
 
