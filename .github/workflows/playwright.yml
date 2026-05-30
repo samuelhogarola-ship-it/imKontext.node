@@ -3,8 +3,20 @@ name: Playwright E2E
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'backend/sql/**'
+      - '.env.example'
+      - 'README.md'
+      - '.gitignore'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'backend/sql/**'
+      - '.env.example'
+      - 'README.md'
+      - '.gitignore'
 
 jobs:
   e2e:
