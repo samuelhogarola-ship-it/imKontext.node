@@ -10,11 +10,11 @@ Rellenar esta matriz una vez abiertos los tres proyectos reales.
 | versiones por nivel | existe | no detectado | ? | reutilizar `imKontext` | canonico |
 | relacion texto-vocabulario | existe | no detectado | ? | reutilizar `imKontext` | canonico |
 | vocabulario | existe | existe | ? | reutilizar `imKontext` y mapear shape | canonico |
-| catalogo de apps | no detectado | `apps_catalog` | ? | reutilizar concepto de VokabelLab si `imKontext` no tiene equivalente real | comprobar antes de crear |
-| perfiles de usuario | no detectado | `profiles` | ? | reutilizar concepto de VokabelLab si `imKontext` no tiene equivalente real | comprobar antes de crear |
-| acceso por app | no detectado | `user_app_access` | ? | reutilizar concepto de VokabelLab si `imKontext` no tiene equivalente real | comprobar antes de crear |
-| snapshots de stats | no detectado | `user_stats_snapshots` | ? | extender porque falta `app_id` en VokabelLab | comprobar antes de crear |
-| roles admin | no detectado | `platform_roles` | ? | comparar con candidato `admin_roles` | comprobar antes de crear |
+| catalogo de apps | no detectado | no detectado en dump remoto | ? | probablemente crear, salvo que aparezca en otro proyecto | comprobar antes de crear |
+| perfiles de usuario | no detectado | `profiles` | ? | reutilizar concepto remoto existente | comprobar antes de crear |
+| acceso por app | no detectado | no detectado en dump remoto | ? | pendiente | comprobar antes de crear |
+| snapshots de stats | no detectado | no detectado en dump remoto | ? | pendiente | comprobar antes de crear |
+| roles admin | no detectado | no detectado en dump remoto | ? | pendiente | comprobar antes de crear |
 | auditoria admin | no detectada | no detectada en migracion vista | ? | pendiente | comprobar antes de crear |
 
 ## Tabla origen -> destino
@@ -27,10 +27,10 @@ Rellenar esta matriz una vez abiertos los tres proyectos reales.
 | `imKontext` | `vocabulario` | vocabulario global | `vocabulario` | reutilizar | medio |
 | `VokabelLab` | `vocabulario` | vocabulario app publica | `vocabulario` | migrar/reconciliar | medio por shape distinto |
 | `VokabelLab` | `profiles` | perfil usuario | pendiente de decidir | extender o renombrar concepto | medio |
-| `VokabelLab` | `apps_catalog` | catalogo apps | pendiente de decidir | extender/reutilizar | medio |
-| `VokabelLab` | `user_app_access` | acceso por app | pendiente de decidir | extender/reutilizar | medio |
-| `VokabelLab` | `user_stats_snapshots` | snapshot remoto stats | pendiente de decidir | extender | alto por falta de `app_id` |
-| `VokabelLab` | `platform_roles` | rol admin plataforma | pendiente de decidir | extender/reutilizar | medio |
+| `VokabelLab` | `study_sessions` | sesiones de estudio | pendiente de decidir | evaluar si se conserva o se migra a stats snapshot | medio |
+| `VokabelLab` | `session_answers` | respuestas por sesion | pendiente de decidir | evaluar si se conserva o se agrega a snapshot/historial | medio |
+| `VokabelLab` | `themas` | agrupacion tematica | pendiente de decidir | mapear a categorias/curriculum | medio |
+| `VokabelLab` | `user_progress` | progreso usuario | pendiente de decidir | evaluar convergencia con stats-core remoto | medio-alto |
 
 Acciones permitidas:
 
@@ -43,12 +43,9 @@ Acciones permitidas:
 
 | Tipo | Objeto | Proyectos afectados | Resolucion propuesta |
 | --- | --- | --- | --- |
-| naming | `apps_catalog` vs `app_catalog` | VokabelLab vs propuesta FASE 1 | no crear tabla nueva hasta decidir si se reutiliza `apps_catalog` |
 | naming | `profiles` vs `user_profiles` | VokabelLab vs propuesta FASE 1 | preferir reutilizacion/extension del concepto existente |
-| naming | `platform_roles` vs `admin_roles` | VokabelLab vs propuesta FASE 1 | validar si `platform_roles` cubre el mismo concepto |
-| modelo | `user_stats_snapshots` sin `app_id` | VokabelLab vs direccion unificada | extender modelo o migrar a PK compuesta |
-| datos | `apps_catalog.id = vokabel-lab` | VokabelLab vs `app_id` previsto `vokabellab` | definir mapeo canonico antes del cutover |
 | shape | `vocabulario(de, es, artikel, type, thema_id, is_active)` | VokabelLab vs `vocabulario(german, spanish, article, word_type, ...)` en imKontext | mapear columnas y confirmar si son datasets iguales o paralelos |
+| discrepancia | migracion local `labworld_secure_platform` vs dump remoto real | VokabelLab local vs VokabelLab remoto | basar la fase 1 en dump remoto real; tratar migracion local como pista, no como estado desplegado |
 
 ## Estructuras reutilizables en imKontext
 
@@ -65,8 +62,17 @@ Acciones permitidas:
 - snapshots remotos de stats
 - roles admin/plataforma
 - auditoria admin
+- sesiones y respuestas de estudio de VokabelLab si se decide preservarlas
 
 ## Observaciones finales
 
-- `VokabelLab` ya aporta un modelo real de plataforma segura; antes de crear tablas candidatas nuevas en `imKontext` hay que comparar contra este modelo
+- el dump remoto real de `VokabelLab` contiene solo:
+  - `profiles`
+  - `session_answers`
+  - `study_sessions`
+  - `themas`
+  - `user_progress`
+  - `vocabulario`
+- por tanto, la migracion local `labworld_secure_platform` no puede asumirse como estado productivo desplegado
+- cualquier decision de FASE 1 debe priorizar el dump remoto real sobre migraciones locales no verificadas
 - `Rivaz` sigue bloqueando el cierre de la matriz final
