@@ -16,7 +16,7 @@ export async function mockApi(page) {
     route => route.fulfill({ json: TEXTS })
   );
   await page.route(
-    url => url.pathname === '/api/text-version-vocabulary',
+    url => url.pathname === '/api/text-version-vocabulary-core',
     route => route.fulfill({ json: VOCABULARY })
   );
   await page.route(

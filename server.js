@@ -127,25 +127,6 @@ app.get("/api/text-version", async (req, res) => {
   }
 });
 
-app.get("/api/text-version-vocabulary", async (req, res) => {
-  const textVersionId = String(req.query.textVersionId || "").trim();
-
-  if (!textVersionId) {
-    return res.status(400).json({ error: "Falta textVersionId" });
-  }
-
-  try {
-    const rows = await supabaseFetch(
-      `text_version_vocabulary?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=vocabulario(id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de,example_sentence_es)`
-    );
-    res.json(rows.map(row => row.vocabulario).filter(Boolean));
-  } catch (error) {
-    res.status(500).json({
-      error: "No se pudo cargar el vocabulario del texto",
-      details: error.details || error.message
-    });
-  }
-});
 
 app.get("/api/text-version-vocabulary-core", async (req, res) => {
   const textVersionId = String(req.query.textVersionId || "").trim();
