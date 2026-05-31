@@ -80,5 +80,13 @@
 ## Bloqueo actual
 
 - no se ha encontrado un repo local identificable con nombre `Rivaz`
-- no se puede listar proyectos remotos desde CLI sin `SUPABASE_ACCESS_TOKEN` o `supabase login`
-- siguiente paso: localizar repo/export o identificar el proyecto Supabase remoto correspondiente
+- `gh repo list samuelhogarola-ship-it --limit 200` no muestra un repo `Rivaz` ni un nombre evidentemente equivalente
+- `supabase projects list` en esta sesion solo muestra dos proyectos accesibles:
+  - `imKontext` (`fvhxbbhxucwawypfzikf`)
+  - `VokabelLab` (`ahxjrugfcoheduwqpoxf`)
+- en `VokabelLab.node` si aparece evidencia de otras apps (`der-die-das`) en migraciones locales, pero no de `Rivaz`
+- conclusion actual: no hay evidencia disponible desde este workspace ni desde el acceso Supabase actual de que `Rivaz` sea un tercer proyecto remoto separado
+- siguiente paso: confirmar con producto/owner si `Rivaz` es:
+  - un alias interno de `VokabelLab`
+  - un proyecto Supabase externo no compartido en esta org
+  - un repo/app aun no localizado

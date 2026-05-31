@@ -53,6 +53,7 @@ Esta fase cubre solo:
   - `imKontext`: `fvhxbbhxucwawypfzikf`
   - `VokabelLab`: `ahxjrugfcoheduwqpoxf`
 - `Rivaz` todavia no aparece como repo local identificable en este workspace
+- `gh repo list samuelhogarola-ship-it --limit 200` tampoco muestra un repo `Rivaz`
 
 ## Orden de trabajo
 
@@ -124,6 +125,7 @@ Actualizacion:
   - `supabase/seed.sql`
   - `server.js`
 - `Rivaz` sigue pendiente de localizacion o export remoto.
+- con la evidencia actual, `Rivaz` debe tratarse como bloqueo por identidad no confirmada, no como tercer proyecto ya demostrado
 
 ## Estado actual de backups
 
@@ -199,3 +201,10 @@ Condiciones exactas ya cumplidas para el bloque `imKontext + VokabelLab`:
 Condicion restante para cerrar backups globales de FASE 1:
 
 - identificar y respaldar `Rivaz`
+
+Evidencia acumulada a fecha `2026-05-31`:
+
+- busqueda local acotada solo encuentra nuestros propios documentos de inventario de `Rivaz`
+- la org accesible por `supabase projects list` expone solo `imKontext` y `VokabelLab`
+- la cuenta accesible por `gh repo list samuelhogarola-ship-it --limit 200` no expone un repo `Rivaz`
+- por tanto, hoy no hay evidencia operativa suficiente para afirmar que `Rivaz` existe como proyecto Supabase separado dentro del acceso disponible

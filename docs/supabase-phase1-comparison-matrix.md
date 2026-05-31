@@ -76,3 +76,7 @@ Acciones permitidas:
 - por tanto, la migracion local `labworld_secure_platform` no puede asumirse como estado productivo desplegado
 - cualquier decision de FASE 1 debe priorizar el dump remoto real sobre migraciones locales no verificadas
 - `Rivaz` sigue bloqueando el cierre de la matriz final
+- a fecha `2026-05-31`, la evidencia operativa disponible apunta a que `Rivaz` no esta confirmado como tercer proyecto accesible:
+  - no aparece como repo en `gh repo list samuelhogarola-ship-it --limit 200`
+  - no aparece como proyecto en `supabase projects list`
+  - la resolucion pasa por confirmacion externa o localizacion de un repo/ref distinto
