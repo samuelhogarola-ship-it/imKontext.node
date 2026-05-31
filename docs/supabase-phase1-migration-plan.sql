@@ -1,8 +1,11 @@
 -- ============================================================
--- FASE 1 — Plan SQL de Migración: imKontext ← VokabelLab
+-- FASE 1 — Plan SQL de Consolidación: imKontext ← VokabelLab
 -- Fecha: 2026-05-31
 -- ESTADO: BORRADOR — NO EJECUTAR sin validación previa
 -- ============================================================
+-- Objetivo: traer el ESQUEMA y el CONTENIDO de VokabelLab a imKontext.
+-- imKontext pasa a ser el único proyecto Supabase de VokabelWorld.
+-- No se migran usuarios — las tablas de práctica se crean vacías.
 -- Orden: DDL primero, datos al final.
 -- Todas las sentencias son idempotentes (IF NOT EXISTS / DO $$).
 -- ============================================================
@@ -332,13 +335,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS vocabulario_german_spanish_idx
 
 
 -- ─────────────────────────────────────────────────────────────
--- PASO 14: Datos — profiles y user_progress
+-- PASO 14: Infraestructura de usuarios en imKontext
 -- ─────────────────────────────────────────────────────────────
--- CONFIRMADO: VokabelLab dump (vokabellab_data_20260530_oneshot.sql) tiene 0 filas
--- en profiles, user_progress y study_sessions. No hay usuarios de producción reales.
--- Este paso queda OMITIDO en FASE 1.
--- Los nuevos usuarios se crearán vía trigger on_auth_user_created → handle_new_user.
+-- Las tablas profiles, study_sessions, session_answers y user_progress
+-- se crean VACÍAS en imKontext (pasos 3–6). No hay datos de usuarios
+-- que mover — el objetivo de esta migración es traer el esquema y el
+-- contenido de VokabelLab (themas + vocabulario) a imKontext para que
+-- imKontext sea el proyecto Supabase único de VokabelWorld.
 --
--- Si en el futuro se migran usuarios reales, los vocabulario_id de user_progress
--- deben remapearse a los IDs de imKontext ANTES de insertar (los IDs de VokabelLab
--- no se preservan en el merge del paso 13b).
+-- Los usuarios nuevos en imKontext se crean vía:
+--   trigger on_auth_user_created → handle_new_user → INSERT INTO profiles
+--
+-- No hay ningún INSERT adicional que ejecutar en este paso.
