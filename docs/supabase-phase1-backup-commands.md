@@ -31,7 +31,7 @@ Conclusión operativa:
 
 - la metadata local enlazada ayuda a identificar el pooler correcto
 - pero sigue haciendo falta la connection string completa con password desde Supabase Database settings
-- mientras no exista esa password, la fase de backups sigue en **NOT COMPLETE**
+- antes de validar el metodo `oneshot` del `2026-05-30`, la fase de backups seguia en **NOT COMPLETE**
 
 ## Objetivo
 
