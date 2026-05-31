@@ -30,7 +30,7 @@ async function startPractice() {
     const vId = version.id;
 
     const vocab = await apiFetch(
-      `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
+      `/api/text-version-vocabulary-core?textVersionId=${encodeURIComponent(vId)}`
     );
     if (!vocab.length) throw new Error('No hay vocabulario para este texto y nivel.');
     currentVocab = vocab;
