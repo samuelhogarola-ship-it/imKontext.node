@@ -7,6 +7,32 @@
 - `pg_dump` disponible
 - DB URL directa obtenida desde Supabase Database settings
 
+## Hallazgo operativo actual
+
+Se localizaron URLs de pooler enlazadas localmente en:
+
+- `/private/tmp/imkontext-supabase-link/supabase/.temp/pooler-url`
+- `/Users/sam/Desktop/webs/LAB-WORLD/VokabelLab.node/supabase/.temp/pooler-url`
+
+Esas URLs permiten confirmar host y puerto, pero no bastan para `pg_dump` si no incluyen password efectivo.
+
+Intento real ejecutado:
+
+- `pg_dump` contra `imKontext` usando la `pooler-url` local
+
+Error exacto obtenido:
+
+```txt
+Password:
+pg_dump: error: connection to server at "aws-1-eu-central-1.pooler.supabase.com" (18.196.8.182), port 5432 failed: fe_sendauth: no password supplied
+```
+
+Conclusión operativa:
+
+- la metadata local enlazada ayuda a identificar el pooler correcto
+- pero sigue haciendo falta la connection string completa con password desde Supabase Database settings
+- mientras no exista esa password, la fase de backups sigue en **NOT COMPLETE**
+
 ## Objetivo
 
 Generar para cada proyecto:
@@ -19,7 +45,7 @@ Generar para cada proyecto:
 
 ## Estado requerido
 
-La FASE 1 de backups sigue en estado **NOT COMPLETE** hasta que se cumplan estas cuatro condiciones:
+El bloque principal de backups para consolidacion `imKontext` + `VokabelLab` queda **COMPLETE** cuando se cumplen estas cuatro condiciones:
 
 - `imKontext` schema dump valido
 - `imKontext` data dump con `INSERT INTO`
@@ -32,6 +58,19 @@ Mientras eso no ocurra:
 - no modificar esquema
 - no tocar frontend
 - no cambiar variables de entorno
+
+Estado actual a `2026-05-30`:
+
+- `imKontext` schema dump valido: **OK**
+- `imKontext` data dump con `INSERT INTO`: **OK**
+- `VokabelLab` schema dump con `CREATE TABLE`: **OK**
+- `VokabelLab` data dump con `INSERT INTO`: **OK**
+
+Nota:
+
+- `Rivaz` sigue pendiente de identificacion / acceso y no entra todavia en este cierre parcial
+- por tanto, el sub-bloque `imKontext + VokabelLab` esta **COMPLETE**
+- el objetivo global de backups de los tres proyectos sigue **PENDIENTE** hasta resolver `Rivaz`
 
 ## VokabelLab
 
@@ -67,10 +106,14 @@ Guardar aparte:
 
 Estado actual:
 
-- schema dump via `supabase db dump` bloqueado por dependencia de Docker
-- schema dump directo intentado via script derivado de `--dry-run`, pero todavia no valido
-- data dump generado, pero el archivo resultante no contiene `INSERT INTO` utiles por ahora
-- estado actual: **NOT COMPLETE**
+- `pooler-url` local encontrada en `supabase/.temp/pooler-url`
+- dump schema valido generado en:
+  - `backups/vokabellab_schema_20260530_oneshot.sql`
+- dump data valido generado en:
+  - `backups/vokabellab_data_20260530_oneshot.sql`
+- verificacion `CREATE TABLE`: **OK**
+- verificacion `INSERT INTO`: **OK**
+- estado actual: **COMPLETE** para `VokabelLab`
 
 ## imKontext
 
@@ -100,10 +143,14 @@ pg_dump "$IMKONTEXT_DB_URL" \
 Estado actual:
 
 - se creo un enlace temporal en `/private/tmp/imkontext-supabase-link`
-- schema dump real generado correctamente en:
-  - `/Users/sam/.codex/worktrees/4c0d/imKontext.node/backups/imkontext_schema_20260530.sql`
-- data dump generado, pero sin `INSERT INTO` utiles por ahora
-- estado actual: **NOT COMPLETE**
+- `pooler-url` local encontrada en `/private/tmp/imkontext-supabase-link/supabase/.temp/pooler-url`
+- dump schema valido generado en:
+  - `backups/imkontext_schema_20260530_oneshot.sql`
+- dump data valido generado en:
+  - `backups/imkontext_data_20260530_oneshot.sql`
+- verificacion `CREATE TABLE`: **OK**
+- verificacion `INSERT INTO`: **OK**
+- estado actual: **COMPLETE** para `imKontext`
 
 ## Rivaz
 

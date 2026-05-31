@@ -127,7 +127,9 @@ Actualizacion:
 
 ## Estado actual de backups
 
-Estado global de FASE 1 backups: **NOT COMPLETE**
+Estado del bloque principal `imKontext + VokabelLab`: **COMPLETE**
+
+Estado global de FASE 1 backups de los tres proyectos: **NOT COMPLETE**
 
 Backups creados en:
 
@@ -135,10 +137,23 @@ Backups creados en:
 
 Resultado a fecha `2026-05-30`:
 
-- `imkontext_schema_20260530.sql`: OK
-- `imkontext_data_20260530.sql`: incompleto o vacio util; solo contiene `SET session_replication_role = replica;`
-- `vokabellab_schema_20260530.sql`: fallo
-- `vokabellab_data_20260530.sql`: incompleto o vacio util; solo contiene `SET session_replication_role = replica;`
+- `imkontext_schema_20260530_oneshot.sql`: OK
+- `imkontext_data_20260530_oneshot.sql`: OK
+- `vokabellab_schema_20260530_oneshot.sql`: OK
+- `vokabellab_data_20260530_oneshot.sql`: OK
+- `Rivaz`: pendiente
+
+Hallazgo adicional confirmado:
+
+- existe `pooler-url` local para `imKontext` en:
+  - `/private/tmp/imkontext-supabase-link/supabase/.temp/pooler-url`
+- existe `pooler-url` local para `VokabelLab` en:
+  - `/Users/sam/Desktop/webs/LAB-WORLD/VokabelLab.node/supabase/.temp/pooler-url`
+- el uso directo de `pooler-url` sin password no basta para `pg_dump`
+- la via que si funciona es:
+  - `supabase db dump --linked --dry-run`
+  - extraer `PGHOST`, `PGUSER`, `PGPASSWORD`, `PGDATABASE`
+  - ejecutar `pg_dump` inmediatamente en el mismo shell (`oneshot`)
 
 Verificacion manual ya hecha:
 
@@ -148,18 +163,39 @@ Verificacion manual ya hecha:
   - `text_version_vocabulary`
   - `vocabulario`
 
+Verificacion manual adicional ya hecha:
+
+- `imKontext` data contiene `INSERT INTO` para:
+  - `texts`
+  - `text_versions`
+  - `vocabulario`
+  - `text_version_vocabulary`
+- `VokabelLab` schema contiene `CREATE TABLE` para:
+  - `profiles`
+  - `session_answers`
+  - `study_sessions`
+  - `themas`
+  - `user_progress`
+  - `vocabulario`
+- `VokabelLab` data contiene `INSERT INTO` para:
+  - `themas`
+  - `vocabulario`
+
 Conclusiones:
 
 - el acceso autenticado al CLI esta confirmado
-- el backup de esquema de `imKontext` ya existe y no esta vacio
-- todavia NO se puede considerar cerrada la fase de backups porque faltan:
-  - backup de esquema valido de `VokabelLab`
-  - backup de datos validos de `imKontext`
-  - backup de datos validos de `VokabelLab`
+- los backups validos de `imKontext` y `VokabelLab` ya existen
+- la metadata local enlazada mas `supabase db dump --dry-run` permite resolver credenciales temporales suficientes para `pg_dump`
+- el bloqueo principal restante no es `imKontext` ni `VokabelLab`
+- el cierre global sigue pendiente por `Rivaz`
 
-Condiciones exactas para cambiar este estado a COMPLETE:
+Condiciones exactas ya cumplidas para el bloque `imKontext + VokabelLab`:
 
 - `imKontext` schema dump valido
 - `imKontext` data dump con `INSERT INTO`
 - `VokabelLab` schema dump con `CREATE TABLE`
 - `VokabelLab` data dump con `INSERT INTO`
+
+Condicion restante para cerrar backups globales de FASE 1:
+
+- identificar y respaldar `Rivaz`
