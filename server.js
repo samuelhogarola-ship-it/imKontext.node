@@ -63,7 +63,7 @@ app.get("/api/texts", async (req, res) => {
         "texts?select=id,title,slug,topic,categoria,access_status,published_at&order=published_at.desc.nullslast,id.desc"
       ),
       supabaseFetch("text_versions?select=id,text_id,level,content"),
-      supabaseFetch("text_version_vocabulary?select=text_version_id")
+      supabaseFetch("text_version_meanings?select=text_version_id")
     ]);
 
     const versionsByTextId = {};
@@ -148,28 +148,7 @@ app.get("/api/text-version-vocabulary-core", async (req, res) => {
   }
 });
 
-app.get("/api/vocabulario", async (req, res) => {
-  const ids = String(req.query.ids || "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
 
-  if (ids.length === 0) {
-    return res.status(400).json({ error: "Faltan ids de vocabulario" });
-  }
-
-  try {
-    const vocab = await supabaseFetch(
-      `vocabulario?id=in.(${ids.join(",")})&select=id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de,example_sentence_es`
-    );
-    res.json(vocab);
-  } catch (error) {
-    res.status(500).json({
-      error: "No se pudo cargar el vocabulario",
-      details: error.details || error.message
-    });
-  }
-});
 
 // SPA routes — serve index.html so client-side router resolves the URL
 app.get('/textos', (req, res) => res.sendFile(path.join(frontendDir, 'index.html')));
