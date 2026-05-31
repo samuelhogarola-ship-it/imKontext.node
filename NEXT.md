@@ -1,11 +1,18 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Google Analytics integrado y CI verde. Próximo foco: merge PR #55 (GA) y retomar polish editorial visual y el E2E de "Repasar solo errores".
+Core léxico unificado operativo en imKontext. PR #63 en revisión de CI.
+Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
 
 ---
 
 ## Tareas pendientes
+
+### Core léxico — pendiente de otros repos
+- [ ] **VokabelLab**: conectar frontend a `vocabulary_meanings WHERE app_key='vokabellab'` + join `vocabulary_meaning_topics` para themas. Pool disponible en Supabase, listo para consumir.
+- [ ] **DerDieDas**: conectar frontend a `app_vocabulary_lemmas WHERE app_key='der-die-das'` + `vocabulary_lemmas` (article ya poblado en 812 lemmas).
+- [ ] **Retirar tablas legacy**: una vez VokabelLab y DerDieDas en producción, aplicar `DROP TABLE vocabulario` y `DROP TABLE text_version_vocabulary` en una migración final.
+- [ ] **59 meanings de imKontext sin thema**: no están vinculados a ningún texto. Asignar temáticamente si en algún momento se publican.
 
 ### Tests E2E
 - [ ] Añadir test para el flujo **"Repasar solo errores"**:
@@ -26,6 +33,7 @@ Google Analytics integrado y CI verde. Próximo foco: merge PR #55 (GA) y retoma
 - [x] Suite de integración Supabase separada (`npm run test:integration`)
 - [x] CI en GitHub Actions (solo suite mockeada)
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
+- [x] Core léxico unificado — imKontext conectado al core (PR #63): `text_version_meanings`, `example_es`, vista `text_version_vocabulary_core`, endpoint `/api/text-version-vocabulary-core`, themas asignados a 1,390 meanings, legacy eliminado de server.js — CI ✅
 - [x] Google Analytics GA4 (G-KT1FWQKQEX) integrado con Consent Mode v2 — PR #55, CI ✅
 - [x] Snapshots visuales regenerados en Linux (ubuntu-latest) para evitar drift macOS/CI
 - [x] Workflow `update-snapshots.yml` añadido para regenerar baselines en Linux cuando sea necesario
