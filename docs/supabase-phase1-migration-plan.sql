@@ -149,7 +149,8 @@ $$;
 -- ─────────────────────────────────────────────────────────────
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger WHERE tgname = 'set_profiles_updated_at'
+        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+        WHERE t.tgname = 'set_profiles_updated_at' AND c.relname = 'profiles'
     ) THEN
         CREATE TRIGGER "set_profiles_updated_at"
             BEFORE UPDATE ON "public"."profiles"
@@ -159,7 +160,8 @@ END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger WHERE tgname = 'set_vocabulario_updated_at'
+        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+        WHERE t.tgname = 'set_vocabulario_updated_at' AND c.relname = 'vocabulario'
     ) THEN
         CREATE TRIGGER "set_vocabulario_updated_at"
             BEFORE UPDATE ON "public"."vocabulario"
@@ -169,7 +171,8 @@ END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger WHERE tgname = 'set_user_progress_updated_at'
+        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+        WHERE t.tgname = 'set_user_progress_updated_at' AND c.relname = 'user_progress'
     ) THEN
         CREATE TRIGGER "set_user_progress_updated_at"
             BEFORE UPDATE ON "public"."user_progress"
@@ -225,10 +228,12 @@ DROP POLICY IF EXISTS "Public can read active vocabulario" ON "public"."vocabula
 CREATE POLICY "Public can read active vocabulario"
     ON "public"."vocabulario" FOR SELECT
     USING (is_active = true);
+-- NOTA: auth.role() está deprecado en Supabase moderno pero funciona.
+-- Alternativa futura: (SELECT auth.jwt() ->> 'role') = 'service_role'
 CREATE POLICY "Admins can manage vocabulario"
     ON "public"."vocabulario"
-    USING (auth.role() = 'service_role')
-    WITH CHECK (auth.role() = 'service_role');
+    USING ((SELECT auth.jwt() ->> 'role') = 'service_role')
+    WITH CHECK ((SELECT auth.jwt() ->> 'role') = 'service_role');
 
 -- study_sessions
 ALTER TABLE "public"."study_sessions" ENABLE ROW LEVEL SECURITY;
@@ -253,8 +258,7 @@ CREATE POLICY "Users manage own progress"
 
 
 -- ─────────────────────────────────────────────────────────────
--- PASO 12: Datos — themas (INSERT desde VokabelLab dump)
--- Adaptar con los valores reales del dump vokabellab_data_20260530_oneshot.sql
+-- PASO 12: Datos — themas (29 registros reales de VokabelLab)
 -- ─────────────────────────────────────────────────────────────
 INSERT INTO public.themas (id, name) VALUES
     (1,  'Zeit & Natur'),
@@ -290,41 +294,51 @@ ON CONFLICT (id) DO NOTHING;
 
 
 -- ─────────────────────────────────────────────────────────────
--- PASO 13: Datos — vocabulario (MERGE con deduplicación)
+-- PASO 13a: Índice único para deduplicación del merge
+-- Verificado: imKontext tiene 1456 filas, 0 duplicados en (german, spanish).
 -- ─────────────────────────────────────────────────────────────
--- Estrategia:
---   1. Los registros de VokabelLab se insertan como nuevas filas si (german, spanish) no existe.
---   2. Si ya existe en imKontext, se actualiza solo thema_id, is_active, source.
---   3. NO sobreescribir datos ricos (examples, conjugaciones) con NULLs de VokabelLab.
---
--- PLACEHOLDER: ejecutar esto como bloque DO $$ ... $$ después de confirmar mapping de IDs.
---
--- Ejemplo de lógica (adaptar con datos reales):
--- INSERT INTO public.vocabulario (german, spanish, article, word_type, thema_id, is_active, source)
--- SELECT
---     vl.de          AS german,
---     vl.es          AS spanish,
---     vl.artikel     AS article,
---     vl.type        AS word_type,
---     vl.thema_id,
---     vl.is_active,
---     vl.source
--- FROM <staging_vokabellab_vocabulario> vl
--- ON CONFLICT (german, spanish)
---     DO UPDATE SET
---         thema_id  = EXCLUDED.thema_id,
---         is_active = EXCLUDED.is_active,
---         source    = COALESCE(vocabulario.source, EXCLUDED.source);
---
--- NOTA: para ON CONFLICT funcionar se necesita un UNIQUE INDEX en (german, spanish).
--- Añadir ANTES del merge:
 CREATE UNIQUE INDEX IF NOT EXISTS vocabulario_german_spanish_idx
     ON public.vocabulario (german, spanish);
 
 
 -- ─────────────────────────────────────────────────────────────
--- PASO 14: Datos — profiles y user_progress (si hay usuarios reales)
+-- PASO 13b: Datos — vocabulario (MERGE con deduplicación)
+-- VokabelLab tiene 1350 filas. Sin usuarios reales confirmados.
 -- ─────────────────────────────────────────────────────────────
--- NOTA: Si VokabelLab no tiene usuarios de producción reales con datos de progreso,
--- este paso puede omitirse en FASE 1. Los nuevos usuarios se crean vía trigger.
--- Si hay datos reales, copiar de vokabellab_data_20260530_oneshot.sql y adaptar.
+-- Estrategia:
+--   1. Registros de VokabelLab → nuevas filas si (german, spanish) no existe en imKontext.
+--   2. Si ya existe → actualizar solo thema_id, is_active, source (no sobreescribir datos ricos).
+--   3. Los IDs nuevos los asigna la secuencia de imKontext (GENERATED ALWAYS AS IDENTITY).
+--      Los vocabulario_id de VokabelLab se abandonan — NO hay usuarios reales con user_progress
+--      vinculado a esos IDs (dump confirmado vacío), por lo que no se requiere remap de IDs.
+--
+-- PLACEHOLDER: cargar datos de VokabelLab en tabla temporal y ejecutar este INSERT.
+-- Reemplazar <staging> por la tabla temporal o pegar los VALUES directamente.
+--
+-- INSERT INTO public.vocabulario (german, spanish, article, word_type, thema_id, is_active, source)
+-- SELECT
+--     vl.de      AS german,
+--     vl.es      AS spanish,
+--     vl.artikel AS article,
+--     vl.type    AS word_type,
+--     vl.thema_id,
+--     vl.is_active,
+--     vl.source
+-- FROM <staging_vokabellab_vocabulario> AS vl
+-- ON CONFLICT (german, spanish) DO UPDATE SET
+--     thema_id  = EXCLUDED.thema_id,
+--     is_active = EXCLUDED.is_active,
+--     source    = COALESCE(vocabulario.source, EXCLUDED.source);
+
+
+-- ─────────────────────────────────────────────────────────────
+-- PASO 14: Datos — profiles y user_progress
+-- ─────────────────────────────────────────────────────────────
+-- CONFIRMADO: VokabelLab dump (vokabellab_data_20260530_oneshot.sql) tiene 0 filas
+-- en profiles, user_progress y study_sessions. No hay usuarios de producción reales.
+-- Este paso queda OMITIDO en FASE 1.
+-- Los nuevos usuarios se crearán vía trigger on_auth_user_created → handle_new_user.
+--
+-- Si en el futuro se migran usuarios reales, los vocabulario_id de user_progress
+-- deben remapearse a los IDs de imKontext ANTES de insertar (los IDs de VokabelLab
+-- no se preservan en el merge del paso 13b).
