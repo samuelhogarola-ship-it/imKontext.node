@@ -167,8 +167,8 @@ function showLanding() {
   const footer = $('app-footer');
   if (footer) footer.style.display = 'none';
   updateSEOMeta({
-    title: 'APP Vokabel Lab imKontext',
-    description: 'Aprende alemán con textos de actualidad. Practica vocabulario real con imKontext de Vokabel Lab.',
+    title: 'imKontext | Aprende alemán con textos y noticias reales',
+    description: 'Aprende alemán con textos y noticias reales. Practica vocabulario en contexto con imKontext y ejercicios por niveles.',
     canonical: window.location.origin + '/'
   });
 }
@@ -243,8 +243,8 @@ async function goToTextos({ pushState: doPush = true } = {}) {
     history.pushState({ screen: 'textos' }, '', '/textos');
   }
   updateSEOMeta({
-    title: 'imKontext — Elige un texto',
-    description: 'Explora los textos de actualidad en alemán. Elige el artículo que quieres leer y practicar hoy.',
+    title: 'imKontext | Elige un texto para practicar alemán',
+    description: 'Explora textos reales en alemán y elige el artículo que quieres leer y practicar hoy.',
     canonical: window.location.origin + '/textos'
   });
   showScreen('textos');
@@ -776,7 +776,7 @@ async function selectText(text, { pushState: doPush = true } = {}) {
 
   updateSEOMeta({
     title: `${text.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
-    description: `Lee y practica vocabulario alemán con "${text.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
+    description: `Lee y practica vocabulario alemán en contexto con "${text.title}". Nivel ${selectedLevel.toUpperCase()} en imKontext.`,
     canonical: window.location.origin + getTextUrl(text, selectedLevel)
   });
 
@@ -895,7 +895,7 @@ document.querySelectorAll('.content-lvl-chip').forEach(btn => {
         );
         updateSEOMeta({
           title: `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
-          description: `Lee y practica vocabulario alemán con "${selectedText.title}". Nivel ${selectedLevel.toUpperCase()}. imKontext de Vokabel Lab.`,
+          description: `Lee y practica vocabulario alemán en contexto con "${selectedText.title}". Nivel ${selectedLevel.toUpperCase()} en imKontext.`,
           canonical: window.location.origin + getTextUrl(selectedText, selectedLevel)
         });
       }
@@ -1300,8 +1300,8 @@ function formatDate(value) {
     // Default: landing
     $('main-app').style.display = 'none';
     updateSEOMeta({
-      title: 'APP Vokabel Lab imKontext',
-      description: 'Aprende alemán con textos de actualidad. Practica vocabulario real con imKontext de Vokabel Lab.',
+      title: 'imKontext | Aprende alemán con textos y noticias reales',
+      description: 'Aprende alemán con textos y noticias reales. Practica vocabulario en contexto con imKontext y ejercicios por niveles.',
       canonical: window.location.origin + '/'
     });
   }
