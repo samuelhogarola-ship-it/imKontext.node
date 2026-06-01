@@ -1,8 +1,8 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Core léxico unificado operativo en imKontext. PR #63 en revisión de CI.
-Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
+Core léxico unificado operativo en imKontext y ya mergeado en `main` (PR #63).
+Próximo foco: conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
 
 ---
 
