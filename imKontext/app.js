@@ -960,7 +960,7 @@ async function refreshSelectedTextVersion(options = {}) {
     if (selectedTextVersion?.id) {
       try {
         currentTextVocab = await apiFetch(
-          `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(selectedTextVersion.id)}`
+          `/api/text-version-vocabulary-core?textVersionId=${encodeURIComponent(selectedTextVersion.id)}`
         );
       } catch {
         currentTextVocab = [];
@@ -991,7 +991,7 @@ async function updateSliderMax() {
       return;
     }
     const vocab = await apiFetch(
-      `/api/text-version-vocabulary?textVersionId=${encodeURIComponent(vId)}`
+      `/api/text-version-vocabulary-core?textVersionId=${encodeURIComponent(vId)}`
     );
     const max = vocab.length || 0;
     numPalabras = max;
