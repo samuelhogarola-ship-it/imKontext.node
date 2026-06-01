@@ -306,22 +306,26 @@ function renderTextGrid(list) {
     const featuredWrap = document.createElement('section');
     featuredWrap.className = 'tx-featured';
     featuredWrap.innerHTML = `
+      ${renderArchiveNotice(sorted)}
       <div class="tx-featured-head">
-        <p class="tx-featured-kicker">Tema principal de la semana</p>
+        <p class="tx-featured-kicker">Destacado de la semana</p>
         ${renderFeaturedAccessTag(featured)}
       </div>
       <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+        <div class="tx-featured-media" aria-hidden="true">
+          <img class="tx-featured-image" src="/textos-featured-hero.png" alt="">
+        </div>
         <div class="tx-featured-copy">
-          <div class="tx-featured-edition">
-            <span class="tx-featured-edition-label">Número de la semana</span>
-            <span class="tx-featured-edition-issue">${formatShortDate(featured.published_at) || 'Edición abierta'}</span>
-          </div>
-          <p class="tx-featured-topic">${escapeHtml(featured.topic || 'Tema destacado')}</p>
-          <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
-          <p class="tx-featured-desc">${renderFeaturedDescription(featured)}</p>
-          <div class="tx-featured-meta">
-            <div class="tx-row-levels">${renderLevelBadges(featured.levels)}</div>
-            <span class="tx-row-date">${formatShortDate(featured.published_at)}</span>
+          <div class="tx-featured-copy-inner">
+            <div class="tx-featured-source-line">
+              <span class="tx-featured-source">${escapeHtml(getEditorialSourceLabel(featured))}</span>
+              <span class="tx-featured-date">${formatShortDate(featured.published_at)}</span>
+            </div>
+            <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
+            <div class="tx-featured-meta">
+              ${renderPrimaryLevelBadge(featured.levels)}
+            </div>
+            <p class="tx-featured-desc">${renderFeaturedSummary(featured)}</p>
           </div>
         </div>
         <span class="tx-featured-arrow">→</span>
@@ -349,18 +353,14 @@ function createTextRow(text, position) {
   row.setAttribute('role', 'listitem');
   row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
 
-  const topicStr = text.topic
-    ? `<span class="tx-row-topic">${escapeHtml(text.topic)}</span>`
-    : '';
-
   row.innerHTML = `
-    <span class="tx-row-num">#${String(position).padStart(2, '0')}</span>
+    <span class="tx-row-num">${String(position).padStart(2, '0')}</span>
+    <span class="tx-row-source">${escapeHtml(getEditorialSourceLabel(text))}</span>
+    <span class="tx-row-date">${formatShortDate(text.published_at)}</span>
     <span class="tx-row-title">${escapeHtml(text.title)}</span>
     <div class="tx-row-meta">
-      ${topicStr}
       ${renderAccessTag(text)}
-      <div class="tx-row-levels">${renderLevelBadges(text.levels)}</div>
-      <span class="tx-row-date">${formatShortDate(text.published_at)}</span>
+      ${renderPrimaryLevelBadge(text.levels)}
     </div>
     <span class="tx-row-arrow">${isLocked ? '🔒' : '→'}</span>
   `;
@@ -393,14 +393,57 @@ function renderAccessTag(text) {
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
-  if (text.access_status === 'free') {
-    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
-  }
   return '';
 }
 
 function renderLevelBadges(levels = []) {
   return levels.map(level => `<span class="tx-lvl-badge tx-lvl-badge--${level}">${level}</span>`).join('');
+}
+
+function renderPrimaryLevelBadge(levels = []) {
+  const level = pickPreferredLevel(levels);
+  return level
+    ? `<span class="tx-lvl-badge tx-lvl-badge--${level}">${escapeHtml(level)}</span>`
+    : '';
+}
+
+function pickPreferredLevel(levels = []) {
+  if (!Array.isArray(levels) || levels.length === 0) return '';
+  const preferred = levels.find(level => String(level).toLowerCase() === selectedLevel);
+  return preferred || levels[0] || '';
+}
+
+function getEditorialSourceLabel(text) {
+  const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || 'Archivo').trim();
+  return raw || 'Archivo';
+}
+
+function renderFeaturedSummary(text) {
+  const preview = String(text?.previewContent || '').replace(/\s+/g, ' ').trim();
+  if (preview) {
+    const firstSentence = preview.split(/(?<=[.!?])\s+/)[0] || preview;
+    const shortPreview = firstSentence.length > 180
+      ? `${firstSentence.slice(0, 177).trimEnd()}...`
+      : firstSentence;
+    return escapeHtml(shortPreview);
+  }
+  return escapeHtml(renderFeaturedDescription(text));
+}
+
+function renderArchiveNotice(list = []) {
+  const premiumCount = list.filter(text => text?.access_status === 'premium').length;
+  if (premiumCount === 0) return '';
+
+  const label = premiumCount === list.length
+    ? 'El archivo completo incluye acceso premium.'
+    : 'Parte del archivo incluye textos premium.';
+
+  return `
+    <div class="tx-archive-note" role="note">
+      <span class="tx-archive-note-icon" aria-hidden="true">✦</span>
+      <p class="tx-archive-note-copy"><strong>${label}</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
+    </div>
+  `;
 }
 
 function formatShortDate(value) {
@@ -427,9 +470,6 @@ function getFeaturedText(list) {
 function renderFeaturedAccessTag(text) {
   if (isFreemiumText(text)) {
     return '<span class="tx-access-tag tx-access-tag--freemium">PROMO · GRATIS AHORA</span>';
-  }
-  if (text.access_status === 'free') {
-    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
   }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
