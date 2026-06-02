@@ -343,6 +343,12 @@ function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
   let rem = seg;
   renderCountdown(seg, rem);
 
+  // Keep the countdown static in deterministic visual tests so snapshots
+  // don't drift based on timer timing between CI runs.
+  if (window.__IMKONTEXT_VISUAL_TEST__) {
+    return;
+  }
+
   _cdTimer = setInterval(() => {
     rem -= 1;
     if (rem <= 0) {
