@@ -9,9 +9,14 @@ run_if_script_exists() {
   script_name="$1"
 
   if node -e '
-    const fs = require("fs");
-    const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-    process.exit(pkg.scripts && pkg.scripts[process.argv[1]] ? 0 : 1);
+    try {
+      const fs = require("fs");
+      const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+      process.exit(pkg.scripts && pkg.scripts[process.argv[1]] ? 0 : 1);
+    } catch (err) {
+      console.error("husky: error reading package.json:", err.message);
+      process.exit(1);
+    }
   ' "$script_name"; then
     echo "husky: running npm run ${script_name}"
     npm run "${script_name}"
