@@ -313,7 +313,7 @@ function renderTextGrid(list) {
       </div>
       <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-media" aria-hidden="true">
-          <img class="tx-featured-image" src="/textos-featured-hero.png" alt="">
+          <img class="tx-featured-image" src="${escapeHtml(getFeaturedImageSrc(featured))}" alt="">
         </div>
         <div class="tx-featured-copy">
           <div class="tx-featured-copy-inner">
@@ -322,9 +322,6 @@ function renderTextGrid(list) {
               <span class="tx-featured-date">${formatShortDate(featured.published_at)}</span>
             </div>
             <h3 class="tx-featured-title">${escapeHtml(featured.title)}</h3>
-            <div class="tx-featured-meta">
-              ${renderPrimaryLevelBadge(featured.levels)}
-            </div>
             <p class="tx-featured-desc">${renderFeaturedSummary(featured)}</p>
           </div>
         </div>
@@ -360,7 +357,6 @@ function createTextRow(text, position) {
     <span class="tx-row-title">${escapeHtml(text.title)}</span>
     <div class="tx-row-meta">
       ${renderAccessTag(text)}
-      ${renderPrimaryLevelBadge(text.levels)}
     </div>
     <span class="tx-row-arrow">${isLocked ? '🔒' : '→'}</span>
   `;
@@ -400,19 +396,6 @@ function renderLevelBadges(levels = []) {
   return levels.map(level => `<span class="tx-lvl-badge tx-lvl-badge--${level}">${level}</span>`).join('');
 }
 
-function renderPrimaryLevelBadge(levels = []) {
-  const level = pickPreferredLevel(levels);
-  return level
-    ? `<span class="tx-lvl-badge tx-lvl-badge--${level}">${escapeHtml(level)}</span>`
-    : '';
-}
-
-function pickPreferredLevel(levels = []) {
-  if (!Array.isArray(levels) || levels.length === 0) return '';
-  const preferred = levels.find(level => String(level).toLowerCase() === selectedLevel);
-  return preferred || levels[0] || '';
-}
-
 function getEditorialSourceLabel(text) {
   const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || 'Archivo').trim();
   return raw || 'Archivo';
@@ -444,6 +427,24 @@ function renderArchiveNotice(list = []) {
       <p class="tx-archive-note-copy"><strong>${label}</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
     </div>
   `;
+}
+
+function getFeaturedImageSrc(text) {
+  const haystack = [
+    text?.title,
+    text?.topic,
+    text?.categoria,
+    text?.previewContent,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  if (haystack.includes('iran')) {
+    return '/textos-featured-iran.webp';
+  }
+
+  return '/textos-featured-hero.webp';
 }
 
 function formatShortDate(value) {

@@ -1,8 +1,8 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Core léxico unificado operativo en imKontext. PR #63 en revisión de CI.
-Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
+Refresh editorial de `/textos` en marcha en la PR #64.
+Próximo foco: revisar visualmente la PR en navegador real, decidir estrategia de imagen por texto (slug/mapa frontend vs dato backend) y después retomar la secuencia de integración del core en otros repos.
 
 ---
 
@@ -18,6 +18,11 @@ Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conec
 - [ ] Añadir test para el flujo **"Repasar solo errores"**:
   responder mal → terminar → botón "Repasar errores" → nuevo ejercicio arranca
   Es el único flujo principal sin cobertura todavía.
+
+### `/textos` — seguimiento visual
+- [ ] Revisar y cerrar la PR #64 (`codex/textos-editorial-pass`) tras validación visual final en navegador.
+- [ ] Definir si las imágenes de textos se resuelven por `slug` en frontend como parche editorial o si se añade `image_url` al contrato de datos en una PR separada.
+- [ ] Si se mantiene el enfoque editorial actual, reducir la dependencia del banner de cookies en las capturas/QA visual para evaluar bien el hero y la jerarquía.
 
 ### Mantenimiento de fixtures
 - [ ] Si se añade o renombra un campo en Supabase, actualizar los tres fixtures:
