@@ -393,6 +393,9 @@ function renderAccessTag(text) {
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
   }
+  if (text.access_status === 'free') {
+    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
+  }
   return '';
 }
 
@@ -434,14 +437,10 @@ function renderArchiveNotice(list = []) {
   const premiumCount = list.filter(text => text?.access_status === 'premium').length;
   if (premiumCount === 0) return '';
 
-  const label = premiumCount === list.length
-    ? 'El archivo completo incluye acceso premium.'
-    : 'Parte del archivo incluye textos premium.';
-
   return `
     <div class="tx-archive-note" role="note">
       <span class="tx-archive-note-icon" aria-hidden="true">✦</span>
-      <p class="tx-archive-note-copy"><strong>${label}</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
+      <p class="tx-archive-note-copy"><strong>Esta selección incluye textos premium.</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
     </div>
   `;
 }
@@ -470,6 +469,9 @@ function getFeaturedText(list) {
 function renderFeaturedAccessTag(text) {
   if (isFreemiumText(text)) {
     return '<span class="tx-access-tag tx-access-tag--freemium">PROMO · GRATIS AHORA</span>';
+  }
+  if (text.access_status === 'free') {
+    return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
   }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
