@@ -7,13 +7,20 @@
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
+    "prepare": "husky",
+    "lint:staged": "lint-staged --no-stash --no-hide-partially-staged",
     "start": "node server.js",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:integration": "playwright test --config playwright.integration.config.js"
   },
+  "lint-staged": {
+    "**/*": "node -e \"process.exit(0)\""
+  },
   "devDependencies": {
-    "@playwright/test": "1.60.0"
+    "@playwright/test": "1.60.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2"
   },
   "dependencies": {
     "express": "^4.18.2"
