@@ -2476,50 +2476,50 @@ body.reader-mode-active .txdet-article p:last-child {
 
 /* Expand the card container only while text selection is active */
 .card.is-textos {
-  max-width: 1080px;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: clamp(1.25rem, 3vw, 3rem);
 }
 
-/* ── Sidebar → horizontal filter toolbar ── */
+/* ── Text selection uses a fixed sidebar and fluid main column ── */
 .txsel-layout {
-  display: block;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
 }
 
 .txsel-sidebar {
-  position: static;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2.2rem;
+  position: sticky;
+  top: 70px;
+  display: block;
+  width: 260px;
+  margin-bottom: 0;
   padding: .1rem 0 0;
   border-bottom: 0;
 }
 
-/* Back button leads the row */
 .txsel-back {
-  order: -1;
-  flex-shrink: 0;
-  margin-top: 0;
+  width: 100%;
+  margin-top: 1rem;
 }
 
-/* Search takes remaining space */
 .txsel-search-panel {
-  flex: 0 1 360px;
-  min-width: 260px;
-  max-width: 360px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
   margin-bottom: 0;
-  margin-left: auto;
+  margin-left: 0;
+}
+
+.txsel-main {
+  width: 100%;
+  min-width: 0;
 }
 
 .txsel-search-wrap {
   margin-bottom: 0;
-}
-
-/* Hide label and help in horizontal mode */
-.txsel-search-label,
-.txsel-search-help {
-  display: none;
 }
 
 /* ── Level selector: tighter gap before toolbar ── */
@@ -2769,7 +2769,8 @@ body.reader-mode-active .txdet-article p:last-child {
 /* ── Mobile: restore stacked layout ── */
 @media (max-width: 680px) {
   .card.is-textos {
-    max-width: 860px;
+    max-width: none;
+    padding-inline: 1rem;
   }
   .txsel-lvl-selector {
     justify-content: flex-start;
@@ -2778,9 +2779,8 @@ body.reader-mode-active .txdet-article p:last-child {
     max-width: none;
   }
   .txsel-sidebar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: .85rem;
+    position: static;
+    width: 100%;
     margin-bottom: 2rem;
   }
   .txsel-search-panel {
