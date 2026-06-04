@@ -1,8 +1,8 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Core léxico unificado operativo en imKontext y VokabelLab.
-Próximo foco: conectar DerDieDas al core → retirar tablas legacy.
+PRs pendientes de merge: #69 (SEO rename) y #71 (perf imágenes).
+Orden correcto: merge #69 primero → luego #71. No hay conflictos. Textos layout (PR #70) ya en main, no afectado.
 
 ---
 
@@ -35,6 +35,9 @@ Próximo foco: conectar DerDieDas al core → retirar tablas legacy.
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
 - [x] Core léxico unificado — imKontext conectado al core (PR #63): `text_version_meanings`, `example_es`, vista `text_version_vocabulary_core`, endpoint `/api/text-version-vocabulary-core`, themas asignados a 1,390 meanings, legacy eliminado de server.js — CI ✅
 - [x] Google Analytics GA4 (G-KT1FWQKQEX) integrado con Consent Mode v2 — PR #55, CI ✅
+- [x] SEO rename + favicon — PR #69 (pendiente merge)
+- [x] Textos layout full-width + sidebar fijo 260px — PR #70, merged
+- [x] Perf imágenes: logo.webp (4KB), landing.logo2.webp (36KB), favicon.png (8KB), fetchpriority LCP, preconnect fonts — PR #71 (pendiente merge)
 - [x] Snapshots visuales regenerados en Linux (ubuntu-latest) para evitar drift macOS/CI
 - [x] Workflow `update-snapshots.yml` añadido para regenerar baselines en Linux cuando sea necesario
 - [x] Footer compartido visible en `/`, `/metodologia` y `/legal`
