@@ -79,7 +79,7 @@ complementarios.
 
 Añadir las columnas que tiene VokabelLab y que faltan:
 
-```
+```sql
 thema_id     INTEGER REFERENCES themas(id)
 is_active    BOOLEAN NOT NULL DEFAULT true
 source       TEXT DEFAULT 'manual_import'
@@ -118,7 +118,7 @@ simplificada actual de `vocabulario` por la versión más granular de VokabelLab
 
 ## 4. Schema final unificado en imKontext
 
-```
+```text
 texts                     (sin cambios)
 text_versions             (sin cambios)
 text_version_vocabulary   (sin cambios)
@@ -134,7 +134,7 @@ user_progress             (NUEVA — de VokabelLab)
 
 ## 5. Orden seguro de migración
 
-```
+```text
 1. CREATE TABLE themas              -- sin dependencias externas
 2. ALTER TABLE vocabulario          -- añadir columnas (no-breaking: nullable o con default)
 3. CREATE TABLE profiles            -- depende de auth.users (UUID)

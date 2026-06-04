@@ -21,16 +21,16 @@ Esto bloqueaba compartir el vocabulario entre apps distintas sin duplicar datos.
 
 ## 2. Modelo de datos
 
-```
+```text
 vocabulary_lemmas              — Palabra alemana como entidad lingüística
     │
     ├── vocabulary_meanings    — Acepción/traducción concreta
     │       │
     │       └── vocabulary_meaning_topics  — Relación meaning ↔ thema
     │
-    └── app_vocabulary_lemmas  — App ↔ lemma (der-die-das consume aquí)
+    └── app_vocabulary_lemmas  — App ↔ lemma (usa ids del registro compartido)
 
-apps                           — Registro de aplicaciones consumidoras
+public.app_catalog             — Registro de aplicaciones consumidoras
     │
     └── app_vocabulary_meanings — App ↔ meaning (imKontext, VokabelLab)
 ```
@@ -57,7 +57,7 @@ Permite homógrafos: `der Band`, `die Band`, `das Band` son tres lemmas distinto
 
 Representa una **acepción concreta** de un lemma. Un lemma puede tener varias:
 
-```
+```text
 schaffen
   → meaning 1: "crear / lograr"      (imkontext)
   → meaning 2: "crear algo; conseguir algo"  (vokabellab)
@@ -82,21 +82,23 @@ schaffen
 Relaciona acepciones con temas. Un mismo lemma puede tener temas distintos según la acepción:  
 `Bank` → economía (cuando es banco financiero) vs. mobiliario (cuando es banco de jardín).
 
-### apps
+### public.app_catalog
 
-| key | name |
-|---|---|
-| `imkontext` | imKontext |
-| `vokabellab` | VokabelLab |
-| `der-die-das` | der-die-das |
+La fuente de verdad para identificadores de app compartidos es `public.app_catalog`.
+
+| id | slug | name |
+|---|---|---|
+| `imkontext` | `imkontext` | imKontext |
+| `vokabellab` | `vokabellab` | VokabelLab |
+| `rivaz` | `rivaz` | Rivaz |
 
 ### app_vocabulary_meanings
 
-Liga qué acepciones consume cada app. Permite que imKontext y VokabelLab compartan el mismo lemma pero consuman acepciones distintas.
+Liga qué acepciones consume cada app. Los identificadores deben alinearse con `public.app_catalog.id`, de forma que imKontext y VokabelLab compartan el mismo lemma pero consuman acepciones distintas.
 
 ### app_vocabulary_lemmas
 
-Liga qué lemmas consume cada app. `der-die-das` consume lemmas directamente (solo necesita `german`, `article`, `plural`) sin necesitar traducciones.
+Liga qué lemmas consume cada app. Igual que en `app_vocabulary_meanings`, los ids deben coincidir con `public.app_catalog.id`.
 
 ---
 
@@ -116,7 +118,7 @@ SELECT
 FROM app_vocabulary_meanings avm
 JOIN vocabulary_meanings m  ON m.id       = avm.meaning_id
 JOIN vocabulary_lemmas   l  ON l.id       = m.lemma_id
-WHERE avm.app_key  = 'imkontext'
+WHERE avm.app_id   = 'imkontext'
   AND l.is_active  = true
   AND m.is_active  = true;
 ```
@@ -142,12 +144,12 @@ JOIN vocabulary_meanings m         ON m.id        = avm.meaning_id
 JOIN vocabulary_lemmas   l         ON l.id        = m.lemma_id
 LEFT JOIN vocabulary_meaning_topics t  ON t.meaning_id = m.id
 LEFT JOIN themas             th    ON th.id        = t.thema_id
-WHERE avm.app_key = 'vokabellab'
+WHERE avm.app_id = 'vokabellab'
   AND l.is_active = true
   AND m.is_active = true;
 ```
 
-### der-die-das
+### Rivaz
 
 ```sql
 -- Solo lemmas con artículo, sin necesitar traducción
@@ -157,7 +159,7 @@ SELECT
   l.plural
 FROM app_vocabulary_lemmas avl
 JOIN vocabulary_lemmas l ON l.id = avl.lemma_id
-WHERE avl.app_key = 'der-die-das'
+WHERE avl.app_id = 'rivaz'
   AND l.is_active  = true;
 -- 812 lemmas disponibles al día de la implementación
 ```
@@ -187,10 +189,10 @@ Se añadieron dos columnas opcionales de trazabilidad (no-breaking):
 | `vocabulary_lemmas` | 2.659 |
 | `vocabulary_meanings` | 2.727 |
 | `vocabulary_meaning_topics` | 0 ⚠️ pendiente (ver abajo) |
-| `apps` | 3 |
+| `public.app_catalog` | 3 |
 | `app_vocabulary_meanings (imkontext)` | 1.449 |
 | `app_vocabulary_meanings (vokabellab)` | 1.325 |
-| `app_vocabulary_lemmas (der-die-das)` | 812 |
+| `app_vocabulary_lemmas (rivaz)` | 812 |
 | Lemmas con múltiples acepciones | 66 |
 
 ---
@@ -199,15 +201,16 @@ Se añadieron dos columnas opcionales de trazabilidad (no-breaking):
 
 ### ⚠️ vocabulary_meaning_topics — segundo paso necesario
 
-Los `thema_id` en VokabelLab viven en la columna legacy `thema` (integer), no en `thema_id` (FK). El staging extrajo `thema_id` que era NULL en todas las filas. Para poblar la relación meaning ↔ thema:
+En VokabelLab origen, el dato útil vive en la columna legacy `thema` (integer). No es lo mismo que el FK destino `public.vocabulario.thema_id`, ni que `vocabulary_meaning_topics.thema_id`. El staging extrajo `thema_id` y salió NULL en todas las filas porque ese FK todavía no existía en origen. Para poblar la relación meaning ↔ thema:
 
 ```sql
--- Requiere acceder a VokabelLab origen y cruzar por (de, es) → meaning_id
--- Paso manual: exportar (de, es, thema) de VokabelLab y hacer INSERT INTO
--- vocabulary_meaning_topics (meaning_id, thema_id) con JOIN por (german, spanish)
+-- Requiere acceder a VokabelLab origen y cruzar por (de, es, legacy thema) → meaning_id
+-- Paso manual: exportar (de, es, thema) de VokabelLab y resolver ese thema legacy
+-- hacia vocabulary_meaning_topics.thema_id y public.vocabulario.thema_id
+-- con JOIN por (german, spanish)
 ```
 
-Este paso no tiene urgencia funcional — VokabelLab puede seguir usando `vocabulario.thema_id` mientras tanto.
+Este paso no tiene urgencia funcional, pero el mapeo debe leerse siempre como `thema` (source legacy) → `thema_id` (FK destino en `public.vocabulario` / `vocabulary_meaning_topics`).
 
 ### Refactorización de código de apps
 
@@ -217,6 +220,7 @@ El código de imKontext y VokabelLab sigue apuntando a `public.vocabulario`. La 
 
 Para registrar una nueva app (p.ej. `konjugation-trainer`):
 ```sql
-INSERT INTO apps (key, name, description) VALUES ('konjugation-trainer', '...', '...');
+INSERT INTO public.app_catalog (id, slug, name, description)
+VALUES ('konjugation-trainer', 'konjugation-trainer', '...', '...');
 -- Luego poblar app_vocabulary_lemmas o app_vocabulary_meanings según lo que consuma
 ```

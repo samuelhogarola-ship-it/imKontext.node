@@ -152,8 +152,10 @@ $$;
 -- ─────────────────────────────────────────────────────────────
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
-        WHERE t.tgname = 'set_profiles_updated_at' AND c.relname = 'profiles'
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'set_profiles_updated_at'
+          AND tgrelid = 'public.profiles'::regclass
     ) THEN
         CREATE TRIGGER "set_profiles_updated_at"
             BEFORE UPDATE ON "public"."profiles"
@@ -163,8 +165,10 @@ END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
-        WHERE t.tgname = 'set_vocabulario_updated_at' AND c.relname = 'vocabulario'
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'set_vocabulario_updated_at'
+          AND tgrelid = 'public.vocabulario'::regclass
     ) THEN
         CREATE TRIGGER "set_vocabulario_updated_at"
             BEFORE UPDATE ON "public"."vocabulario"
@@ -174,8 +178,10 @@ END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
-        WHERE t.tgname = 'set_user_progress_updated_at' AND c.relname = 'user_progress'
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'set_user_progress_updated_at'
+          AND tgrelid = 'public.user_progress'::regclass
     ) THEN
         CREATE TRIGGER "set_user_progress_updated_at"
             BEFORE UPDATE ON "public"."user_progress"
@@ -189,7 +195,10 @@ END $$;
 -- ─────────────────────────────────────────────────────────────
 DO $$ BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created'
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'on_auth_user_created'
+          AND tgrelid = 'auth.users'::regclass
     ) THEN
         CREATE TRIGGER "on_auth_user_created"
             AFTER INSERT ON auth.users
