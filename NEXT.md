@@ -1,8 +1,8 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-Core léxico unificado operativo en imKontext. PR #63 en revisión de CI.
-Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
+Core léxico unificado operativo en imKontext y `/textos` con layout full-width corregido.
+Próximo foco: conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
 
 ---
 
@@ -34,6 +34,7 @@ Próximo foco: merge PR #63 → conectar VokabelLab al core en su repo → conec
 - [x] CI en GitHub Actions (solo suite mockeada)
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
 - [x] Core léxico unificado — imKontext conectado al core (PR #63): `text_version_meanings`, `example_es`, vista `text_version_vocabulary_core`, endpoint `/api/text-version-vocabulary-core`, themas asignados a 1,390 meanings, legacy eliminado de server.js — CI ✅
+- [x] `/textos` usa el ancho disponible entre sidebar fija y viewport, sin columna artificial centrada (PR #70)
 - [x] Google Analytics GA4 (G-KT1FWQKQEX) integrado con Consent Mode v2 — PR #55, CI ✅
 - [x] Snapshots visuales regenerados en Linux (ubuntu-latest) para evitar drift macOS/CI
 - [x] Workflow `update-snapshots.yml` añadido para regenerar baselines en Linux cuando sea necesario
