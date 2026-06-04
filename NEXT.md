@@ -2,7 +2,7 @@
 
 ## ENFOQUE ACTUAL
 Core léxico unificado operativo en imKontext y VokabelLab.
-Próximo foco: conectar DerDieDas al core → retirar tablas legacy.
+Próximo foco: mergear y desplegar DerDieDas, ya conectado al core, para poder retirar tablas legacy.
 
 ---
 
@@ -10,7 +10,7 @@ Próximo foco: conectar DerDieDas al core → retirar tablas legacy.
 
 ### Core léxico — pendiente de otros repos
 - [x] **VokabelLab**: conectado al core vía vista `vokabellab_vocabulary` (1,325 palabras, 29 themas). Commit `d42d866`, desplegado 2026-06-01.
-- [x] **DerDieDas**: vista `derdiedas_vocabulary` poblada (537 palabras, 27 categorías, A1–B2). `server.js` conectado a Supabase vía `/api/vocabulary`. PR pendiente en der-die-das `feature/supabase-vocabulary`.
+- [x] **DerDieDas**: vista `derdiedas_vocabulary` poblada (537 palabras, 27 categorías, A1–B2). `server.js` conectado a Supabase vía `/api/vocabulary`; queda pendiente merge y despliegue en der-die-das `feature/supabase-vocabulary`.
 - [ ] **Retirar tablas legacy**: una vez VokabelLab y DerDieDas en producción, aplicar `DROP TABLE vocabulario` y `DROP TABLE text_version_vocabulary` en una migración final.
 - [ ] **59 meanings de imKontext sin thema**: no están vinculados a ningún texto. Asignar temáticamente si en algún momento se publican.
 

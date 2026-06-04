@@ -5,6 +5,8 @@ export const VIEWPORTS = {
 
 export async function installDeterministicVisualState(page) {
   await page.addInitScript(() => {
+    window.__IMKONTEXT_VISUAL_TEST__ = true;
+
     let seed = 123456789;
     Math.random = () => {
       seed = (seed * 1664525 + 1013904223) % 4294967296;
