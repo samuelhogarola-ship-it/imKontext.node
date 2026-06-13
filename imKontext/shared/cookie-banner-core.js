@@ -24,7 +24,10 @@
 
     var imgHtml = cfg.imageSrc
       ? '<div class="cookie-banner-img-container">' +
-          '<img src="' + cfg.imageSrc + '" alt="' + (cfg.imageAlt || '') + '" class="cookie-banner-img">' +
+          '<img src="' + cfg.imageSrc + '" alt="' + (cfg.imageAlt || '') + '" class="cookie-banner-img"' +
+          (cfg.imageWidth  ? ' width="'  + cfg.imageWidth  + '"' : '') +
+          (cfg.imageHeight ? ' height="' + cfg.imageHeight + '"' : '') +
+          '>' +
         '</div>'
       : '';
 

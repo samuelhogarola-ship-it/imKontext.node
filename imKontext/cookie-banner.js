@@ -16,6 +16,8 @@
       storageKey:  'imkontext_cookie_consent',
       imageSrc:    '/imK.cookie.webp',
       imageAlt:    'Cookies imKontext',
+      imageWidth:  160,
+      imageHeight: 157,
       title:       'CONTROLA TU PRIVACIDAD',
       noticeHtml:  '<p>Utilizamos cookies propias y de terceros para analizar nuestros servicios y' +
                    ' mostrarte contenido relacionado con tus preferencias. Puedes aceptar todas las' +
