@@ -362,7 +362,7 @@ function createTextRow(text, position) {
       ${renderAccessTag(text)}
       ${renderPrimaryLevelBadge(text.levels)}
     </div>
-    <span class="tx-row-arrow">${isLocked ? '🔒' : '→'}</span>
+    <span class="tx-row-arrow">${isLocked ? '<svg width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true"><rect x=".7" y="5.5" width="9.6" height="7" rx="1.3" stroke="currentColor" stroke-width="1.3"/><path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' : '→'}</span>
   `;
 
   row.addEventListener('click', () => selectText(text));
@@ -1299,7 +1299,7 @@ function renderPremiumGateBody(text) {
     <div class="premium-gate">
       ${excerptHtml ? `<div class="premium-gate-excerpt">${excerptHtml}</div>` : ''}
       <div class="premium-gate-lock">
-        <span class="premium-gate-icon" aria-hidden="true">🔒</span>
+        <svg class="premium-gate-icon" width="28" height="32" viewBox="0 0 28 32" fill="none" aria-hidden="true"><rect x="1.5" y="13" width="25" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M7 13V9a7 7 0 0 1 14 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         <p class="premium-gate-title">${escapeHtml(text.title)}</p>
         ${text.topic ? `<p class="premium-gate-topic">${escapeHtml(text.topic)}</p>` : ''}
         <p class="premium-gate-msg">Este texto es premium. Escríbenos para obtener acceso.</p>
