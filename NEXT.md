@@ -1,16 +1,16 @@
 # NEXT — Tareas pendientes y enfoque actual
 
 ## ENFOQUE ACTUAL
-PRs pendientes de merge: #69 (SEO rename) y #71 (perf imágenes).
-Orden correcto: merge #69 primero → luego #71. No hay conflictos. Textos layout (PR #70) ya en main, no afectado.
+Core léxico unificado operativo en imKontext y `/textos` con layout full-width corregido.
+Próximo foco: conectar VokabelLab al core en su repo → conectar DerDieDas → retirar `vocabulario` + `text_version_vocabulary`.
 
 ---
 
 ## Tareas pendientes
 
 ### Core léxico — pendiente de otros repos
-- [x] **VokabelLab**: conectado al core vía vista `vokabellab_vocabulary` (1,325 palabras, 29 themas). Commit `d42d866`, desplegado 2026-06-01.
-- [x] **DerDieDas**: vista `derdiedas_vocabulary` poblada (537 palabras, 27 categorías, A1–B2). `server.js` conectado a Supabase vía `/api/vocabulary`. PR pendiente en der-die-das `feature/supabase-vocabulary`.
+- [ ] **VokabelLab**: conectar frontend a `vocabulary_meanings WHERE app_key='vokabellab'` + join `vocabulary_meaning_topics` para themas. Pool disponible en Supabase, listo para consumir.
+- [ ] **DerDieDas**: conectar frontend a `app_vocabulary_lemmas WHERE app_key='der-die-das'` + `vocabulary_lemmas` (article ya poblado en 812 lemmas).
 - [ ] **Retirar tablas legacy**: una vez VokabelLab y DerDieDas en producción, aplicar `DROP TABLE vocabulario` y `DROP TABLE text_version_vocabulary` en una migración final.
 - [ ] **59 meanings de imKontext sin thema**: no están vinculados a ningún texto. Asignar temáticamente si en algún momento se publican.
 
@@ -34,10 +34,8 @@ Orden correcto: merge #69 primero → luego #71. No hay conflictos. Textos layou
 - [x] CI en GitHub Actions (solo suite mockeada)
 - [x] Suite de visual regression con Playwright estabilizada para CI (`e2e/visual.spec.js`)
 - [x] Core léxico unificado — imKontext conectado al core (PR #63): `text_version_meanings`, `example_es`, vista `text_version_vocabulary_core`, endpoint `/api/text-version-vocabulary-core`, themas asignados a 1,390 meanings, legacy eliminado de server.js — CI ✅
+- [x] `/textos` usa el ancho disponible entre sidebar fija y viewport, sin columna artificial centrada (PR #70)
 - [x] Google Analytics GA4 (G-KT1FWQKQEX) integrado con Consent Mode v2 — PR #55, CI ✅
-- [x] SEO rename + favicon — PR #69 (pendiente merge)
-- [x] Textos layout full-width + sidebar fijo 260px — PR #70, merged
-- [x] Perf imágenes: logo.webp (4KB), landing.logo2.webp (36KB), favicon.png (8KB), fetchpriority LCP, preconnect fonts — PR #71 (pendiente merge)
 - [x] Snapshots visuales regenerados en Linux (ubuntu-latest) para evitar drift macOS/CI
 - [x] Workflow `update-snapshots.yml` añadido para regenerar baselines en Linux cuando sea necesario
 - [x] Footer compartido visible en `/`, `/metodologia` y `/legal`
