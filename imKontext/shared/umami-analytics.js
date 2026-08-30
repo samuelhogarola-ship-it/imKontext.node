@@ -44,6 +44,16 @@
     return ready;
   }
 
+  function initAfterLoad() {
+    if (document.readyState === 'complete') return init();
+
+    return new Promise(function (resolve) {
+      window.addEventListener('load', function () {
+        resolve(init());
+      }, { once: true });
+    });
+  }
+
   window.ImKontextUmami = { init: init };
-  window.ImKontextUmami.ready = init();
+  window.ImKontextUmami.ready = initAfterLoad();
 })();
