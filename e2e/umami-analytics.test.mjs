@@ -64,10 +64,28 @@ test("covers every HTML entry with personal Umami", async () => {
   assert.equal(tracker.dataset.websiteId, "imkontext-test-id");
 });
 
-test("fails closed without a website id", async () => {
+test("versioned production config loads the real imKontext website", async () => {
+  const config = JSON.parse(
+    readFileSync(path.join(frontendRoot, "umami-config.json"), "utf8"),
+  );
+  const tracker = await runBootstrap(config);
+
+  assert.deepEqual(config, {
+    hostUrl: "https://analytics.187.124.55.36.sslip.io",
+    websiteId: "e29b9b5b-3ec7-4e25-8d5d-76e1a52d86a2",
+  });
+  assert.equal(tracker?.dataset.websiteId, config.websiteId);
+});
+
+test("fails closed without a website id or with the wrong host", async () => {
   const tracker = await runBootstrap({
     hostUrl: "https://analytics.187.124.55.36.sslip.io",
     websiteId: "",
   });
+  const wrongHostTracker = await runBootstrap({
+    hostUrl: "https://analytics.2.24.10.239.sslip.io",
+    websiteId: "e29b9b5b-3ec7-4e25-8d5d-76e1a52d86a2",
+  });
   assert.equal(tracker, null);
+  assert.equal(wrongHostTracker, null);
 });
