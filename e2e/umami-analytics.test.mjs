@@ -14,10 +14,12 @@ function collectHtmlFiles() {
     .map((entry) => path.join(frontendRoot, entry.name));
 }
 
-async function runBootstrap(config) {
+async function runBootstrap(config, { readyState = "complete" } = {}) {
   const source = readFileSync(bootstrapPath, "utf8");
   const appended = [];
+  let loadHandler = null;
   const document = {
+    readyState,
     createElement() {
       return { dataset: {}, defer: false };
     },
@@ -26,7 +28,11 @@ async function runBootstrap(config) {
       return null;
     },
   };
-  const window = {};
+  const window = {
+    addEventListener(type, handler) {
+      if (type === "load") loadHandler = handler;
+    },
+  };
   vm.runInContext(
     source,
     vm.createContext({
@@ -36,8 +42,20 @@ async function runBootstrap(config) {
       window,
     }),
   );
-  await window.ImKontextUmami.ready;
-  return appended[0] ?? null;
+  return {
+    appended,
+    fireLoad() {
+      loadHandler?.();
+    },
+    loadHandler,
+    ready: window.ImKontextUmami.ready,
+  };
+}
+
+async function loadTracker(config) {
+  const bootstrap = await runBootstrap(config);
+  await bootstrap.ready;
+  return bootstrap.appended[0] ?? null;
 }
 
 test("covers every HTML entry with personal Umami", async () => {
@@ -50,7 +68,7 @@ test("covers every HTML entry with personal Umami", async () => {
       return matches?.length !== 1;
     })
     .map((file) => path.relative(projectRoot, file));
-  const tracker = await runBootstrap({
+  const tracker = await loadTracker({
     hostUrl: "https://analytics.187.124.55.36.sslip.io",
     websiteId: "imkontext-test-id",
   });
@@ -68,7 +86,7 @@ test("versioned production config loads the real imKontext website", async () =>
   const config = JSON.parse(
     readFileSync(path.join(frontendRoot, "umami-config.json"), "utf8"),
   );
-  const tracker = await runBootstrap(config);
+  const tracker = await loadTracker(config);
 
   assert.deepEqual(config, {
     hostUrl: "https://analytics.187.124.55.36.sslip.io",
@@ -78,14 +96,32 @@ test("versioned production config loads the real imKontext website", async () =>
 });
 
 test("fails closed without a website id or with the wrong host", async () => {
-  const tracker = await runBootstrap({
+  const tracker = await loadTracker({
     hostUrl: "https://analytics.187.124.55.36.sslip.io",
     websiteId: "",
   });
-  const wrongHostTracker = await runBootstrap({
+  const wrongHostTracker = await loadTracker({
     hostUrl: "https://analytics.2.24.10.239.sslip.io",
     websiteId: "e29b9b5b-3ec7-4e25-8d5d-76e1a52d86a2",
   });
   assert.equal(tracker, null);
   assert.equal(wrongHostTracker, null);
+});
+
+test("waits for page load before requesting the external tracker", async () => {
+  const bootstrap = await runBootstrap(
+    {
+      hostUrl: "https://analytics.187.124.55.36.sslip.io",
+      websiteId: "e29b9b5b-3ec7-4e25-8d5d-76e1a52d86a2",
+    },
+    { readyState: "loading" },
+  );
+
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(bootstrap.appended.length, 0);
+  assert.equal(typeof bootstrap.loadHandler, "function");
+
+  bootstrap.fireLoad();
+  await bootstrap.ready;
+  assert.equal(bootstrap.appended.length, 1);
 });
