@@ -20,7 +20,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       var btn = document.createElement('a');
       btn.className = 'world-back-fab';
-      btn.href = 'https://vokabelworld.com';
+      btn.href = 'https://vokabelworld.vokabellab.com';
       btn.setAttribute('aria-label', 'Volver al planetario');
       btn.innerHTML = '🪐';
       btn.title = 'Volver a Vokabel World';
