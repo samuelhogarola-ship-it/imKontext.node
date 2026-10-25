@@ -19,7 +19,7 @@ async function apiFetch(path) {
 }
 
 /* ── STATE ───────────────────────────────────────────────────── */
-function isPremiumUser() { return false; } // replace when auth exists
+function isPremiumUser() { return isLoggedIn(); }
 const SUPPORT_EMAIL = 'www.vokabellab@pm.me';
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
 let selectedText   = null; // selected text object from Supabase
@@ -1323,7 +1323,14 @@ function formatDate(value) {
 /* ══════════════════════════════════════════════════════════════
    INIT — resolve URL and route
 ══════════════════════════════════════════════════════════════ */
+onAuthChange(() => {
+  if (allTexts.length > 0 && screens.textos.style.display !== 'none') {
+    renderTextGrid(getFilteredTexts());
+  }
+});
+
 (async function initRouting() {
+  await initAuth();
   const pathname = window.location.pathname;
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
 

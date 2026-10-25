@@ -46,6 +46,38 @@ async function supabaseFetch(pathname) {
   return response.json();
 }
 
+async function authenticateUser(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7);
+  if (!token || token === SUPABASE_ANON) return null;
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        apikey: SUPABASE_ANON,
+        Authorization: `Bearer ${token}`
+      }
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+app.get("/api/me", async (req, res) => {
+  const user = await authenticateUser(req);
+  if (!user) {
+    return res.status(401).json({ error: "No autenticado" });
+  }
+  res.json({
+    id: user.id,
+    email: user.email,
+    premium: false
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
