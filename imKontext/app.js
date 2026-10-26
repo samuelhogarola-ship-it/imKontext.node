@@ -5,8 +5,11 @@
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── API CONFIG ──────────────────────────────────────────────── */
+let languageRequestGeneration = 0;
 async function apiFetch(path) {
-  const res = await fetch(path);
+  const generation = languageRequestGeneration;
+  const res = await fetch(localizedApiPath(path));
+  if (generation !== languageRequestGeneration) throw new DOMException('Language changed', 'AbortError');
   if (!res.ok) {
     let details = "";
     try {
@@ -15,7 +18,9 @@ async function apiFetch(path) {
     } catch {}
     throw new Error(details || `API error ${res.status}`);
   }
-  return res.json();
+  const data = await res.json();
+  if (generation !== languageRequestGeneration) throw new DOMException('Language changed', 'AbortError');
+  return data;
 }
 
 /* ── STATE ───────────────────────────────────────────────────── */
@@ -158,8 +163,7 @@ function updateSEOMeta({ title, description, canonical }) {
 }
 
 function getTextUrl(text, level) {
-  const base = `/textos/${encodeURIComponent(text.slug)}`;
-  return level ? `${base}?nivel=${level.toUpperCase()}` : base;
+  return learningTextPath(text.slug, level);
 }
 
 function showLanding() {
@@ -173,7 +177,7 @@ function showLanding() {
   updateSEOMeta({
     title: t('seo.home_title'),
     description: t('seo.home_desc'),
-    canonical: window.location.origin + '/'
+    canonical: window.location.origin + learningHomePath()
   });
   applyI18nToDOM();
 }
@@ -182,7 +186,8 @@ async function openTextBySlug(slug) {
   if (!allTexts.length) {
     try {
       allTexts = await apiFetch('/api/texts');
-    } catch {
+    } catch (error) {
+      if (error.name === 'AbortError') return;
       showScreen('textos');
       $('txsel-loading').style.display = 'none';
       $('txsel-error').style.display = 'block';
@@ -217,20 +222,7 @@ $('btn-share-text').addEventListener('click', async () => {
 
 /* ── POPSTATE ────────────────────────────────────────────────── */
 window.addEventListener('popstate', async () => {
-  const pathname = window.location.pathname;
-  const levelParam = new URLSearchParams(window.location.search).get('nivel');
-
-  if (pathname === '/textos') {
-    await goToTextos({ pushState: false });
-  } else if (pathname.startsWith('/textos/')) {
-    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
-    if (levelParam) selectedLevel = levelParam.toLowerCase();
-    await openTextBySlug(slug);
-  } else {
-    selectedTopic = null;
-    selectedCategory = null;
-    showLanding();
-  }
+  await routeCurrentLanguage();
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -245,12 +237,12 @@ $('btn-entrar').addEventListener('click', async () => {
 ══════════════════════════════════════════════════════════════ */
 async function goToTextos({ pushState: doPush = true } = {}) {
   if (doPush) {
-    history.pushState({ screen: 'textos' }, '', '/textos');
+    history.pushState({ screen: 'textos' }, '', learningCatalogPath());
   }
   updateSEOMeta({
     title: t('seo.textos_title'),
     description: t('seo.textos_desc'),
-    canonical: window.location.origin + '/textos'
+    canonical: window.location.origin + learningCatalogPath()
   });
   showScreen('textos');
   applyI18nToDOM();
@@ -274,6 +266,7 @@ async function goToTextos({ pushState: doPush = true } = {}) {
     buildTopicChips();
     renderTextGrid(getFilteredTexts());
   } catch (err) {
+    if (err.name === 'AbortError') return;
     console.error(err);
     $('txsel-loading').style.display = 'none';
     $('txsel-error').style.display   = 'block';
@@ -611,7 +604,7 @@ $('txsel-search').addEventListener('input', () => {
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
   selectedCategory = null;
-  history.pushState({ screen: 'landing' }, '', '/');
+  history.pushState({ screen: 'landing' }, '', learningHomePath());
   showLanding();
 });
 
@@ -623,7 +616,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing' }, '', learningHomePath());
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -642,14 +635,12 @@ function parseDashboardEntries() {
   const entries = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (!key.startsWith('progress_')) continue;
+    const parsed = parseLanguageProgressKey(key);
+    if (!parsed || parsed.language !== getTargetLang()) continue;
     try {
       const data = JSON.parse(localStorage.getItem(key));
       if (!data || typeof data.done !== 'number') continue;
-      const withoutPrefix = key.slice('progress_'.length);
-      const lastUnderscore = withoutPrefix.lastIndexOf('_');
-      const textId = withoutPrefix.slice(0, lastUnderscore);
-      const level  = withoutPrefix.slice(lastUnderscore + 1);
+      const { textId, level } = parsed;
       if (!textId || !level) continue;
       const text = allTexts.find(t => String(t.id) === textId) || null;
       entries.push({ key, textId, level, done: data.done || 0, total: data.total || 0, text });
@@ -747,7 +738,7 @@ async function showDashboard() {
     row.querySelector('.db-rank-reset').addEventListener('click', ev => {
       ev.stopPropagation();
       localStorage.removeItem(e.key);
-      localStorage.removeItem(`queue_${e.textId}_${e.level}`);
+      localStorage.removeItem(languageQueueKey(e.textId,e.level));
       showDashboard();
     });
 
@@ -773,7 +764,7 @@ document.getElementById('btn-dashboard-go-textos').addEventListener('click', asy
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing' }, '', learningHomePath());
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -985,6 +976,7 @@ async function refreshSelectedTextVersion(options = {}) {
     );
     selectedTextVersion = versions[0] || null;
   } catch (error) {
+    if (error.name === 'AbortError') throw error;
     selectedTextVersion = null;
     throw error;
   }
@@ -996,7 +988,8 @@ async function refreshSelectedTextVersion(options = {}) {
         currentTextVocab = await apiFetch(
           `/api/text-version-vocabulary-core?textVersionId=${encodeURIComponent(selectedTextVersion.id)}`
         );
-      } catch {
+      } catch (error) {
+        if (error.name === 'AbortError') throw error;
         currentTextVocab = [];
       }
     } else {
@@ -1071,7 +1064,7 @@ function updateLevelStatus(vocabCount) {
 
 function updateProgressPanel() {
   if (!selectedText) return;
-  const key = `progress_${selectedText.id}_${selectedLevel}`;
+  const key = languageProgressKey(selectedText.id,selectedLevel);
   const data = JSON.parse(localStorage.getItem(key) || 'null');
   const lvlLabel = selectedLevel.toUpperCase();
 
@@ -1094,7 +1087,7 @@ function updateProgressPanel() {
 
 function checkSavedProgress() {
   if (!selectedText) return;
-  const key = `queue_${selectedText.id}_${selectedLevel}`;
+  const key = languageQueueKey(selectedText.id,selectedLevel);
   const saved = localStorage.getItem(key);
   const banner = $('progreso-guardado-banner');
   if (saved) {
@@ -1108,8 +1101,8 @@ function checkSavedProgress() {
 
 $('btn-reset-progress').addEventListener('click', () => {
   if (!selectedText) return;
-  const key = `progress_${selectedText.id}_${selectedLevel}`;
-  const qkey = `queue_${selectedText.id}_${selectedLevel}`;
+  const key = languageProgressKey(selectedText.id,selectedLevel);
+  const qkey = languageQueueKey(selectedText.id,selectedLevel);
   localStorage.removeItem(key);
   localStorage.removeItem(qkey);
   updateProgressPanel();
@@ -1156,9 +1149,13 @@ function buildVocabData(vocab) {
     if (!g) return;
 
     const wt   = String(item.word_type || '').toLowerCase().trim();
-    const bare = g.replace(ARTICLE_PREFIX_RE, '');
+    const bare = getTargetLang() === 'de' ? g.replace(ARTICLE_PREFIX_RE, '') : stripArticle(g);
 
-    const add = t => { if (t) { terms.add(t); termToId.set(t.toLowerCase(), item.id); } };
+    const add = term => {
+      for (const t of getTargetLang() === 'de' ? [term] : targetWordVariants(term)) {
+        if (t) { terms.add(t); termToId.set(t.toLowerCase(), item.id); }
+      }
+    };
 
     add(g);
     if (bare !== g) add(bare);
@@ -1171,7 +1168,7 @@ function buildVocabData(vocab) {
         const v = String(f || '').trim();
         if (v) add(v);
       });
-    } else if (wt === 'adjective') {
+    } else if (wt === 'adjective' && getTargetLang() === 'de') {
       ADJ_ENDINGS.forEach(sfx => add(bare + sfx));
     }
   });
@@ -1180,10 +1177,11 @@ function buildVocabData(vocab) {
   const escaped = [...terms]
     .sort((a, b) => b.length - a.length)
     .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const edges = getTargetLang() === 'de' ? VOCAB_WORD_EDGE : '\\p{L}\\p{M}\\p{N}';
   return {
     pattern: new RegExp(
-      `(?<![${VOCAB_WORD_EDGE}])(${escaped.join('|')})(?![${VOCAB_WORD_EDGE}])`,
-      'gi'
+      `(?<![${edges}])(${escaped.join('|')})(?![${edges}])`,
+      getTargetLang() === 'de' ? 'gi' : 'giu'
     ),
     termToId
   };
@@ -1317,7 +1315,7 @@ function formatDate(value) {
 /* ══════════════════════════════════════════════════════════════
    INIT — resolve URL and route
 ══════════════════════════════════════════════════════════════ */
-onAuthChange(() => {
+if (typeof onAuthChange === 'function') onAuthChange(() => {
   if (allTexts.length > 0 && screens.textos.style.display !== 'none') {
     renderTextGrid(getFilteredTexts());
   }
@@ -1357,14 +1355,17 @@ onAuthChange(() => {
         setUILang(lang);
         applyI18nToDOM();
         updateSelectorDisplay();
+        syncLearningSelectors();
         buildGrid();
         closeDropdown();
         const deck = $('ln-deck');
         if (deck) deck.innerHTML = t('landing.deck') + '<br>' + t('landing.deck2');
+        const route = getTargetLang() === 'de' ? null : resolveLearningRoute(window.location.pathname);
+        const detail = route?.screen === 'content' && selectedText;
         updateSEOMeta({
-          title: t('seo.home_title'),
-          description: t('seo.home_desc'),
-          canonical: window.location.origin + '/'
+          title: detail ? `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext` : t(route?.screen === 'textos' ? 'seo.textos_title' : 'seo.home_title'),
+          description: detail ? t('seo.text_detail_desc', {title:selectedText.title,level:selectedLevel.toUpperCase()}) : t(route?.screen === 'textos' ? 'seo.textos_desc' : 'seo.home_desc'),
+          canonical: window.location.origin + (detail ? getTextUrl(selectedText,selectedLevel) : route?.screen === 'textos' ? learningCatalogPath() : learningHomePath())
         });
       });
       grid.appendChild(item);
@@ -1399,31 +1400,82 @@ onAuthChange(() => {
   updateSelectorDisplay();
 })();
 
-(async function initRouting() {
-  const pathname = window.location.pathname;
+// Resolve explicit shared-link language before the first content request.
+async function routeCurrentLanguage() {
+  const route = resolveLearningRoute(window.location.pathname);
+  if (route && route.language !== getTargetLang()) {
+    setTargetLang(route.language);
+    resetLanguageSession();
+  }
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
-
-  if (pathname === '/textos') {
-    $('main-app').style.display = 'block';
-    screens.landing.style.display = 'none';
-    await goToTextos({ pushState: false });
-  } else if (pathname.startsWith('/textos/')) {
-    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
-    if (levelParam) selectedLevel = levelParam.toLowerCase();
+  if (levelParam && ['a2','b1','b2','c1'].includes(levelParam.toLowerCase())) selectedLevel = levelParam.toLowerCase();
+  syncLearningSelectors();
+  applyI18nToDOM();
+  if (route?.screen === 'textos') return goToTextos({pushState:false});
+  if (route?.screen === 'content') {
     $('main-app').style.display = 'block';
     screens.landing.style.display = 'none';
     $('app-header').classList.remove('app-is-landing');
-    await openTextBySlug(slug);
-  } else {
-    // Default: landing
-    $('main-app').style.display = 'none';
-    const deck = $('ln-deck');
-    if (deck) deck.innerHTML = t('landing.deck') + '<br>' + t('landing.deck2');
-    applyI18nToDOM();
-    updateSEOMeta({
-      title: t('seo.home_title'),
-      description: t('seo.home_desc'),
-      canonical: window.location.origin + '/'
-    });
+    return openTextBySlug(route.slug);
   }
+  showLanding();
+}
+
+function resetLanguageSession() {
+  languageRequestGeneration++;
+  allTexts=[]; selectedText=null; selectedTextVersion=null;
+  currentVocab=[]; currentTextVocab=[]; queue=[]; selectedModos=[];
+  selectedTopic=null; selectedCategory=null; currentTextsPage=0; numPalabras=0;
+  clearPersistedErrors();
+  if(typeof clearCountdown==='function') clearCountdown();
+  document.querySelectorAll('[data-modo]').forEach(button=>button.classList.remove('active'));
+  closeVocabPanel();
+}
+
+let availableLearningLanguages = new Set(['de']);
+function syncLearningSelectors() {
+  const target=$('learning-language'); const native=$('native-language');
+  if(!target||!native) return;
+  target.replaceChildren(); native.replaceChildren();
+  SUPPORTED_TARGET_LANGS.forEach(lang=>{
+    const option=document.createElement('option'); option.value=lang;
+    option.textContent=LANG_NAMES[lang].native;
+    option.disabled=!availableLearningLanguages.has(lang);
+    option.selected=lang===getTargetLang(); target.appendChild(option);
+    if(lang!==getTargetLang()) {
+      const known=document.createElement('option'); known.value=lang;
+      known.textContent=LANG_NAMES[lang].native;
+      known.disabled=!['de','es'].includes(lang)&&!availableLearningLanguages.has(lang);
+      known.selected=lang===getNativeLang(); native.appendChild(known);
+    }
+  });
+  const articleMode=document.querySelector('[data-modo="articulo"]');
+  if(articleMode) articleMode.disabled=learningArticleOptions().length===0;
+  const status=$('learning-availability');
+  if(status) status.textContent=availableLearningLanguages.has(getTargetLang())?'':t('learning.pending');
+}
+
+$('learning-language')?.addEventListener('change',async event=>{
+  const lang=event.target.value;
+  if(!availableLearningLanguages.has(lang)) return;
+  setTargetLang(lang); resetLanguageSession(); syncLearningSelectors(); applyI18nToDOM();
+  history.pushState({},'',learningCatalogPath());
+  await goToTextos({pushState:false});
+});
+$('native-language')?.addEventListener('change',async event=>{
+  if(!setNativeLang(event.target.value)) return;
+  resetLanguageSession(); syncLearningSelectors();
+  history.pushState({},'',learningCatalogPath());
+  await goToTextos({pushState:false});
+});
+(async()=>{
+  try {
+    const response=await fetch('/api/learning-languages');
+    if(response.ok) {
+      const languages=await response.json();
+      if(Array.isArray(languages)) availableLearningLanguages=new Set(['de',...languages.filter(x=>x.available&&SUPPORTED_TARGET_LANGS.includes(x.code)).map(x=>x.code)]);
+    }
+  } catch {}
+  syncLearningSelectors();
 })();
+routeCurrentLanguage();

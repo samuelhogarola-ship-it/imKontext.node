@@ -21,6 +21,8 @@ const LANG_NAMES = {
 
 let _uiLang     = 'es';
 let _targetLang = 'de';
+let _nativeLang = null;
+const I18N_NATIVE_KEY = 'imk_native_lang';
 
 /* ── DICTIONARIES ───────────────────────────────────────────── */
 
@@ -1113,6 +1115,19 @@ DICT.pt = {
 
 function getUILang() { return _uiLang; }
 function getTargetLang() { return _targetLang; }
+function hasExplicitNativeLanguage() { return _nativeLang !== null; }
+function getNativeLang() {
+  if (_nativeLang && _nativeLang !== _targetLang) return _nativeLang;
+  if (_targetLang !== 'de') return _targetLang === 'es' ? 'de' : 'es';
+  if (_uiLang !== _targetLang) return _uiLang;
+  return _targetLang === 'es' ? 'de' : 'es';
+}
+function setNativeLang(lang) {
+  if (!SUPPORTED_UI_LANGS.includes(lang) || lang === _targetLang) return false;
+  _nativeLang = lang;
+  try { localStorage.setItem(I18N_NATIVE_KEY, lang); } catch {}
+  return true;
+}
 
 function setUILang(lang) {
   if (!SUPPORTED_UI_LANGS.includes(lang)) return;
@@ -1163,18 +1178,21 @@ const LANG_EX_COL = { de: 'example_sentence_de', es: 'example_sentence_es', en: 
 function getWordCol(lang)    { return LANG_COL[lang || _targetLang] || LANG_COL.de; }
 function getExampleCol(lang) { return LANG_EX_COL[lang || _targetLang] || LANG_EX_COL.de; }
 
-function getTargetWord(word)    { return word[getWordCol(_targetLang)] || ''; }
-function getNativeWord(word)    { return word[getWordCol(_uiLang)] || ''; }
-function getTargetExample(word) { return word[getExampleCol(_targetLang)] || ''; }
-function getNativeExample(word) { return word[getExampleCol(_uiLang)] || ''; }
+function getTargetWord(word)    { return word.target_word ?? word[getWordCol(_targetLang)] ?? ''; }
+function getNativeWord(word)    { return word.native_word ?? word[getWordCol(getNativeLang())] ?? ''; }
+function getTargetExample(word) { return word.target_example ?? word[getExampleCol(_targetLang)] ?? ''; }
+function getNativeExample(word) { return word.native_example ?? word[getExampleCol(getNativeLang())] ?? ''; }
 
 function getTargetWordCol()    { return getWordCol(_targetLang); }
-function getNativeWordCol()    { return getWordCol(_uiLang); }
+function getNativeWordCol()    { return getWordCol(getNativeLang()); }
 function getTargetExampleCol() { return getExampleCol(_targetLang); }
-function getNativeExampleCol() { return getExampleCol(_uiLang); }
+function getNativeExampleCol() { return getExampleCol(getNativeLang()); }
 
 const ARTICLE_PATTERNS = {
   de: /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/i,
+  es: /^(el|la|los|las|un|una|unos|unas)\s+/i,
+  it: /^(?:(il|lo|la|i|gli|le|un|uno|una)\s+|l['’])/i,
+  pt: /^(o|a|os|as|um|uma|uns|umas)\s+/i,
 };
 
 function stripArticle(word, lang) {
@@ -1188,6 +1206,8 @@ function initI18n() {
     if (savedUI && SUPPORTED_UI_LANGS.includes(savedUI)) _uiLang = savedUI;
     const savedTarget = localStorage.getItem(I18N_TARGET_KEY);
     if (savedTarget && SUPPORTED_TARGET_LANGS.includes(savedTarget)) _targetLang = savedTarget;
+    const savedNative = localStorage.getItem(I18N_NATIVE_KEY);
+    if (savedNative && SUPPORTED_UI_LANGS.includes(savedNative)) _nativeLang = savedNative;
   } catch {}
 }
 
@@ -1211,4 +1231,14 @@ function getDateLocale() {
   return map[_uiLang] || 'es-ES';
 }
 
+const LEARNING_LABELS = {
+ es:['Idioma que aprendes','Traducciones de vocabulario','Contenido en preparación'],
+ en:['Learning language','Vocabulary translations','Content in preparation'],
+ de:['Lernsprache','Wortschatzübersetzungen','Inhalte in Vorbereitung'],
+ fi:['Opiskeltava kieli','Sanaston käännökset','Sisältöä valmistellaan'],
+ it:['Lingua da imparare','Traduzioni del vocabolario','Contenuti in preparazione'],
+ pt:['Idioma de aprendizagem','Traduções do vocabulário','Conteúdo em preparação'],
+};
+Object.entries(LEARNING_LABELS).forEach(([lang,labels])=>Object.assign(DICT[lang],{'learning.target':labels[0],'learning.native':labels[1],'learning.pending':labels[2]}));
+Object.entries({es:'No hay ejemplos compatibles con los ejercicios seleccionados. Elige otro modo.',en:'No examples support the selected exercises. Choose another mode.',de:'Keine Beispiele passen zu den gewählten Übungen. Wähle einen anderen Modus.',fi:'Valittuihin harjoituksiin ei ole sopivia esimerkkejä. Valitse toinen harjoitustapa.',it:'Non ci sono esempi adatti agli esercizi selezionati. Scegli un’altra modalità.',pt:'Não há exemplos compatíveis com os exercícios selecionados. Escolha outro modo.'}).forEach(([lang,value])=>DICT[lang]['activity.no_matching_exercises']=value);
 initI18n();

@@ -3078,3 +3078,7 @@ body.reader-mode-active .txdet-article p:last-child {
     display: inline-block;
   }
 }
+/* Learning choices stay inside the existing language menu. */
+.learning-selectors { display:grid; gap:.45rem; }
+.learning-selectors label,.learning-selectors [role="status"] { font-size:.78rem; }
+.learning-selectors select { width:100%; font:inherit; color:inherit; background:var(--card,white); border:1px solid var(--border,#ddd); border-radius:6px; padding:.4rem; }

@@ -10,8 +10,8 @@
     "prepare": "node .husky/install.mjs",
     "lint:staged": "lint-staged --no-stash --no-hide-partially-staged",
     "start": "node server.js",
-    "test:unit": "node --test e2e/umami-analytics.test.mjs",
-    "test:e2e": "node --test e2e/umami-analytics.test.mjs && playwright test",
+    "test:unit": "node --test e2e/umami-analytics.test.mjs tests/*.test.mjs",
+    "test:e2e": "npm run test:unit && playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:integration": "playwright test --config playwright.integration.config.js"
   },
@@ -19,6 +19,7 @@
     "**/*": "node -e \"process.exit(0)\""
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.12",
     "@playwright/test": "1.60.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2"
