@@ -528,74 +528,76 @@ input, select { font-family: inherit; }
   flex-shrink: 0;
 }
 
-/* Hamburger button — hidden on desktop, shown on mobile */
+/* Hamburger / Vokabel World toggle — always visible on landing */
 .app-nav-hamburger {
   display: none;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
   gap: 4px;
-  width: 36px;
-  height: 36px;
-  padding: 6px;
+  padding: 6px 12px;
   background: none;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), background var(--transition);
+  font-family: var(--font-ui);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-light);
 }
-.app-nav-hamburger:hover { border-color: var(--muted); }
-.hamburger-line {
+.app-nav-hamburger:hover { border-color: var(--muted); background: rgba(30,58,138,.04); }
+.hamburger-label { pointer-events: none; }
+.hamburger-chevron {
+  font-size: .6rem;
+  transition: transform .2s;
+  pointer-events: none;
+}
+.app-nav-hamburger.is-open .hamburger-chevron { transform: rotate(180deg); }
+
+.app-header.app-is-landing .app-nav-hamburger { display: flex; }
+
+/* Landing: nav links hidden behind Vokabel World toggle (all viewports) */
+.app-header.app-is-landing .app-nav-inner {
+  flex-wrap: wrap;
+}
+.app-header.app-is-landing .app-nav-links,
+.app-header.app-is-landing .app-nav-dashboard {
+  display: none;
+}
+.app-header.app-is-landing .app-nav-sep { display: none; }
+
+.app-header.app-is-landing .app-nav-links.is-open {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 0 0 100%;
+  order: 10;
+  padding: 10px 0 6px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  gap: 0;
+}
+.app-header.app-is-landing .app-nav-links.is-open + .app-nav-dashboard {
   display: block;
-  width: 100%;
-  height: 2px;
-  background: var(--ink-light);
-  border-radius: 1px;
-  transition: transform .2s, opacity .2s;
+  flex: 0 0 100%;
+  order: 11;
+  text-align: left;
+  padding: 8px 4px;
 }
-.app-nav-hamburger.is-open .hamburger-line:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.app-nav-hamburger.is-open .hamburger-line:nth-child(2) { opacity: 0; }
-.app-nav-hamburger.is-open .hamburger-line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.app-header.app-is-landing .app-nav-links.is-open a {
+  text-align: left;
+  padding: 10px 4px;
+  font-size: .78rem;
+  border-radius: 6px;
+}
 
-/* Mobile — landing: hamburger dropdown */
 @media (max-width: 640px) {
-  .app-nav-hamburger { display: flex; }
-
   .app-header.app-is-landing .app-nav-inner {
-    flex-wrap: wrap;
     padding: 8px 16px;
     gap: 0;
   }
   .app-header.app-is-landing .app-nav-logo { flex: 1; }
-
-  .app-header.app-is-landing .app-nav-links,
-  .app-header.app-is-landing .app-nav-dashboard {
-    display: none;
-  }
-  .app-header.app-is-landing .app-nav-links.is-open {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 0 0 100%;
-    order: 10;
-    padding: 10px 0 6px;
-    border-top: 1px solid var(--border);
-    margin-top: 8px;
-    gap: 0;
-  }
-  .app-header.app-is-landing .app-nav-links.is-open + .app-nav-dashboard {
-    display: block;
-    flex: 0 0 100%;
-    order: 11;
-    text-align: left;
-    padding: 8px 4px;
-  }
-  .app-header.app-is-landing .app-nav-links.is-open a {
-    text-align: left;
-    padding: 10px 4px;
-    font-size: .78rem;
-    border-radius: 6px;
-  }
-  .app-header.app-is-landing .app-nav-sep { display: none; }
 }
 
 /* Non-landing: hide nav links from header (all viewports — they live in the footer) */
