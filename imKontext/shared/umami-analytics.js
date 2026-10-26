@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  if (window.ImKontextUmami) return;
+
   var PERSONAL_HOST = 'https://analytics.187.124.55.36.sslip.io';
   var WEBSITE_ID_PATTERN = /^[A-Za-z0-9_-]{8,128}$/;
   var ready = null;
