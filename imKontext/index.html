@@ -80,7 +80,21 @@
         </picture>
         <span><span class="app-nav-logo-im">im</span> Kontext</span>
       </a>
-      <div class="app-nav-links">
+      <div class="app-nav-right">
+        <div class="app-nav-auth">
+          <button class="auth-btn" id="auth-header-btn" type="button">Iniciar sesión</button>
+          <div class="auth-user-info" id="auth-user-info" style="display:none">
+            <span class="auth-user-email" id="auth-user-email"></span>
+            <button class="auth-logout-btn" id="auth-logout-btn" type="button">Salir</button>
+          </div>
+        </div>
+        <button class="app-nav-hamburger" id="nav-hamburger" type="button" aria-label="Menú" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+      <div class="app-nav-links" id="nav-links-menu">
         <a href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">Samuel Coach de alemán</a>
         <span class="app-nav-sep">|</span>
         <a href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">Vokabel Lab</a>
@@ -88,13 +102,6 @@
         <a href="https://derdiedas.vokabellab.com/" target="_blank" rel="noreferrer">der die das</a>
         <span class="app-nav-sep">|</span>
         <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
-      </div>
-      <div class="app-nav-auth">
-        <button class="auth-btn" id="auth-header-btn" type="button">Iniciar sesión</button>
-        <div class="auth-user-info" id="auth-user-info" style="display:none">
-          <span class="auth-user-email" id="auth-user-email"></span>
-          <button class="auth-logout-btn" id="auth-logout-btn" type="button">Salir</button>
-        </div>
       </div>
       <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
     </div>

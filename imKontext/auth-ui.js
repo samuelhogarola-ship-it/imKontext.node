@@ -150,6 +150,27 @@
     }
   }
 
+  /* ── HAMBURGER MENU ──────────────────────────────────────────── */
+  function initHamburger() {
+    const btn = $('nav-hamburger');
+    const menu = $('nav-links-menu');
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      btn.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menu.classList.contains('is-open')) return;
+      if (e.target.closest('#nav-hamburger') || e.target.closest('#nav-links-menu')) return;
+      menu.classList.remove('is-open');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   /* ── WIRE UP EVENTS ─────────────────────────────────────────── */
   function init() {
     $('auth-header-btn')?.addEventListener('click', openAuthModal);
@@ -171,6 +192,9 @@
         closeAuthModal();
       }
     });
+
+    // Hamburger menu
+    initHamburger();
 
     // Listen to auth state changes
     onAuthChange(updateHeaderAuth);
