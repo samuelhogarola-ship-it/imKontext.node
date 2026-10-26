@@ -8,6 +8,8 @@ This release is stacked on #79 (`4255692`) and contains its functional #78 UI ba
 
 Production's Umami compatibility fix is preserved here, with regression coverage for cached pages, consent callbacks and repeated script loads. The orphan sign-in markup from #78 is removed: #77 owns the working authentication integration and remains separate. This release retains anonymous learning and existing premium behavior; it makes no authentication or entitlement changes.
 
+The release also resolves the runtime audit findings in body-parser (1.20.9), proxy-addr (2.0.8) and qs (6.16.1). The explicit qs override is necessary because Express 4.22.1 otherwise constrains its parser to vulnerable `~6.14.0`. Keep the override until Express permits a patched version. Fresh npm installation/audit reports zero vulnerabilities; the dependency tree and API query parsing were independently checked. No Express major-version upgrade is included.
+
 ## Before any production write
 
 1. Review the complete app delta against the deployed commit, including the multilingual PRs, and record the exact approved release SHA.
@@ -31,4 +33,6 @@ If localized data or app verification fails, stop rollout. Already committed imp
 
 ## Current status
 
-Prepared and rehearsed locally. No production database writes, Hostinger deployments, auto-deployment changes, merges or DNS changes have been performed by this review.
+Prepared and independently reviewed in draft PR #80, stacked on #79. Fresh validation: 30 Node tests and 25 functional browser flows pass; all five real local database flows and EN/ES mobile views pass. The visual suite retains its six pre-existing failing cases (three other cases pass). Of the six, three screenshots match archived base hashes exactly; the mobile landing changes by one pixel after removing the unused auth header, and two feedback screens differ in shuffled vocabulary choices with identical dimensions/layout. Baselines were not replaced. These snapshot differences are documented rather than represented as a green visual suite.
+
+No production database writes, Hostinger deployments, auto-deployment changes, merges or DNS changes have been performed by this review.
