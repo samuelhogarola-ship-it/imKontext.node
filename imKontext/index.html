@@ -90,7 +90,27 @@
         <span class="app-nav-sep">|</span>
         <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
       </div>
-      <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
+      <div class="lang-selector" id="lang-selector">
+        <button class="lang-selector-btn" id="lang-selector-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="lang-selector-flag" id="lang-selector-flag">🇪🇸</span>
+          <span class="lang-selector-code" id="lang-selector-code">ES</span>
+          <svg class="lang-selector-caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="lang-selector-dropdown" id="lang-selector-dropdown" role="menu" aria-label="Idioma de la interfaz">
+          <div class="lang-dropdown-section">
+            <span class="lang-dropdown-label" data-i18n="lang_sel.ui_label">Idioma de la app</span>
+            <div class="lang-dropdown-grid" id="lang-ui-grid"></div>
+          </div>
+        </div>
+      </div>
+      <div class="app-nav-auth">
+        <button class="auth-btn" id="auth-header-btn" type="button">Iniciar sesión</button>
+        <div class="auth-user-info" id="auth-user-info" style="display:none">
+          <span class="auth-user-email" id="auth-user-email"></span>
+          <button class="auth-logout-btn" id="auth-logout-btn" type="button">Salir</button>
+        </div>
+      </div>
+      <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true" data-i18n="nav.dashboard">Dashboard</span>
     </div>
   </nav>
 </header>
@@ -140,14 +160,14 @@
       </a>
       <div class="ln-portada">
         <div class="ln-edition-bar" aria-label="Edición semanal">
-          <span class="ln-edition-label">Número de la semana</span>
+          <span class="ln-edition-label" data-i18n="landing.edition_label">Número de la semana</span>
           <span class="ln-edition-issue">Ed. 17 · Abril 2026</span>
         </div>
-        <div class="ln-portada-kicker">Willkommen!</div>
+        <div class="ln-portada-kicker" data-i18n="landing.kicker">Willkommen!</div>
         <div class="ln-portada-rule"></div>
-        <h1 class="ln-portada-headline">Aprende alemán con noticias reales</h1>
+        <h1 class="ln-portada-headline" data-i18n="landing.headline">Aprende alemán con noticias reales</h1>
         <div class="ln-portada-rule"></div>
-        <p class="ln-portada-deck">Practica vocabulario real con textos de actualidad.<br>El método de <strong>Vokabel Lab imKontext</strong>.</p>
+        <p class="ln-portada-deck" id="ln-deck">Practica vocabulario real con textos de actualidad.<br>El método de <strong>Vokabel Lab imKontext</strong>.</p>
         <div class="ln-tag-row" aria-hidden="true">
           <span class="ln-tag">A2</span><span class="ln-tag-dot">·</span>
           <span class="ln-tag">B1</span><span class="ln-tag-dot">·</span>
@@ -155,21 +175,21 @@
           <span class="ln-tag">C1</span>
         </div>
         <button class="ln-btn-entrar" id="btn-entrar">
-          <span class="ln-btn-text">Empieza ahora</span>
+          <span class="ln-btn-text" data-i18n="landing.cta">Empieza ahora</span>
           <span class="ln-btn-fire">🔥</span>
           <span class="ln-btn-arrow">→</span>
         </button>
-        <p class="ln-footer-line">Flashcards · Test · Lückentext · Ordenar · Artículo</p>
+        <p class="ln-footer-line" data-i18n="landing.activities">Flashcards · Test · Lückentext · Ordenar · Artículo</p>
       </div>
     </div>
   </div>
 
   <div class="ln-bottom-bar">
-    <a class="ln-contact-btn" href="/metodologia">Metodología</a>
+    <a class="ln-contact-btn" href="/metodologia" data-i18n="nav.methodology">Metodología</a>
     <span class="ln-sep">·</span>
-    <a class="ln-contact-btn" href="mailto:www.vokabellab@pm.me">Contacto</a>
+    <a class="ln-contact-btn" href="mailto:www.vokabellab@pm.me" data-i18n="nav.contact">Contacto</a>
     <span class="ln-sep">·</span>
-    <a class="ln-contact-btn" href="/legal">Legal</a>
+    <a class="ln-contact-btn" href="/legal" data-i18n="nav.legal">Legal</a>
   </div>
 </div>
 
@@ -193,7 +213,7 @@
         <div class="loading-word"><span class="de">das Rathaus</span><span class="es">el ayuntamiento</span></div>
         <div class="loading-word"><span class="de">die Ampel</span><span class="es">el semáforo</span></div>
       </div>
-      <p class="loading-text">Preparando tus ejercicios...</p>
+      <p class="loading-text" data-i18n="loading.preparing">Preparando tus ejercicios...</p>
     </div>
 
     <div class="error-msg" id="error-msg"></div>
@@ -203,9 +223,9 @@
     ══════════════════════════════════════════════ -->
     <div id="screen-textos">
       <div class="txsel-header">
-        <div class="txsel-kicker">Paso 1 de 3</div>
-        <h2 class="txsel-title">Elige un texto</h2>
-        <p class="txsel-subtitle">Selecciona el artículo sobre el que quieres practicar hoy. Si el tema se te queda corto, cambia el nivel antes de entrar.</p>
+        <div class="txsel-kicker" data-i18n="textos.step">Paso 1 de 3</div>
+        <h2 class="txsel-title" data-i18n="textos.title">Elige un texto</h2>
+        <p class="txsel-subtitle" data-i18n="textos.subtitle">Selecciona el artículo sobre el que quieres practicar hoy. Si el tema se te queda corto, cambia el nivel antes de entrar.</p>
       </div>
 
       <div class="txsel-lvl-selector" aria-label="Nivel preferido para la selección de texto">
@@ -220,7 +240,7 @@
       <div class="txsel-layout">
         <aside class="txsel-sidebar">
           <div class="txsel-search-panel">
-            <p class="txsel-search-label">Buscar texto</p>
+            <p class="txsel-search-label" data-i18n="textos.search">Buscar texto</p>
             <div class="txsel-search-wrap">
               <svg class="txsel-search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
@@ -231,22 +251,23 @@
                 id="txsel-search"
                 class="txsel-search"
                 placeholder="Buscar texto..."
+                data-i18n-placeholder="textos.search_placeholder"
                 autocomplete="off"
                 aria-label="Buscar texto"
               >
             </div>
-            <p class="txsel-search-help">Filtra por título mientras exploras los textos disponibles.</p>
+            <p class="txsel-search-help" data-i18n="textos.search_help">Filtra por título mientras exploras los textos disponibles.</p>
           </div>
 
-          <button class="btn-back section-back txsel-back" id="btn-volver-landing-from-textos">← Volver</button>
+          <button class="btn-back section-back txsel-back" id="btn-volver-landing-from-textos" data-i18n="textos.back">← Volver</button>
         </aside>
 
         <div class="txsel-main">
           <div class="txsel-loading" id="txsel-loading" aria-live="polite">
             <div class="txsel-spinner"></div>
-            <span>Cargando textos…</span>
+            <span data-i18n="textos.loading">Cargando textos…</span>
           </div>
-          <div class="txsel-error" id="txsel-error" style="display:none">
+          <div class="txsel-error" id="txsel-error" style="display:none" data-i18n="textos.error">
             No se pudieron cargar los textos. Comprueba tu conexión e inténtalo de nuevo.
           </div>
           <div class="txsel-list" id="txsel-grid" style="display:none" role="list"></div>
@@ -260,18 +281,18 @@
     ══════════════════════════════════════════════ -->
     <div id="screen-content" style="display:none">
       <div class="txdet-header">
-        <button class="txdet-back-btn" id="btn-volver-textos" aria-label="Volver a la lista de textos">
+        <button class="txdet-back-btn" id="btn-volver-textos" aria-label="Volver a la lista de textos" data-i18n="content.back_texts">
           ← Textos
         </button>
-        <div class="txdet-kicker">Paso 2 de 3 — Antes de empezar</div>
+        <div class="txdet-kicker" data-i18n="content.step">Paso 2 de 3 — Antes de empezar</div>
         <h2 class="txdet-title" id="content-title">Texto</h2>
       </div>
 
       <div class="content-card">
-        <span class="content-kicker">Lee el texto primero</span>
-        <p id="content-description" class="txdet-desc">Este texto se carga directamente desde Supabase. Léelo con calma y vuelve cuando estés listo para los ejercicios.</p>
+        <span class="content-kicker" data-i18n="content.read_first">Lee el texto primero</span>
+        <p id="content-description" class="txdet-desc" data-i18n="content.description">Este texto se carga directamente desde Supabase. Léelo con calma y vuelve cuando estés listo para los ejercicios.</p>
         <div class="content-level-switch">
-          <p class="content-level-label">¿Demasiado fácil? Cambia de nivel aquí:</p>
+          <p class="content-level-label" data-i18n="content.change_level">¿Demasiado fácil? Cambia de nivel aquí:</p>
           <div class="content-level-chips" aria-label="Cambiar nivel del texto">
             <button class="content-lvl-chip" type="button" data-level="a2">A2</button>
             <button class="content-lvl-chip active" type="button" data-level="b1">B1</button>
@@ -281,18 +302,18 @@
         </div>
         <div class="txdet-meta" id="content-meta"></div>
         <div id="freemium-notice" class="freemium-notice" style="display:none" role="note">
-          Promoción activa: este contenido premium está desbloqueado gratis por tiempo limitado.
+          <span data-i18n="content.freemium">Promoción activa: este contenido premium está desbloqueado gratis por tiempo limitado.</span>
         </div>
         <article class="txdet-article" id="content-body" aria-live="polite"></article>
         <div class="content-actions">
-          <button class="btn-main-solo" id="btn-ir-actividad">Empezar ejercicios →</button>
+          <button class="btn-main-solo" id="btn-ir-actividad" data-i18n="content.start_exercises">Empezar ejercicios →</button>
           <div class="content-actions-utils">
-            <button class="btn-back" id="btn-share-text" type="button">Compartir ↗</button>
-            <button class="btn-back" id="btn-toggle-reading-mode" type="button" aria-pressed="false">Modo lectura ⤢</button>
+            <button class="btn-back" id="btn-share-text" type="button" data-i18n="content.share">Compartir ↗</button>
+            <button class="btn-back" id="btn-toggle-reading-mode" type="button" aria-pressed="false" data-i18n="content.reading_mode">Modo lectura ⤢</button>
           </div>
         </div>
         <div class="reader-exit-wrap">
-          <button class="btn-back reader-exit-btn" id="btn-terminar-lectura" type="button">Terminar</button>
+          <button class="btn-back reader-exit-btn" id="btn-terminar-lectura" type="button" data-i18n="content.finish_reading">Terminar</button>
         </div>
       </div>
 
@@ -310,19 +331,19 @@
           <div class="vocab-panel-audio" id="vp-audio-slot"></div>
           <dl class="vocab-panel-details">
             <div class="vp-row" id="vp-row-meaning">
-              <dt>Significado</dt><dd id="vp-meaning"></dd>
+              <dt data-i18n="vocab.meaning">Significado</dt><dd id="vp-meaning"></dd>
             </div>
             <div class="vp-row" id="vp-row-type">
-              <dt>Tipo</dt><dd id="vp-type"></dd>
+              <dt data-i18n="vocab.type">Tipo</dt><dd id="vp-type"></dd>
             </div>
             <div class="vp-row" id="vp-row-plural">
-              <dt>Plural</dt><dd id="vp-plural"></dd>
+              <dt data-i18n="vocab.plural">Plural</dt><dd id="vp-plural"></dd>
             </div>
             <div class="vp-row" id="vp-row-infinitive">
-              <dt>Infinitivo</dt><dd id="vp-infinitive"></dd>
+              <dt data-i18n="vocab.infinitive">Infinitivo</dt><dd id="vp-infinitive"></dd>
             </div>
             <div class="vp-row" id="vp-row-example">
-              <dt>Ejemplo</dt><dd id="vp-example"></dd>
+              <dt data-i18n="vocab.example">Ejemplo</dt><dd id="vp-example"></dd>
             </div>
           </dl>
         </div>
@@ -334,11 +355,11 @@
     ══════════════════════════════════════════════ -->
     <div id="screen-activity" style="display:none">
       <div class="act-header">
-        <button class="txdet-back-btn" id="btn-volver-contenido-from-activity" aria-label="Volver al texto">
+        <button class="txdet-back-btn" id="btn-volver-contenido-from-activity" aria-label="Volver al texto" data-i18n="activity.back">
           ← Texto
         </button>
-        <div class="txdet-kicker">Paso 3 de 3 — Configura tu práctica</div>
-        <h2 class="act-title" id="act-text-title">Configura tu práctica</h2>
+        <div class="txdet-kicker" data-i18n="activity.step">Paso 3 de 3 — Configura tu práctica</div>
+        <h2 class="act-title" id="act-text-title" data-i18n="activity.title">Configura tu práctica</h2>
       </div>
 
       <div class="activity-layout">
@@ -351,8 +372,8 @@
 
           <div class="config-group">
             <div class="config-head">
-              <h3>Nivel</h3>
-              <p>Los ejercicios se adaptarán al nivel de dificultad elegido.</p>
+              <h3 data-i18n="activity.level">Nivel</h3>
+              <p data-i18n="activity.level_desc">Los ejercicios se adaptarán al nivel de dificultad elegido.</p>
             </div>
             <div class="config-selector" id="level-selector">
               <button class="config-chip" type="button" data-level="a2">A2</button>
@@ -365,26 +386,26 @@
 
           <div class="config-group">
             <div class="config-head">
-              <h3>Tipo de actividad</h3>
-              <p>Elige una o deja en blanco para practicar con todos los formatos.</p>
+              <h3 data-i18n="activity.type">Tipo de actividad</h3>
+              <p data-i18n="activity.type_desc">Elige una o deja en blanco para practicar con todos los formatos.</p>
             </div>
             <div class="config-selector" id="practice-selector">
-              <button class="config-chip" type="button" data-modo="ordenar">Ordenar frases</button>
-              <button class="config-chip" type="button" data-modo="test">Test</button>
-              <button class="config-chip" type="button" data-modo="flashcards">Flashcards</button>
-              <button class="config-chip" type="button" data-modo="articulo">Artículo</button>
-              <button class="config-chip" type="button" data-modo="lueckentext">Lückentext</button>
+              <button class="config-chip" type="button" data-modo="ordenar" data-i18n="mode.ordenar">Ordenar frases</button>
+              <button class="config-chip" type="button" data-modo="test" data-i18n="mode.test">Test</button>
+              <button class="config-chip" type="button" data-modo="flashcards" data-i18n="mode.flashcards">Flashcards</button>
+              <button class="config-chip" type="button" data-modo="articulo" data-i18n="mode.articulo">Artículo</button>
+              <button class="config-chip" type="button" data-modo="lueckentext" data-i18n="mode.lueckentext">Lückentext</button>
             </div>
           </div>
-          <div class="modo-hint" id="practice-hint">Si no eliges ninguna actividad, practicarás con todos los formatos.</div>
+          <div class="modo-hint" id="practice-hint" data-i18n="hint.none">Si no eliges ninguna actividad, practicarás con todos los formatos.</div>
 
-          <button class="btn-main-solo" id="btn-empezar">Empezar práctica 🚀</button>
+          <button class="btn-main-solo" id="btn-empezar" data-i18n="activity.start">Empezar práctica 🚀</button>
         </div>
 
         <aside class="weekly-progress-panel" aria-label="Progreso semanal">
           <div class="weekly-progress-head">
             <div>
-              <p class="weekly-progress-kicker">Seguimiento</p>
+              <p class="weekly-progress-kicker" data-i18n="progress.tracking">Seguimiento</p>
               <h3 id="weekly-progress-title">Progreso B1</h3>
             </div>
           </div>
@@ -394,7 +415,7 @@
           </div>
           <p class="weekly-progress-main" id="weekly-progress-main">0 / 0 palabras practicadas</p>
           <p class="weekly-progress-sub" id="weekly-progress-sub">0 palabras en este nivel</p>
-          <button class="btn-reset-progress" id="btn-reset-progress" type="button">Reiniciar progreso</button>
+          <button class="btn-reset-progress" id="btn-reset-progress" type="button" data-i18n="activity.reset">Reiniciar progreso</button>
         </aside>
       </div>
     </div>
@@ -411,7 +432,7 @@
       <div class="pregunta" id="pregunta-texto"></div>
       <div class="pregunta-sub" id="pregunta-sub"></div>
       <div id="sentence-context-wrap"></div>
-      <button class="translation-toggle" id="btn-toggle-traduccion" type="button">Ver traducción</button>
+      <button class="translation-toggle" id="btn-toggle-traduccion" type="button" data-i18n="exercise.show_translation">Ver traducción</button>
       <div class="translation-panel" id="translation-panel"></div>
       <div class="respuesta-feedback" id="respuesta-feedback"></div>
       <div class="next-countdown" id="next-countdown"></div>
@@ -422,24 +443,24 @@
           <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
         </div>
         <div class="flashcard-actions">
-          <button class="btn-back flashcard-btn" id="btn-flashcard-no">No la sé</button>
-          <button class="btn-main flashcard-btn" id="btn-flashcard-si">Sí</button>
+          <button class="btn-back flashcard-btn" id="btn-flashcard-no" data-i18n="flashcard.no">No la sé</button>
+          <button class="btn-main flashcard-btn" id="btn-flashcard-si" data-i18n="flashcard.yes">Sí</button>
         </div>
       </div>
       <div class="input-wrap" id="input-wrap" style="display:none">
         <input type="text" id="input-traduccion" placeholder="Escribe la traducción..." autocomplete="off">
       </div>
       <div id="ordenar-wrap" style="display:none">
-        <p class="orden-label">Banco de palabras — clica para añadir</p>
+        <p class="orden-label" data-i18n="exercise.word_bank">Banco de palabras — clica para añadir</p>
         <div class="palabras-banco" id="banco-palabras"></div>
-        <p class="orden-label">Tu frase</p>
+        <p class="orden-label" data-i18n="exercise.your_sentence">Tu frase</p>
         <div class="orden-construccion" id="orden-construccion"></div>
       </div>
       <div class="nav-btns">
-        <button class="btn-back" id="btn-atras">← Atrás</button>
-        <button class="btn-main" id="btn-siguiente" disabled>Siguiente →</button>
+        <button class="btn-back" id="btn-atras" data-i18n="exercise.back">← Atrás</button>
+        <button class="btn-main" id="btn-siguiente" disabled data-i18n="exercise.next">Siguiente →</button>
       </div>
-      <button class="btn-terminar" id="btn-terminar">Terminar test</button>
+      <button class="btn-terminar" id="btn-terminar" data-i18n="exercise.finish_test">Terminar test</button>
     </div>
 
     <!-- ══════════════════════════════════════════════
@@ -447,22 +468,22 @@
     ══════════════════════════════════════════════ -->
     <div id="screen-dashboard" style="display:none">
       <div class="act-header">
-        <button class="txdet-back-btn" id="btn-volver-from-dashboard">← Volver</button>
-        <div class="txdet-kicker">Tu progreso</div>
-        <h2 class="act-title">Dashboard</h2>
+        <button class="txdet-back-btn" id="btn-volver-from-dashboard" data-i18n="dashboard.back">← Volver</button>
+        <div class="txdet-kicker" data-i18n="dashboard.subtitle">Tu progreso</div>
+        <h2 class="act-title" data-i18n="dashboard.title">Dashboard</h2>
       </div>
 
       <section id="auth-container" class="auth-container auth-container--visible" aria-label="Cuenta"></section>
 
       <div class="db-empty" id="db-empty" style="display:none">
-        <p>Todavía no tienes sesiones registradas. ¡Empieza a practicar para ver tu progreso aquí!</p>
-        <button class="btn-main-solo db-empty-btn" id="btn-dashboard-go-textos">Ir a los textos →</button>
+        <p data-i18n="dashboard.empty">Todavía no tienes sesiones registradas. ¡Empieza a practicar para ver tu progreso aquí!</p>
+        <button class="btn-main-solo db-empty-btn" id="btn-dashboard-go-textos" data-i18n="dashboard.go_texts">Ir a los textos →</button>
       </div>
 
       <div class="db-content" id="db-content" style="display:none">
         <div class="db-stats-strip" id="db-stats-grid"></div>
         <div class="db-ranking-head">
-          <span class="db-ranking-label">Progreso por texto</span>
+          <span class="db-ranking-label" data-i18n="dashboard.by_text">Progreso por texto</span>
         </div>
         <div class="db-ranking" id="db-text-list"></div>
       </div>
@@ -470,17 +491,17 @@
 
     <!-- ── RESULTADO ── -->
     <div id="screen-resultado" style="display:none">
-      <p style="color:var(--muted);font-size:1rem">Puntuación final</p>
+      <p style="color:var(--muted);font-size:1rem" data-i18n="result.score_label">Puntuación final</p>
       <div class="puntuacion-grande" id="punt-grande"></div>
       <p class="puntuacion-label" id="punt-label"></p>
       <div class="result-stats" id="result-stats"></div>
       <div class="resumen-lista" id="resumen-lista"></div>
       <div class="result-actions">
         <button class="btn-continue" id="btn-continuar" style="display:none"></button>
-        <button class="btn-secondary" id="btn-repasar-errores" type="button" style="display:none">Repasar errores</button>
-        <button class="btn-main-solo" id="btn-reiniciar">Volver a intentarlo</button>
-        <button class="btn-secondary" id="btn-volver-menu" type="button">Volver al menú principal</button>
-        <button class="btn-back" id="btn-salir-test" type="button">Finalizar / salir</button>
+        <button class="btn-secondary" id="btn-repasar-errores" type="button" style="display:none"></button>
+        <button class="btn-main-solo" id="btn-reiniciar" data-i18n="result.retry">Volver a intentarlo</button>
+        <button class="btn-secondary" id="btn-volver-menu" type="button" data-i18n="result.back_menu">Volver al menú principal</button>
+        <button class="btn-back" id="btn-salir-test" type="button" data-i18n="result.exit">Finalizar / salir</button>
       </div>
     </div>
 
@@ -515,6 +536,7 @@
 <script src="/shared/google-analytics-core.js?v=1"></script>
 <script src="/shared/cookie-banner-core.js?v=1"></script>
 <script src="/cookie-banner.js?v=1"></script>
+<script src="/i18n.js?v=1"></script>
 <script src="/common.js?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/shared/auth-core.js?v=20261028"></script>
