@@ -21,9 +21,9 @@
       var btn = document.createElement('a');
       btn.className = 'world-back-fab';
       btn.href = 'https://vokabelworld.vokabellab.com';
-      btn.setAttribute('aria-label', 'Volver al planetario');
+      btn.setAttribute('aria-label', typeof t === 'function' ? t('world.back_planetarium') : 'Volver al planetario');
       btn.innerHTML = '🪐';
-      btn.title = 'Volver a Vokabel World';
+      btn.title = typeof t === 'function' ? t('world.back_world') : 'Volver a Vokabel World';
       document.body.appendChild(btn);
     });
   }
