@@ -200,10 +200,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 6: Roboter arbeiten in deutschen Restaurants (tecnología) ──
+-- ── Text 6: Roboter arbeiten in deutschen Restaurants (tecnologia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Roboter arbeiten jetzt in deutschen Restaurants', 'roboter-arbeiten-in-deutschen-restaurants', 'tecnología', 'premium', NOW())
+  VALUES ('Roboter arbeiten jetzt in deutschen Restaurants', 'roboter-arbeiten-in-deutschen-restaurants', 'tecnologia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -239,10 +239,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 7: Schüler lernen mit künstlicher Intelligenz (tecnología) ──
+-- ── Text 7: Schüler lernen mit künstlicher Intelligenz (tecnologia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Schüler lernen jetzt mit künstlicher Intelligenz', 'schueler-lernen-mit-kuenstlicher-intelligenz', 'tecnología', 'premium', NOW())
+  VALUES ('Schüler lernen jetzt mit künstlicher Intelligenz', 'schueler-lernen-mit-kuenstlicher-intelligenz', 'tecnologia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -278,10 +278,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 8: Neue App hilft beim Deutschlernen (tecnología) ──
+-- ── Text 8: Neue App hilft beim Deutschlernen (tecnologia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Neue App hilft beim Deutschlernen', 'neue-app-hilft-beim-deutschlernen', 'tecnología', 'premium', NOW())
+  VALUES ('Neue App hilft beim Deutschlernen', 'neue-app-hilft-beim-deutschlernen', 'tecnologia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -317,10 +317,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 9: Das intelligente Zuhause (tecnología) ──
+-- ── Text 9: Das intelligente Zuhause (tecnologia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Das intelligente Zuhause', 'das-intelligente-zuhause', 'tecnología', 'premium', NOW())
+  VALUES ('Das intelligente Zuhause', 'das-intelligente-zuhause', 'tecnologia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -356,10 +356,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 10: Elektroautos werden immer beliebter (tecnología) ──
+-- ── Text 10: Elektroautos werden immer beliebter (tecnologia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Elektroautos werden immer beliebter', 'elektroautos-werden-immer-beliebter', 'tecnología', 'premium', NOW())
+  VALUES ('Elektroautos werden immer beliebter', 'elektroautos-werden-immer-beliebter', 'tecnologia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -654,7 +654,7 @@ Die Umsetzung stellt die Länder vor praktische Herausforderungen: Es fehlen sow
 voc AS (
   INSERT INTO vocabulario (german, word_type, spanish, english, example_sentence_de, example_sentence_es, article, level)
   VALUES
-    ('der Sportunterricht', 'noun', 'la clase de educación física', 'physical education', 'Sportunterricht ist mein Lieblingsfach.', 'La educación física es mi asignatura favorita.', 'der', 'A1'),
+    ('der Sportunterricht', 'noun', 'la clase de educacion física', 'physical education', 'Sportunterricht ist mein Lieblingsfach.', 'La educacion física es mi asignatura favorita.', 'der', 'A1'),
     ('die Schule', 'noun', 'la escuela', 'school', 'Meine Schule hat eine große Turnhalle.', 'Mi escuela tiene un gimnasio grande.', 'die', 'A1'),
     ('die Stunde', 'noun', 'la hora', 'hour', 'Wir haben drei Stunden Sport.', 'Tenemos tres horas de deporte.', 'die', 'A1'),
     ('fit', 'adjective', 'en forma', 'fit', 'Sport macht fit und gesund.', 'El deporte pone en forma y sano.', NULL, 'A1'),
@@ -779,10 +779,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 21: Programmieren als neues Schulfach (educación) ──
+-- ── Text 21: Programmieren als neues Schulfach (educacion) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Programmieren als neues Schulfach', 'programmieren-als-neues-schulfach', 'educación', 'premium', NOW())
+  VALUES ('Programmieren als neues Schulfach', 'programmieren-als-neues-schulfach', 'educacion', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -817,10 +817,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 22: Austauschschüler in Deutschland (educación) ──
+-- ── Text 22: Austauschschüler in Deutschland (educacion) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Austauschschüler in Deutschland', 'austauschschueler-in-deutschland', 'educación', 'premium', NOW())
+  VALUES ('Austauschschüler in Deutschland', 'austauschschueler-in-deutschland', 'educacion', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -855,10 +855,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 23: Der Kindergarten wird kostenlos (educación) ──
+-- ── Text 23: Der Kindergarten wird kostenlos (educacion) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Der Kindergarten wird kostenlos', 'der-kindergarten-wird-kostenlos', 'educación', 'premium', NOW())
+  VALUES ('Der Kindergarten wird kostenlos', 'der-kindergarten-wird-kostenlos', 'educacion', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -885,7 +885,7 @@ voc AS (
     ('der Kindergarten', 'noun', 'la guardería', 'kindergarten', 'Mein Kind geht in den Kindergarten.', 'Mi hijo va a la guardería.', 'der', 'A1'),
     ('der Erzieher', 'noun', 'el educador', 'educator', 'Die Erzieher sind sehr geduldig.', 'Los educadores son muy pacientes.', 'der', 'A1'),
     ('bezahlen', 'verb', 'pagar', 'to pay', 'Eltern müssen nichts bezahlen.', 'Los padres no tienen que pagar nada.', NULL, 'A1'),
-    ('die Bildung', 'noun', 'la educación', 'education', 'Frühe Bildung ist wichtig.', 'La educación temprana es importante.', 'die', 'A1'),
+    ('die Bildung', 'noun', 'la educacion', 'education', 'Frühe Bildung ist wichtig.', 'La educacion temprana es importante.', 'die', 'A1'),
     ('das Kind', 'noun', 'el niño, la niña', 'child', 'Die Kinder spielen im Kindergarten.', 'Los niños juegan en la guardería.', 'das', 'A1'),
     ('die Entwicklung', 'noun', 'el desarrollo', 'development', 'Die Entwicklung von Kindern ist wichtig.', 'El desarrollo de los niños es importante.', 'die', 'A1')
   RETURNING id
@@ -893,10 +893,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 24: Integrationskurse für Deutsch (educación) ──
+-- ── Text 24: Integrationskurse für Deutsch (educacion) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Integrationskurse: Deutsch lernen für ein neues Leben', 'integrationskurse-deutsch-lernen', 'educación', 'premium', NOW())
+  VALUES ('Integrationskurse: Deutsch lernen für ein neues Leben', 'integrationskurse-deutsch-lernen', 'educacion', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -931,10 +931,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 25: Digitale Schulbücher ersetzen Papier (educación) ──
+-- ── Text 25: Digitale Schulbücher ersetzen Papier (educacion) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Digitale Schulbücher ersetzen Papier', 'digitale-schulbuecher-ersetzen-papier', 'educación', 'premium', NOW())
+  VALUES ('Digitale Schulbücher ersetzen Papier', 'digitale-schulbuecher-ersetzen-papier', 'educacion', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -969,10 +969,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 26: Energiepreise steigen stark (economía) ──
+-- ── Text 26: Energiepreise steigen stark (economia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Energiepreise steigen stark', 'energiepreise-steigen-stark', 'economía', 'premium', NOW())
+  VALUES ('Energiepreise steigen stark', 'energiepreise-steigen-stark', 'economia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -1007,10 +1007,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 27: Wohnungen in der Stadt sind knapp (economía) ──
+-- ── Text 27: Wohnungen in der Stadt sind knapp (economia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Wohnungen in der Stadt sind knapp', 'wohnungen-in-der-stadt-sind-knapp', 'economía', 'premium', NOW())
+  VALUES ('Wohnungen in der Stadt sind knapp', 'wohnungen-in-der-stadt-sind-knapp', 'economia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -1045,10 +1045,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 28: Minijobs sind bei Studenten beliebt (economía) ──
+-- ── Text 28: Minijobs sind bei Studenten beliebt (economia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Minijobs sind bei Studenten beliebt', 'minijobs-sind-bei-studenten-beliebt', 'economía', 'premium', NOW())
+  VALUES ('Minijobs sind bei Studenten beliebt', 'minijobs-sind-bei-studenten-beliebt', 'economia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -1083,10 +1083,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 29: Start-ups boomen in Berlin (economía) ──
+-- ── Text 29: Start-ups boomen in Berlin (economia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Start-ups boomen in Berlin', 'start-ups-boomen-in-berlin', 'economía', 'premium', NOW())
+  VALUES ('Start-ups boomen in Berlin', 'start-ups-boomen-in-berlin', 'economia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
@@ -1121,10 +1121,10 @@ voc AS (
 INSERT INTO text_version_meanings (text_version_id, meaning_id)
 SELECT tv.id, voc.id FROM tv CROSS JOIN voc;
 
--- ── Text 30: Weihnachtsmärkte bringen Milliarden (economía) ──
+-- ── Text 30: Weihnachtsmärkte bringen Milliarden (economia) ──
 WITH t AS (
   INSERT INTO texts (title, slug, categoria, access_status, published_at)
-  VALUES ('Weihnachtsmärkte bringen Milliarden', 'weihnachtsmaerkte-bringen-milliarden', 'economía', 'premium', NOW())
+  VALUES ('Weihnachtsmärkte bringen Milliarden', 'weihnachtsmaerkte-bringen-milliarden', 'economia', 'premium', NOW())
   RETURNING id
 ),
 tv AS (
