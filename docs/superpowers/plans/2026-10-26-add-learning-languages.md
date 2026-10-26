@@ -49,7 +49,7 @@
 - [x] Translate existing title/content/linked vocabulary into five new languages; preserve CEFR level and facts. Reuse existing Spanish word translations. Validate every source ID and ensure no German text is relabelled as a translation.
 - [x] Rehearse migration/import and rerun against a disposable database; assert original German fixture rows unchanged and localized catalog usable.
 - [x] Verify real UI → API → localized content → vocabulary → exercise → isolated progress for all five locales.
-- [ ] Fresh whole-branch review completed and findings fixed; commit and create/attach dedicated PR pending.
+- [x] Fresh whole-branch review completed, findings fixed, implementation committed and dedicated draft [PR #79](https://github.com/samuelhogarola-ship-it/imKontext.node/pull/79) created and attached.
 - [ ] Migration/import and evidence prepared; final production rollout approval pending. No production writes or publish.
 
 ## Verification notes
