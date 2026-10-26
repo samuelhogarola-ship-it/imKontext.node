@@ -69,9 +69,20 @@ function blankifyWord(sentence, word) {
   }
 
   const tryReplace = (term) => {
-    const re = new RegExp(`\\b${escRx(term)}\\b`, 'i');
+    const unicode = typeof getTargetLang === 'function' && getTargetLang() !== 'de';
+    const re = unicode
+      ? new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escRx(term)}(?![\\p{L}\\p{M}\\p{N}])`, 'iu')
+      : new RegExp(`\\b${escRx(term)}\\b`, 'i');
     return re.test(sentence) ? sentence.replace(re, '______') : null;
   };
+
+  if (typeof getTargetLang === 'function' && getTargetLang() !== 'de' && typeof targetWordVariants === 'function') {
+    for (const term of targetWordVariants(word)) {
+      const matched = tryReplace(term);
+      if (matched) return matched;
+    }
+    return null;
+  }
 
   let result = tryReplace(word);
   if (result) return result;

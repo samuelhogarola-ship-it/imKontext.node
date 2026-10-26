@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { registerLocalizedRoutes } from "./server/localized-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +56,8 @@ app.get("/api/health", (req, res) => {
     supabaseConfigured: hasSupabaseConfig()
   });
 });
+
+registerLocalizedRoutes(app, supabaseFetch);
 
 app.get("/api/texts", async (req, res) => {
   try {

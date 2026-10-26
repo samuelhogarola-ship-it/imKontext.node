@@ -36,8 +36,11 @@ async function startPractice() {
     currentVocab = vocab;
 
     // Build queue using all available words (numPalabras set by updateSliderMax)
+    const eligible = getTargetLang() === 'de' || !selectedModos.length
+      ? vocab : vocab.filter(word => practiceModesForWord(word, selectedModos).length > 0);
+    if (!eligible.length) throw new Error(t('activity.no_matching_exercises'));
     const count = numPalabras > 0 ? numPalabras : vocab.length;
-    queue = buildQueue(vocab, count, getPersistedErrorIds());
+    queue = buildQueue(eligible, count, getPersistedErrorIds());
     clearPersistedErrors();
 
     currentIdx = 0;
@@ -45,7 +48,7 @@ async function startPractice() {
     wrongWords = [];
     questionStates = [];
 
-    const pKey = `progress_${selectedText.id}_${selectedLevel}`;
+    const pKey = languageProgressKey(selectedText.id,selectedLevel);
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
     localStorage.setItem(pKey, JSON.stringify({
       total: vocab.length,
@@ -56,6 +59,7 @@ async function startPractice() {
     buildExercise();
 
   } catch (err) {
+    if(err.name==='AbortError') return;
     console.error(err);
     $('error-msg').textContent = `Error: ${err.message}`;
   } finally {
@@ -368,7 +372,9 @@ function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
 
 function getModo(idx) {
-  return getModoForIdx(idx, selectedModos, MODOS);
+  if(getTargetLang()==='de')return getModoForIdx(idx,selectedModos,MODOS);
+  const available=practiceModesForWord(queue[idx],selectedModos.length?selectedModos:MODOS);
+  return getModoForIdx(idx,available,available.length?available:['test']);
 }
 
 function buildExercise() {
@@ -552,16 +558,16 @@ function buildArticulo(word) {
   const article = word.article?.toLowerCase();
 
   // Word has no article (e.g. verb, adverb) — fall back to test mode.
-  if (!article) {
+  if (!article || !learningArticleOptions().includes(article)) {
     $('tipo-badge').textContent = '🎯 Test';
     buildTest(word);
     return;
   }
 
-  $('pregunta-texto').innerHTML = `<em>___</em> ${stripArticle(getTargetWord(word), getTargetLang())}`;
+  $('pregunta-texto').innerHTML = `<em>___</em> ${escapeHtml(stripArticle(getTargetWord(word), getTargetLang()))}`;
   renderQuestionHint(word.word_type || '');
 
-  const opts = ['der', 'die', 'das'];
+  const opts = learningArticleOptions();
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
 
@@ -720,7 +726,7 @@ function showResultado() {
 
   // Save progress
   if (selectedText) {
-    const pKey = `progress_${selectedText.id}_${selectedLevel}`;
+    const pKey = languageProgressKey(selectedText.id,selectedLevel);
     const existing = JSON.parse(localStorage.getItem(pKey) || '{}');
     localStorage.setItem(pKey, JSON.stringify({
       total: existing.total || queue.length,
