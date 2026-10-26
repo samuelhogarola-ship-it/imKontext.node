@@ -95,3 +95,14 @@ test('changing interface language retains translated detail canonical and native
  await page.locator('#lang-selector-btn').click();await page.locator('#lang-ui-grid [data-lang="en"]').click();
  await expect(page.locator('#link-canonical')).toHaveAttribute('href',/\/it\/textos\/hitze\?nivel=B1$/);expect(await page.evaluate(()=>getNativeLang())).toBe('es');
 });
+
+test('landing exposes learning choices without an unavailable sign-in action',async({page})=>{
+ await multilingualApi(page);await page.goto('/en/');
+ await expect(page.locator('h1')).toHaveText('Aprende inglés con noticias reales');
+ await expect(page.locator('#auth-header-btn')).not.toBeVisible();
+ await page.locator('#lang-selector-btn').click();
+ await expect(page.locator('#learning-language')).toBeVisible();
+ await page.locator('#learning-language').selectOption('es');
+ await expect(page).toHaveURL(/\/es\/textos$/);
+ await expect(page.locator('[data-testid="featured-card"]').first()).toContainText('Hace calor');
+});
