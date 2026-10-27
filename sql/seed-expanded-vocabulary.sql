@@ -48,6 +48,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o programa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el programa", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Intelligenz
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Intelligenz', 'intelligenz', 'die', 'Nomen')
@@ -82,6 +86,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a inteligência')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la inteligencia", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Arzt
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -118,6 +126,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o médico')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el médico", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Bild
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Bild', 'bild', 'das', 'Nomen')
@@ -152,6 +164,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a imagem')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la imagen", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Patient
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -188,6 +204,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o paciente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el paciente", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- analysieren
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('analysieren', 'analysieren', NULL, 'Verb')
@@ -222,6 +242,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'analisar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "analizar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Krankheit
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -258,6 +282,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a doença')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la enfermedad", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Technik
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Technik', 'technik', 'die', 'Nomen')
@@ -292,6 +320,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a técnica')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la técnica", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- nützlich
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -328,6 +360,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'útil')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "útil", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Fehler
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Fehler', 'fehler', 'der', 'Nomen')
@@ -362,6 +398,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o erro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el error", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- ersetzen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -398,6 +438,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'substituir')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "sustituir", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Entscheidung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Entscheidung', 'entscheidung', 'die', 'Nomen')
@@ -432,6 +476,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a decisão')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la decisión", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- vertrauen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -468,6 +516,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'confiar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "confiar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- helfen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('helfen', 'helfen', NULL, 'Verb')
@@ -502,6 +554,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ajudar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "ayudar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- nutzen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -538,6 +594,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'utilizar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "utilizar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- finden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('finden', 'finden', NULL, 'Verb')
@@ -572,6 +632,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'encontrar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "encontrar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- schnell
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -608,6 +672,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'rápido')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "rápido", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Arbeit
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Arbeit', 'arbeit', 'die', 'Nomen')
@@ -642,6 +710,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o trabalho')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el trabajo", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- weniger
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -678,6 +750,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'menos')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "menos", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- treffen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('treffen', 'treffen', NULL, 'Verb')
@@ -712,6 +788,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'tomar (uma decisão)')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "tomar (una decisión)", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- neu
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -748,6 +828,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'novo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "nuevo", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- lesen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('lesen', 'lesen', NULL, 'Verb')
@@ -782,6 +866,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ler')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "leer", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Mensch
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -818,6 +906,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a pessoa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la persona", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- künstlich
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('künstlich', 'künstlich', NULL, 'Adjektiv')
@@ -853,6 +945,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'artificial')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "artificial", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Beispiel
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Beispiel', 'beispiel', 'das', 'Nomen')
@@ -887,6 +983,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o exemplo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el ejemplo", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -934,6 +1034,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o verão')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el verano", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- heiß
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('heiß', 'heiß', NULL, 'Adjektiv')
@@ -968,6 +1072,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'quente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "caliente", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Temperatur
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1004,6 +1112,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a temperatura')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la temperatura", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- sterben
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('sterben', 'sterben', NULL, 'Verb')
@@ -1038,6 +1150,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'morrer')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "morir", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Experte
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1074,6 +1190,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o especialista')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el experto", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Gefahr
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Gefahr', 'gefahr', 'die', 'Nomen')
@@ -1108,6 +1228,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o perigo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el peligro", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- besonders
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1144,6 +1268,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'especialmente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "especialmente", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- schlimm
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('schlimm', 'schlimm', NULL, 'Adjektiv')
@@ -1178,6 +1306,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'grave')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "grave", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- extrem
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1214,6 +1346,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'extremo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "extremo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Hitze
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Hitze', 'hitze', 'die', 'Nomen')
@@ -1248,6 +1384,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o calor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el calor", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Regierung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1284,6 +1424,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o governo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el gobierno", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Plan
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Plan', 'plan', 'der', 'Nomen')
@@ -1318,6 +1462,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o plano')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el plan", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- schuld
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1354,6 +1502,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'culpado')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "culpable", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Todesfall
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Todesfall', 'todesfall', 'der', 'Nomen')
@@ -1388,6 +1540,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o falecimento')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el fallecimiento", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- kühl
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1424,6 +1580,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'fresco')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "fresco", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Raum
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Raum', 'raum', 'der', 'Nomen')
@@ -1458,6 +1618,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a sala')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la habitación", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Stadt
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1494,6 +1658,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a cidade')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la ciudad", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- brauchen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('brauchen', 'brauchen', NULL, 'Verb')
@@ -1528,6 +1696,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'precisar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "necesitar", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Drittel
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1564,6 +1736,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o terço')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el tercio", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- alt
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('alt', 'alt', NULL, 'Adjektiv')
@@ -1598,6 +1774,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'velho')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "viejo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Jahr
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1634,6 +1814,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o ano')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el año", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Grad
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Grad', 'grad', 'der', 'Nomen')
@@ -1668,6 +1852,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o grau')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el grado", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Tag
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1704,6 +1892,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o dia')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el día", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- besser
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('besser', 'besser', NULL, 'Adjektiv')
@@ -1738,6 +1930,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'melhor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "mejor", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -1785,6 +1981,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o partido')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el partido", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- gewinnen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('gewinnen', 'gewinnen', NULL, 'Verb')
@@ -1819,6 +2019,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ganhar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "ganar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Studentenbewegung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1855,6 +2059,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o movimento estudantil')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el movimiento estudiantil", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- jung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('jung', 'jung', NULL, 'Adjektiv')
@@ -1889,6 +2097,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'jovem')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "joven", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Präsident
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1925,6 +2137,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o presidente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el presidente", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Macht
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Macht', 'macht', 'die', 'Nomen')
@@ -1959,6 +2175,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o poder')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el poder", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- unzufrieden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -1995,6 +2215,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'insatisfeito')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "insatisfecho", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- protestieren
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('protestieren', 'protestieren', NULL, 'Verb')
@@ -2029,6 +2253,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'protestar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "protestar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Straße
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2065,6 +2293,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a rua')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la calle", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Sieg
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Sieg', 'sieg', 'der', 'Nomen')
@@ -2099,6 +2331,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a vitória')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la victoria", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- feiern
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2135,6 +2371,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'celebrar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "celebrar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- zufrieden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('zufrieden', 'zufrieden', NULL, 'Adjektiv')
@@ -2169,6 +2409,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'satisfeito')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "satisfecho", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Regierung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2205,6 +2449,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o governo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el gobierno", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- zusammenarbeiten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('zusammenarbeiten', 'zusammenarbeiten', NULL, 'Verb')
@@ -2239,6 +2487,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'colaborar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "colaborar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- historisch
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2275,6 +2527,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'histórico')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "histórico", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Moment
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Moment', 'moment', 'der', 'Nomen')
@@ -2309,6 +2565,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o momento')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el momento", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Land
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2345,6 +2605,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o país')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el país", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- wichtig
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('wichtig', 'wichtig', NULL, 'Adjektiv')
@@ -2379,6 +2643,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'importante')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "importante", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Student
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2415,6 +2683,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o estudante')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el estudiante", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- lange
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('lange', 'lange', NULL, 'Adverb')
@@ -2449,6 +2721,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'muito tempo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "mucho tiempo", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- wollen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2485,6 +2761,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'querer')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "querer", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- eng
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('eng', 'eng', NULL, 'Adjektiv')
@@ -2519,6 +2799,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'estreito')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "estrecho", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -2566,6 +2850,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a empresa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la empresa", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Börse
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Börse', 'börse', 'die', 'Nomen')
@@ -2600,6 +2888,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a bolsa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la bolsa", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Produkt
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2636,6 +2928,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o produto')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el producto", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- sprechen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('sprechen', 'sprechen', NULL, 'Verb')
@@ -2670,6 +2966,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'falar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "hablar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Geschichte
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2706,6 +3006,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a história')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la historia", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Milliarde
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Milliarde', 'milliarde', 'die', 'Nomen')
@@ -2740,6 +3044,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o bilhão')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el mil millones", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- wert
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2776,6 +3084,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'que vale')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "que vale", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- kaufen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('kaufen', 'kaufen', NULL, 'Verb')
@@ -2810,6 +3122,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'comprar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "comprar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Branche
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2846,6 +3162,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o setor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el sector", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- wachsen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('wachsen', 'wachsen', NULL, 'Verb')
@@ -2880,6 +3200,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'crescer')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "crecer", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Kosten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2916,6 +3240,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'os custos')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "los costes", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- hoch
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('hoch', 'hoch', NULL, 'Adjektiv')
@@ -2950,6 +3278,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'alto')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "alto", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- glauben
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -2986,6 +3318,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'acreditar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "creer", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Zukunft
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Zukunft', 'zukunft', 'die', 'Nomen')
@@ -3020,6 +3356,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o futuro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el futuro", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- stattfinden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3056,6 +3396,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'ter lugar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "tener lugar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- amerikanisch
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('amerikanisch', 'amerikanisch', NULL, 'Adjektiv')
@@ -3090,6 +3434,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'americano')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "estadounidense", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- bekannt
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3126,6 +3474,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'conhecido')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "conocido", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- verdreifachen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('verdreifachen', 'verdreifachen', NULL, 'Verb')
@@ -3160,6 +3512,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'triplicar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "triplicar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Entwicklung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3196,6 +3552,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o desenvolvimento')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el desarrollo", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Anfang
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Anfang', 'anfang', 'der', 'Nomen')
@@ -3230,6 +3590,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o início')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el principio", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- denken
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3266,6 +3630,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'pensar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "pensar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- groß
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('groß', 'groß', NULL, 'Adjektiv')
@@ -3301,6 +3669,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'grande')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "grande", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Geld
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Geld', 'geld', 'das', 'Nomen')
@@ -3335,6 +3707,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o dinheiro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el dinero", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -3382,6 +3758,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o agricultor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el agricultor", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- krank
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('krank', 'krank', NULL, 'Adjektiv')
@@ -3416,6 +3796,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'doente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "enfermo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Fieber
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3452,6 +3836,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a febre')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la fiebre", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Kopfschmerzen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Kopfschmerzen', 'kopfschmerzen', 'die', 'Nomen')
@@ -3486,6 +3874,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a dor de cabeça')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el dolor de cabeza", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- untersuchen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3522,6 +3914,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'examinar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "examinar", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Risiko
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Risiko', 'risiko', 'das', 'Nomen')
@@ -3556,6 +3952,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o risco')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el riesgo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Bevölkerung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3592,6 +3992,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a população')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la población", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- gering
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('gering', 'gering', NULL, 'Adjektiv')
@@ -3626,6 +4030,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'baixo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "escaso", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- leicht
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3662,6 +4070,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'fácil')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "fácil", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- beobachten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('beobachten', 'beobachten', NULL, 'Verb')
@@ -3696,6 +4108,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'observar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "observar", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Situation
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3732,6 +4148,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a situação')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la situación", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- genau
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('genau', 'genau', NULL, 'Adverb')
@@ -3766,6 +4186,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'exatamente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "exactamente", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- sicher
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3802,6 +4226,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'seguro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "seguro", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- sich verbreiten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('sich verbreiten', 'sich verbreiten', NULL, 'Verb')
@@ -3836,6 +4264,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'espalhar-se')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "propagarse", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Tier
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3872,6 +4304,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o animal')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el animal", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- normalerweise
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('normalerweise', 'normalerweise', NULL, 'Adverb')
@@ -3906,6 +4342,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'normalmente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "normalmente", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Mann
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -3942,6 +4382,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o homem')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el hombre", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- vorkommen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('vorkommen', 'vorkommen', NULL, 'Verb')
@@ -3976,6 +4420,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ocorrer')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "ocurrir", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- weiter
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4012,6 +4460,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'mais adiante')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "más allá", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Fall
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Fall', 'fall', 'der', 'Nomen')
@@ -4046,6 +4498,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o caso')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el caso", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- neu
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4082,6 +4538,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'novo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "nuevo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- zum ersten Mal
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('zum ersten Mal', 'zum ersten mal', NULL, 'Adverb')
@@ -4117,6 +4577,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'pela primeira vez')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "por primera vez", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- trotzdem
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('trotzdem', 'trotzdem', NULL, 'Adverb')
@@ -4151,6 +4615,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'mesmo assim')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "sin embargo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -4198,6 +4666,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o erro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el error", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- gefährlich
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('gefährlich', 'gefährlich', NULL, 'Adjektiv')
@@ -4232,6 +4704,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'perigoso')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "peligroso", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Hacker
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4268,6 +4744,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o hacker')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el hacker", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- stehlen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('stehlen', 'stehlen', NULL, 'Verb')
@@ -4302,6 +4782,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'roubar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "robar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Daten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4338,6 +4822,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'os dados')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "los datos", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Suche
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Suche', 'suche', 'die', 'Nomen')
@@ -4372,6 +4860,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a busca')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la búsqueda", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- finden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4408,6 +4900,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'encontrar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "encontrar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Programmiersprache
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Programmiersprache', 'programmiersprache', 'die', 'Nomen')
@@ -4442,6 +4938,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a linguagem de programação')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el lenguaje de programación", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Webseite
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4478,6 +4978,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o site')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la página web", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- benutzen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('benutzen', 'benutzen', NULL, 'Verb')
@@ -4512,6 +5016,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'usar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "usar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Regierung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4548,6 +5056,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o governo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el gobierno", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Regel
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Regel', 'regel', 'die', 'Nomen')
@@ -4582,6 +5094,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a regra')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la regla", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Sicherheit
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4618,6 +5134,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a segurança')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la seguridad", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Software
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Software', 'software', 'die', 'Nomen')
@@ -4652,6 +5172,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o software')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el software", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Experte
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4688,6 +5212,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o especialista')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el experto", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- schnell
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('schnell', 'schnell', NULL, 'Adjektiv')
@@ -4722,6 +5250,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'rápido')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "rápido", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Nutzer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4758,6 +5290,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o utilizador')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el usuario", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Internet
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Internet', 'internet', 'das', 'Nomen')
@@ -4792,6 +5328,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a internet')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el internet", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- nutzen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4828,6 +5368,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'utilizar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "utilizar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Problem
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Problem', 'problem', 'das', 'Nomen')
@@ -4862,6 +5406,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o problema')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el problema", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- ernst
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4898,6 +5446,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'grave')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "grave", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- helfen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('helfen', 'helfen', NULL, 'Verb')
@@ -4932,6 +5484,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ajudar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "ayudar", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- künstlich
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -4968,6 +5524,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'artificial')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "artificial", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Intelligenz
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Intelligenz', 'intelligenz', 'die', 'Nomen')
@@ -5002,6 +5562,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a inteligência')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la inteligencia", "level": "a2", "category": "technology"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -5049,6 +5613,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a empresa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la empresa", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Idee
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Idee', 'idee', 'die', 'Nomen')
@@ -5083,6 +5651,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a ideia')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la idea", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Technologie
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5119,6 +5691,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a tecnologia')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la tecnología", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die App
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die App', 'app', 'die', 'Nomen')
@@ -5153,6 +5729,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o aplicativo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la aplicación", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- entstehen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5189,6 +5769,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'surgir')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "surgir", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Geld
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Geld', 'geld', 'das', 'Nomen')
@@ -5223,6 +5807,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o dinheiro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el dinero", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- bekommen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5259,6 +5847,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'receber')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "recibir", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Miete
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Miete', 'miete', 'die', 'Nomen')
@@ -5293,6 +5885,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o aluguel')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el alquiler", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Büro
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5329,6 +5925,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o escritório')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la oficina", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- teuer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('teuer', 'teuer', NULL, 'Adjektiv')
@@ -5363,6 +5963,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'caro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "caro", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- schwer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5399,6 +6003,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'difícil')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "difícil", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Mitarbeiter
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Mitarbeiter', 'mitarbeiter', 'der', 'Nomen')
@@ -5433,6 +6041,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o funcionário')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el empleado", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- wachsen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5469,6 +6081,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'crescer')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "crecer", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- arbeiten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('arbeiten', 'arbeiten', NULL, 'Verb')
@@ -5503,6 +6119,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'trabalhar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "trabajar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- besonders
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5539,6 +6159,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'especialmente')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "especialmente", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- klein
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('klein', 'klein', NULL, 'Adjektiv')
@@ -5573,6 +6197,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'pequeno')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "pequeño", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- neu
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5609,6 +6237,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'novo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "nuevo", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- geben
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('geben', 'geben', NULL, 'Verb')
@@ -5643,6 +6275,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'dar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "dar", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Beispiel
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5679,6 +6315,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o exemplo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el ejemplo", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- gut
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('gut', 'gut', NULL, 'Adjektiv')
@@ -5713,6 +6353,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'bom')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "bueno", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- trotzdem
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5749,6 +6393,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'mesmo assim')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "sin embargo", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Szene
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Szene', 'szene', 'die', 'Nomen')
@@ -5784,6 +6432,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a cena')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la escena", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- immer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('immer', 'immer', NULL, 'Adverb')
@@ -5818,6 +6470,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'sempre')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "siempre", "level": "a2", "category": "economy"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -5865,6 +6521,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o tempo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el tiempo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Sturm
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Sturm', 'sturm', 'der', 'Nomen')
@@ -5899,6 +6559,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a tempestade')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la tormenta", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- zerstören
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -5935,6 +6599,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'destruir')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "destruir", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Haus
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Haus', 'haus', 'das', 'Nomen')
@@ -5969,6 +6637,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a casa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la casa", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Straße
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6005,6 +6677,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a rua')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la calle", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- wichtig
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('wichtig', 'wichtig', NULL, 'Adjektiv')
@@ -6039,6 +6715,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'importante')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "importante", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- vorhersagen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6075,6 +6755,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'prever')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "predecir", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- analysieren
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('analysieren', 'analysieren', NULL, 'Verb')
@@ -6109,6 +6793,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'analisar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "analizar", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Temperatur
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6145,6 +6833,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a temperatura')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la temperatura", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Wind
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Wind', 'wind', 'der', 'Nomen')
@@ -6179,6 +6871,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o vento')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el viento", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Wolke
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6215,6 +6911,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a nuvem')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la nube", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Meteorologe
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Meteorologe', 'meteorologe', 'der', 'Nomen')
@@ -6249,6 +6949,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o meteorologista')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el meteorólogo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Technik
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6285,6 +6989,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a técnica')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la técnica", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- genau
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('genau', 'genau', NULL, 'Adjektiv')
@@ -6319,6 +7027,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'preciso')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "preciso", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- früher
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6355,6 +7067,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'antes')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "antes", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- sich vorbereiten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('sich vorbereiten', 'sich vorbereiten', NULL, 'Verb')
@@ -6389,6 +7105,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'preparar-se')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "prepararse", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- schlecht
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6425,6 +7145,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'mau')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "malo", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- manchmal
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('manchmal', 'manchmal', NULL, 'Adverb')
@@ -6459,6 +7183,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'às vezes')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "a veces", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- schauen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6495,6 +7223,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'olhar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "mirar", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- besser
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('besser', 'besser', NULL, 'Adjektiv')
@@ -6530,6 +7262,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'melhor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "mejor", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Daten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Daten', 'daten', 'die', 'Nomen')
@@ -6564,6 +7300,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'os dados')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "los datos", "level": "a2", "category": "science"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -6611,6 +7351,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o fim de semana')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el fin de semana", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- unzufrieden
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('unzufrieden', 'unzufrieden', NULL, 'Adjektiv')
@@ -6645,6 +7389,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'insatisfeito')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "insatisfecho", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Lohn
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6681,6 +7429,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o salário')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el salario", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Wohnung
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Wohnung', 'wohnung', 'die', 'Nomen')
@@ -6715,6 +7467,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o apartamento')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el piso", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- günstig
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6751,6 +7507,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'barato')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "barato", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Leben
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Leben', 'leben', 'das', 'Nomen')
@@ -6785,6 +7545,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a vida')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la vida", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Essen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6821,6 +7585,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a comida')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la comida", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Strom
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Strom', 'strom', 'der', 'Nomen')
@@ -6855,6 +7623,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a eletricidade')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la electricidad", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- kosten
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6891,6 +7663,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'custar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "costar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Demonstrant
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Demonstrant', 'demonstrant', 'der', 'Nomen')
@@ -6925,6 +7701,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o manifestante')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el manifestante", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Schild
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -6961,6 +7741,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o cartaz')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el cartel", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- rufen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('rufen', 'rufen', NULL, 'Verb')
@@ -6995,6 +7779,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'gritar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "gritar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Parole
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7031,6 +7819,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o lema')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el lema", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- friedlich
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('friedlich', 'friedlich', NULL, 'Adjektiv')
@@ -7065,6 +7857,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'pacífico')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "pacífico", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Polizei
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7101,6 +7897,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a polícia')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la policía", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- aufrufen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('aufrufen', 'aufrufen', NULL, 'Verb')
@@ -7135,6 +7935,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'convocar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "convocar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Politiker
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7171,6 +7975,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o político')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el político", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- zuhören
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('zuhören', 'zuhören', NULL, 'Verb')
@@ -7205,6 +8013,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'escutar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "escuchar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- der Protest
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7241,6 +8053,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o protesto')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la protesta", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- tragen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('tragen', 'tragen', NULL, 'Verb')
@@ -7275,6 +8091,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'carregar / usar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "llevar", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- größtenteils
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7311,6 +8131,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'em grande parte')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "en su mayoría", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- gehen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('gehen', 'gehen', NULL, 'Verb')
@@ -7345,6 +8169,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'ir')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "ir", "level": "a2", "category": "society"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
@@ -7392,6 +8220,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a escola')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el colegio", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Schüler
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Schüler', 'schüler', 'der', 'Nomen')
@@ -7426,6 +8258,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o aluno')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el alumno", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- verändern
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7462,6 +8298,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'mudar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "cambiar", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- lernen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('lernen', 'lernen', NULL, 'Verb')
@@ -7496,6 +8336,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'aprender')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "aprender", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Tablet
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7532,6 +8376,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o tablet')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la tableta", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Computer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Computer', 'computer', 'der', 'Nomen')
@@ -7566,6 +8414,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o computador')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el ordenador", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Klassenzimmer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7602,6 +8454,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a sala de aula')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el aula", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- digital
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('digital', 'digital', NULL, 'Adjektiv')
@@ -7636,6 +8492,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'digital')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "digital", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Tafel
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7672,6 +8532,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o quadro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la pizarra", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Lehrer
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Lehrer', 'lehrer', 'der', 'Nomen')
@@ -7706,6 +8570,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o professor')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el profesor", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- das Programm
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7742,6 +8610,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o programa')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el programa", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- erklären
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('erklären', 'erklären', NULL, 'Verb')
@@ -7776,6 +8648,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'explicar')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "explicar", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Grammatik
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7812,6 +8688,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'a gramática')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la gramática", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Tempo
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Tempo', 'tempo', 'das', 'Nomen')
@@ -7846,6 +8726,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'o ritmo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el ritmo", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- eigen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7882,6 +8766,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'próprio')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "propio", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Eltern
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Eltern', 'eltern', 'die', 'Nomen')
@@ -7916,6 +8804,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'os pais')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "los padres", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- sich Sorgen machen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -7952,6 +8844,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'preocupar-se')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "preocuparse", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- das Kind
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('das Kind', 'kind', 'das', 'Nomen')
@@ -7986,6 +8882,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a criança')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el niño", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- die Zeit
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -8022,6 +8922,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o tempo')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el tiempo", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- der Bildschirm
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('der Bildschirm', 'bildschirm', 'der', 'Nomen')
@@ -8056,6 +8960,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'a tela')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "la pantalla", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- verbringen
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
@@ -8092,6 +9000,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'passar (tempo)')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "pasar (tiempo)", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- die Zukunft
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('die Zukunft', 'zukunft', 'die', 'Nomen')
@@ -8127,6 +9039,10 @@ BEGIN
   VALUES (v_meaning_id, 'pt', 'o futuro')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "el futuro", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
+
   -- manche
   INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
   VALUES ('manche', 'manche', NULL, 'Adjektiv')
@@ -8161,6 +9077,10 @@ BEGIN
   INSERT INTO imk_meaning_localizations (meaning_id, language, term)
   VALUES (v_meaning_id, 'pt', 'alguns')
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
+
+  -- Bridge: VokabelLab + DerDieDas
+  INSERT INTO app_vocabulary_meanings (app_key, meaning_id, is_active) VALUES ('vokabellab', v_meaning_id, true) ON CONFLICT (app_key, meaning_id) DO NOTHING;
+  INSERT INTO app_vocabulary_lemmas (app_key, lemma_id, is_active, metadata) VALUES ('der-die-das', v_lemma_id, true, '{"translation": "algunos", "level": "a2", "category": "education"}') ON CONFLICT (app_key, lemma_id) DO UPDATE SET metadata = EXCLUDED.metadata;
 
 END $$;
 
