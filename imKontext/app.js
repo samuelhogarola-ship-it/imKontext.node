@@ -307,10 +307,10 @@ function renderTextGrid(list) {
     featuredWrap.innerHTML = `
       ${renderArchiveNotice(sorted)}
       <div class="tx-featured-head">
-        <p class="tx-featured-kicker">Destacado de la semana</p>
+        <p class="tx-featured-kicker">${escapeHtml(t('textos.featured'))}</p>
         ${renderFeaturedAccessTag(featured)}
       </div>
-      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="${escapeHtml(t('textos.open_featured', { title: featured.title }))}">
         <div class="tx-featured-media" aria-hidden="true">
           <img class="tx-featured-image" src="/textos-featured-hero.png" alt="">
         </div>
@@ -350,7 +350,7 @@ function createTextRow(text, position) {
   row.dataset.testid = 'text-row';
   row.setAttribute('type', 'button');
   row.setAttribute('role', 'listitem');
-  row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
+  row.setAttribute('aria-label', t('textos.select_text', { title: text.title }));
 
   row.innerHTML = `
     <span class="tx-row-num">${String(position).padStart(2, '0')}</span>
@@ -387,7 +387,7 @@ function canAccessText(text) {
 
 function renderAccessTag(text) {
   if (isFreemiumText(text)) {
-    return '<span class="tx-access-tag tx-access-tag--freemium">PREMIUM · GRATIS AHORA</span>';
+    return `<span class="tx-access-tag tx-access-tag--freemium">${escapeHtml(t('textos.premium_promo_tag'))}</span>`;
   }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
@@ -416,8 +416,8 @@ function pickPreferredLevel(levels = []) {
 }
 
 function getEditorialSourceLabel(text) {
-  const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || 'Archivo').trim();
-  return raw || 'Archivo';
+  const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || t('textos.archive')).trim();
+  return raw || t('textos.archive');
 }
 
 function renderFeaturedSummary(text) {
@@ -439,7 +439,7 @@ function renderArchiveNotice(list = []) {
   return `
     <div class="tx-archive-note" role="note">
       <span class="tx-archive-note-icon" aria-hidden="true">✦</span>
-      <p class="tx-archive-note-copy"><strong>Esta selección incluye textos premium.</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
+      <p class="tx-archive-note-copy"><strong>${escapeHtml(t('textos.archive_intro'))}</strong> ${escapeHtml(t('textos.archive_note'))}</p>
     </div>
   `;
 }
@@ -467,7 +467,7 @@ function getFeaturedText(list) {
 
 function renderFeaturedAccessTag(text) {
   if (isFreemiumText(text)) {
-    return '<span class="tx-access-tag tx-access-tag--freemium">PROMO · GRATIS AHORA</span>';
+    return `<span class="tx-access-tag tx-access-tag--freemium">${escapeHtml(t('textos.promo_tag'))}</span>`;
   }
   if (text.access_status === 'free') {
     return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
@@ -480,10 +480,10 @@ function renderFeaturedAccessTag(text) {
 
 function renderFeaturedDescription(text) {
   if (isFreemiumText(text)) {
-    return 'Promoción activa: este texto premium está desbloqueado gratis por tiempo limitado. Entra aquí para aprovecharlo.';
+    return t('textos.promo_description');
   }
 
-  return 'Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.';
+  return t('textos.free_description');
 }
 
 function getFilteredTexts() {
@@ -516,17 +516,17 @@ function renderTextsPagination(totalTexts) {
       class="txsel-page-btn"
       id="txsel-page-prev"
       type="button"
-      aria-label="Ver textos anteriores"
+      aria-label="${escapeHtml(t('textos.previous_page'))}"
       ${currentTextsPage === 0 ? 'disabled' : ''}
     >
       ←
     </button>
-    <p class="txsel-page-status">${start}-${end} de ${totalTexts}</p>
+    <p class="txsel-page-status">${escapeHtml(t('textos.page_range', { start, end, total: totalTexts }))}</p>
     <button
       class="txsel-page-btn"
       id="txsel-page-next"
       type="button"
-      aria-label="Ver más textos"
+      aria-label="${escapeHtml(t('textos.next_page'))}"
       ${currentTextsPage >= totalPages - 1 ? 'disabled' : ''}
     >
       →
@@ -680,15 +680,15 @@ async function showDashboard() {
   $('db-stats-grid').innerHTML = `
     <div class="db-stat-col">
       <span class="db-stat-num">${totalDone}</span>
-      <span class="db-stat-lbl">${escapeHtml(t('result.words'))}<br>${escapeHtml(t('result.correct'))}</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.words_practiced')).replaceAll('\n', '<br>')}</span>
     </div>
     <div class="db-stat-col">
       <span class="db-stat-num">${activeTexts}</span>
-      <span class="db-stat-lbl">${escapeHtml(t('textos.title'))}</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.active_texts')).replaceAll('\n', '<br>')}</span>
     </div>
     <div class="db-stat-col db-stat-col--circle">
       <span class="db-global-circle ${globalScoreClass}">${globalPct}%</span>
-      <span class="db-stat-lbl">${escapeHtml(t('progress.tracking'))}</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.overall_progress')).replaceAll('\n', '<br>')}</span>
     </div>
   `;
 
@@ -726,7 +726,7 @@ async function showDashboard() {
         </span>
       </span>
       <span class="db-rank-score ${scoreClass}">${pct}%</span>
-      <button class="db-rank-reset" type="button" aria-label="Reiniciar progreso">×</button>
+      <button class="db-rank-reset" type="button" aria-label="${escapeHtml(t('dashboard.reset_label'))}">×</button>
     `;
 
     const goToText = e.text
@@ -1358,6 +1358,12 @@ if (typeof onAuthChange === 'function') onAuthChange(() => {
         syncLearningSelectors();
         buildGrid();
         closeDropdown();
+        if (screens.textos.getClientRects().length) {
+          buildTopicChips();
+          renderTextGrid(getFilteredTexts());
+        } else if (screens.dashboard.getClientRects().length) {
+          showDashboard();
+        }
         const deck = $('ln-deck');
         if (deck) deck.innerHTML = t('landing.deck') + '<br>' + t('landing.deck2');
         const route = getTargetLang() === 'de' ? null : resolveLearningRoute(window.location.pathname);

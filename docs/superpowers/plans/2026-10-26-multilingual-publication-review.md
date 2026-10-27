@@ -24,3 +24,17 @@
 - Keep authentication separate. The partial header markup currently exposes a button with no handler; remove that unavailable action in this release. Cost: sign-in awaits the separately reviewed #77.
 - Production is not main and auto-deploy tracks a different branch. A GitHub merge by itself cannot prove publication; preserve current environment variables and use the exact reviewed commit for the explicit Hostinger deployment.
 - Pin the patched qs version through an npm override because Express constrains its dependency to a vulnerable minor branch. Cost: retain this explicit override until an Express update admits the patched parser; no major framework upgrade is needed.
+
+## 2026-10-27 local verification checkpoint
+
+- User priority is documentation and verification before uploading. No new pushes, merges, remote SQL or deployments.
+- Remote PR #78 closed unmerged; PR #80 still at ed1aad8, no Actions checks, CodeRabbit skipped its draft. The old #78 CI exception was `onAuthChange is not defined`; #79 already guards it.
+- Corrected semantic dashboard translation keys and untranslated dynamic catalog controls; catalog/dashboard refresh on UI-language switches.
+- Integrated-browser practice found the result summary still rendered German. A backward-compatible optional target-word accessor now renders the practiced language and preserves original fields/HTML escaping.
+- RED→GREEN evidence: wrong dashboard labels in six UI languages; English catalog/switch; English result summary and Node result tests. Final Node 33/33 and functional browser 38/38 pass.
+- Stable visual fixture restores the intended Climate word/options without changing product randomization. Dashboard visual now passes; five other macOS comparisons remain explicitly unresolved. No snapshots changed.
+- Nine real local UI×learning combinations DE/EN/ES pass with native explanations, exact locale JSON content/term checks, canonical URLs and reload persistence; sibling progress/queues use the actual practiced text ID. Local HTTP 200 wrong-language negative control is rejected.
+- Independent review found no product compatibility blocker and required strengthening the verifier's locale comparison; fixed and proved with the negative control. Database provenance is documented through exact launch configuration, not incorrectly inferred from browser request observation.
+- Ruling: preserve the existing neutral badge/mobile header instead of restoring outdated reference styling; cost is a pending Linux visual signoff before publication.
+- Ruling: leave CI changes local, including stacked-PR coverage and Node22/Ubuntu24.04 pinning; cost is that remote CI remains unverified until uploading is explicitly agreed.
+- Full evidence, known localization gaps, source/PR identities and reproduction steps: `docs/multilingual-verification-2026-10-27.md` and the projectless outputs verification bundle.

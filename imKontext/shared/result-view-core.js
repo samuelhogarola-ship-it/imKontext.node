@@ -12,13 +12,14 @@ function escapeHTML(str) {
 
 /* ── ROW DATA ────────────────────────────────────────────────── */
 // Returns a plain array of row objects — one per answered question.
-function buildResumenRows(questionStates, queue) {
+function buildResumenRows(questionStates, queue, getTargetWord = word => word.german) {
   return queue.map((word, i) => {
     const s = questionStates[i];
     if (!s?.answered) return null;
     return {
       german:        word.german,
       spanish:       word.spanish,
+      target:        getTargetWord(word),
       correct:       s.correct,
       correctAnswer: s.correctAnswer || s.solutionText || null,
       wasNoSe:       s.wasNoSe,
@@ -39,7 +40,7 @@ function renderResumenHTML(rows) {
       : '';
     return `<div class="resumen-item ${cls}">` +
       `<span class="resumen-icon">${icon}</span>` +
-      `<span class="resumen-word">${escapeHTML(row.german)}</span>` +
+      `<span class="resumen-word">${escapeHTML(row.target ?? row.german)}</span>` +
       correction +
       `</div>`;
   }).join('');

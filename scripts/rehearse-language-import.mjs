@@ -71,6 +71,12 @@ try{
   const port=Number(process.env.IMK_REHEARSAL_PORT);assert.ok(Number.isSafeInteger(port)&&port>0&&port<65536);
   const {default:express}=await import('express');const app=express();
   await db.exec('SET ROLE anon');registerLocalizedRoutes(app,fetchRows);
+  // Optional read-only local upstream for the unmodified production server.js.
+  // This permits German and localized handlers to use the same disposable source DB.
+  if(process.env.IMK_REHEARSAL_REST==='1')app.get('/rest/v1/:table',async(req,res)=>{
+   try{res.json(await fetchRows(req.originalUrl.slice('/rest/v1'.length)));}
+   catch(error){res.status(400).json({error:error.message});}
+  });
   const frontend=path.resolve(new URL('../imKontext',import.meta.url).pathname);
   app.use(express.static(frontend));app.get('*',(req,res)=>res.sendFile(path.join(frontend,'index.html')));
   const server=await new Promise(resolve=>{const listener=app.listen(port,'127.0.0.1',()=>resolve(listener));});

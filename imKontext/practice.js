@@ -713,7 +713,7 @@ function showResultado() {
   `;
 
   // Populate answer-by-answer summary
-  $('resumen-lista').innerHTML = renderResumenHTML(buildResumenRows(questionStates, queue));
+  $('resumen-lista').innerHTML = renderResumenHTML(buildResumenRows(questionStates, queue, getTargetWord));
 
   // Show "Repasar solo errores" only when there are errors
   const btnRepasar = $('btn-repasar-errores');

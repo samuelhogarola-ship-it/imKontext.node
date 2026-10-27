@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import { mockApi } from './helpers/mock-api.js';
 import {
   VIEWPORTS,
@@ -7,6 +8,10 @@ import {
   prepareVisualPage,
   waitForVisualStability,
 } from './helpers/visual.js';
+
+const vocabulary = JSON.parse(readFileSync(new URL('./fixtures/vocabulary.json', import.meta.url), 'utf8'));
+// A visual fixture has fixed words/options; random exercise behavior is tested separately.
+const visualVocabulary = [vocabulary.find(word => word.id === 'v2'), ...vocabulary.filter(word => word.id !== 'v2')];
 
 function screenshotOptions(localOptions = {}) {
   return {
@@ -25,7 +30,7 @@ async function gotoVisualRoute(page, route, { mock = false, viewport = VIEWPORTS
     localStorage.setItem('imkontext_cookie_consent', 'accepted');
   });
   if (mock) {
-    await mockApi(page);
+    await mockApi(page, { vocabulary: visualVocabulary });
   }
   await page.goto(route);
   await disableAnimations(page);
@@ -47,9 +52,11 @@ async function reachExercise(page, mode = 'test') {
   await page.locator(`#practice-selector [data-modo="${mode}"]`).click();
   await page.evaluate(() => {
     EXERCISE_CONFIG.autoNextDelay = 999;
+    Math.random = () => 0.999999;
   });
   await page.locator('#btn-empezar').click();
   await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#pregunta-texto')).toHaveText('das Klima');
 }
 
 test.describe('visual regression without API dependency', () => {

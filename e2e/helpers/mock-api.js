@@ -10,14 +10,14 @@ const TEXTS = load('texts');
 const TEXT_VERSION = load('text-version');
 const VOCABULARY = load('vocabulary');
 
-export async function mockApi(page) {
+export async function mockApi(page, { vocabulary = VOCABULARY } = {}) {
   await page.route(
     url => url.pathname === '/api/texts',
     route => route.fulfill({ json: TEXTS })
   );
   await page.route(
     url => url.pathname === '/api/text-version-vocabulary-core',
-    route => route.fulfill({ json: VOCABULARY })
+    route => route.fulfill({ json: vocabulary })
   );
   await page.route(
     url => url.pathname === '/api/text-version',

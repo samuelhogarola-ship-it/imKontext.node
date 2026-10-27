@@ -33,6 +33,10 @@ If localized data or app verification fails, stop rollout. Already committed imp
 
 ## Current status
 
-Prepared and independently reviewed in draft PR #80, stacked on #79. Fresh validation: 30 Node tests and 25 functional browser flows pass; all five real local database flows and EN/ES mobile views pass. The visual suite retains its six pre-existing failing cases (three other cases pass). Of the six, three screenshots match archived base hashes exactly; the mobile landing changes by one pixel after removing the unused auth header, and two feedback screens differ in shuffled vocabulary choices with identical dimensions/layout. Baselines were not replaced. These snapshot differences are documented rather than represented as a green visual suite.
+The remotely prepared release remains draft PR #80 at `ed1aad8`, stacked on #79. PR #78 was subsequently closed without merging. Its interface code remains present in the prepared source; an integration strategy must be reviewed before any merge.
+
+On 2026-10-27, further translation/result fixes and CI changes were prepared **locally only**, following the user's priority to document and verify before uploading. Validation is now 33 Node tests and 38 functional browser flows passing, plus a 9/9 real local UI DE/EN/ES × learning DE/EN/ES matrix with exact reviewed-language content/term checks and persisted progress. A negative control rejects Spanish content returned with HTTP 200 for an English request. The dashboard snapshot passes after its mislabeled metrics were corrected; five other screenshot comparisons remain unresolved on macOS. References were not replaced. See `multilingual-verification-2026-10-27.md` for classifications, reproduction commands, remaining untranslated static UI and the pending Linux CI gate.
+
+The local changes are not yet in the remote PR and no new Actions run has validated them. The additive SQL bundle and rollback revision remain unchanged. This is a reviewable local checkpoint, not production publication approval.
 
 No production database writes, Hostinger deployments, auto-deployment changes, merges or DNS changes have been performed by this review.

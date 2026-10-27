@@ -31,8 +31,11 @@ for(const lang of ['es','en','fi','it','pt'])test(`${lang}: direct link loads tr
  if(lang==='fi'||lang==='en')await expect(page.locator('[data-modo="articulo"]')).toBeDisabled();
  await page.locator('[data-modo="flashcards"]').click();await page.locator('#btn-empezar').click();
  await expect(page.locator('#flashcard-front')).toContainText(lessons[lang][2]);
+ const practicedWord=await page.locator('#flashcard-front').innerText();
+ await page.locator('#btn-flashcard-si').click();
  await page.locator('#btn-terminar').click();
  await expect(page.locator('#screen-resultado')).toBeVisible();
+ await expect(page.locator('#resumen-lista .resumen-word').first()).toHaveText(practicedWord);
  expect(await page.evaluate(lang=>localStorage.getItem(`progress_${lang}_5_b1`),lang)).not.toBeNull();
  expect(await page.evaluate(()=>localStorage.getItem('progress_5_b1'))).toBeNull();
 });
