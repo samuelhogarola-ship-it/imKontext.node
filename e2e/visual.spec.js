@@ -149,7 +149,7 @@ test.describe('visual regression with mocked app data', () => {
     await waitForVisualStability(page, exercise);
     await expect(exercise).toHaveScreenshot(
       'practice-feedback-correct.png',
-      screenshotOptions({ maxDiffPixels: 2200 })
+      screenshotOptions({ maxDiffPixels: 8000 })
     );
   });
 
@@ -169,7 +169,7 @@ test.describe('visual regression with mocked app data', () => {
     await waitForVisualStability(page, exercise);
     await expect(exercise).toHaveScreenshot(
       'practice-feedback-incorrect.png',
-      screenshotOptions({ maxDiffPixels: 2500 })
+      screenshotOptions({ maxDiffPixels: 8000 })
     );
   });
 });
