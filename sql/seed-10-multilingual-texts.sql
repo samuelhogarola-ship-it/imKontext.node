@@ -78,7 +78,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -486,7 +486,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -894,7 +894,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -1302,7 +1302,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -1758,7 +1758,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -2166,7 +2166,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -2574,7 +2574,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -3006,7 +3006,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -3438,7 +3438,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
@@ -3882,7 +3882,7 @@ BEGIN
     'premium',
     NOW()
   )
-  ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
+  ON CONFLICT (slug) DO UPDATE SET title = EXCLUDED.title, topic = EXCLUDED.topic, categoria = EXCLUDED.categoria
   RETURNING id INTO v_text_id;
 
   -- Insert versions (A2, B1, B2)
