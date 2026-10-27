@@ -64,7 +64,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -75,7 +75,7 @@ BEGIN
     'ki-hilft-aerzten-in-krankenhaeusern',
     'Künstliche Intelligenz im Gesundheitswesen',
     'tecnologia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -209,17 +209,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   -- Vocabulary
 
   -- Word: die Diagnose
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Diagnose', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Diagnose', 'diagnose', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el diagnóstico', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el diagnóstico', 'el diagnóstico')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -245,17 +245,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: das Krankenhaus
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Krankenhaus', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Krankenhaus', 'krankenhaus', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el hospital', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el hospital', 'el hospital')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -281,17 +281,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Röntgenaufnahme
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Röntgenaufnahme', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Röntgenaufnahme', 'röntgenaufnahme', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la radiografía', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la radiografía', 'la radiografía')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -317,17 +317,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Datenschutz
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Datenschutz', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Datenschutz', 'datenschutz', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la protección de datos', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la protección de datos', 'la protección de datos')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -353,17 +353,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: erkennen
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('erkennen', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('erkennen', 'erkennen', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'detectar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'detectar', 'detectar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -389,17 +389,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Fehlerquote
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Fehlerquote', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Fehlerquote', 'fehlerquote', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la tasa de error', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la tasa de error', 'la tasa de error')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -425,17 +425,17 @@ A OMS recomenda uma abordagem equilibrada: a IA deve servir como ferramenta de a
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: unterstützen
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('unterstützen', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('unterstützen', 'unterstützen', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'apoyar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'apoyar', 'apoyar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -472,7 +472,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -483,7 +483,7 @@ BEGIN
     'rekordhitze-europa-50000-tote',
     'Klimawandel und Hitzetote in Europa',
     'ciencia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -617,17 +617,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   -- Vocabulary
 
   -- Word: die Hitzewelle
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Hitzewelle', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Hitzewelle', 'hitzewelle', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la ola de calor', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la ola de calor', 'la ola de calor')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -653,17 +653,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Klimawandel
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Klimawandel', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Klimawandel', 'klimawandel', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el cambio climático', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el cambio climático', 'el cambio climático')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -689,17 +689,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Sterblichkeit
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Sterblichkeit', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Sterblichkeit', 'sterblichkeit', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la mortalidad', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la mortalidad', 'la mortalidad')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -725,17 +725,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Grünfläche
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Grünfläche', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Grünfläche', 'grünfläche', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la zona verde', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la zona verde', 'la zona verde')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -761,17 +761,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: gefährdet
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('gefährdet', NULL, 'Adjektiv')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('gefährdet', 'gefährdet', NULL, 'Adjektiv')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'vulnerable', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'vulnerable', 'vulnerable')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -797,17 +797,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: das Warnsystem
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Warnsystem', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Warnsystem', 'warnsystem', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el sistema de alerta', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el sistema de alerta', 'el sistema de alerta')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -833,17 +833,17 @@ Perante estes dados, os cientistas climáticos exigem uma mudança fundamental d
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Treibhausgase
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Treibhausgase', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Treibhausgase', 'treibhausgase', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'los gases de efecto invernadero', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'los gases de efecto invernadero', 'los gases de efecto invernadero')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -880,7 +880,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -891,7 +891,7 @@ BEGIN
     'studentenbewegung-gewinnt-wahl-serbien',
     'Politischer Wandel in Serbien',
     'politica',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -1025,17 +1025,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   -- Vocabulary
 
   -- Word: die Wahl
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Wahl', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Wahl', 'wahl', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la elección', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la elección', 'la elección')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1061,17 +1061,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Korruption
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Korruption', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Korruption', 'korruption', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la corrupción', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la corrupción', 'la corrupción')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1097,17 +1097,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Pressefreiheit
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Pressefreiheit', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Pressefreiheit', 'pressefreiheit', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la libertad de prensa', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la libertad de prensa', 'la libertad de prensa')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1133,17 +1133,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Machtwechsel
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Machtwechsel', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Machtwechsel', 'machtwechsel', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el cambio de poder', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el cambio de poder', 'el cambio de poder')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1169,17 +1169,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: protestieren
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('protestieren', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('protestieren', 'protestieren', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'protestar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'protestar', 'protestar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1205,17 +1205,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Demokratie
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Demokratie', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Demokratie', 'demokratie', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la democracia', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la democracia', 'la democracia')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1241,17 +1241,17 @@ A União Europeia acolheu a vitória eleitoral com entusiasmo. A presidente da C
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: autoritär
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('autoritär', NULL, 'Adjektiv')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('autoritär', 'autoritär', NULL, 'Adjektiv')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'autoritario', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'autoritario', 'autoritario')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1288,7 +1288,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -1299,7 +1299,7 @@ BEGIN
     'anthropic-boersengang',
     'Börsengänge in der KI-Branche',
     'economia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -1445,17 +1445,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   -- Vocabulary
 
   -- Word: der Börsengang
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Börsengang', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Börsengang', 'börsengang', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la salida a bolsa', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la salida a bolsa', 'la salida a bolsa')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1481,17 +1481,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Umsatz
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Umsatz', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Umsatz', 'umsatz', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'los ingresos', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'los ingresos', 'los ingresos')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1517,17 +1517,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Gewinn
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Gewinn', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Gewinn', 'gewinn', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el beneficio', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el beneficio', 'el beneficio')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1553,17 +1553,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Bewertung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Bewertung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Bewertung', 'bewertung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la valoración', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la valoración', 'la valoración')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1589,17 +1589,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Investor
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Investor', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Investor', 'investor', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el inversor', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el inversor', 'el inversor')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1625,17 +1625,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Aktie
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Aktie', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Aktie', 'aktie', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la acción', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la acción', 'la acción')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1661,17 +1661,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: das Rechenzentrum
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Rechenzentrum', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Rechenzentrum', 'rechenzentrum', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el centro de datos', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el centro de datos', 'el centro de datos')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1697,17 +1697,17 @@ Os defensores, por outro lado, sublinham que o setor da IA se distingue fundamen
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: nachhaltig
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('nachhaltig', NULL, 'Adjektiv')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('nachhaltig', 'nachhaltig', NULL, 'Adjektiv')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'sostenible', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'sostenible', 'sostenible')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1744,7 +1744,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -1755,7 +1755,7 @@ BEGIN
     'shamonda-virus-frankreich',
     'Neue Viruserkrankungen in Europa',
     'ciencia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -1889,17 +1889,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   -- Vocabulary
 
   -- Word: das Virus
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Virus', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Virus', 'virus', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el virus', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el virus', 'el virus')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1925,17 +1925,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: sich anstecken
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('sich anstecken', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('sich anstecken', 'sich anstecken', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'contagiarse', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'contagiarse', 'contagiarse')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1961,17 +1961,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Übertragung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Übertragung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Übertragung', 'übertragung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la transmisión', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la transmisión', 'la transmisión')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -1997,17 +1997,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Erreger
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Erreger', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Erreger', 'erreger', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el patógeno', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el patógeno', 'el patógeno')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2033,17 +2033,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Gesundheitsbehörde
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Gesundheitsbehörde', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Gesundheitsbehörde', 'gesundheitsbehörde', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la autoridad sanitaria', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la autoridad sanitaria', 'la autoridad sanitaria')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2069,17 +2069,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: zoonotisch
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('zoonotisch', NULL, 'Adjektiv')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('zoonotisch', 'zoonotisch', NULL, 'Adjektiv')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'zoonótico', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'zoonótico', 'zoonótico')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2105,17 +2105,17 @@ Contudo, o caso gerou considerável preocupação entre os virologistas. Os espe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Überwachung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Überwachung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Überwachung', 'überwachung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la vigilancia', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la vigilancia', 'la vigilancia')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2152,7 +2152,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -2163,7 +2163,7 @@ BEGIN
     'ki-entdeckt-sicherheitsluecken',
     'Cybersicherheit und künstliche Intelligenz',
     'tecnologia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -2297,17 +2297,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   -- Vocabulary
 
   -- Word: die Sicherheitslücke
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Sicherheitslücke', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Sicherheitslücke', 'sicherheitslücke', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la vulnerabilidad', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la vulnerabilidad', 'la vulnerabilidad')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2333,17 +2333,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Quellcode
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Quellcode', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Quellcode', 'quellcode', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el código fuente', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el código fuente', 'el código fuente')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2369,17 +2369,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Angreifer
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Angreifer', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Angreifer', 'angreifer', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el atacante', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el atacante', 'el atacante')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2405,17 +2405,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: aufdecken
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('aufdecken', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('aufdecken', 'aufdecken', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'descubrir', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'descubrir', 'descubrir')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2441,17 +2441,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Schwachstelle
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Schwachstelle', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Schwachstelle', 'schwachstelle', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el punto débil', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el punto débil', 'el punto débil')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2477,17 +2477,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: verschärfen
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('verschärfen', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('verschärfen', 'verschärfen', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'endurecer', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'endurecer', 'endurecer')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2513,17 +2513,17 @@ O setor da cibersegurança enfrenta assim uma mudança de paradigma: enquanto os
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Gesetzentwurf
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Gesetzentwurf', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Gesetzentwurf', 'gesetzentwurf', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el proyecto de ley', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el proyecto de ley', 'el proyecto de ley')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2560,7 +2560,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -2571,7 +2571,7 @@ BEGIN
     'europas-startups-wachsen',
     'Europäische Wirtschaft und Innovation',
     'economia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -2729,17 +2729,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   -- Vocabulary
 
   -- Word: das Startup
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Startup', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Startup', 'startup', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la startup', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la startup', 'la startup')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2765,17 +2765,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Investor
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Investor', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Investor', 'investor', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el inversor', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el inversor', 'el inversor')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2801,17 +2801,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Neugründung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Neugründung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Neugründung', 'neugründung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la nueva empresa', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la nueva empresa', 'la nueva empresa')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2837,17 +2837,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Fachkräftemangel
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Fachkräftemangel', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Fachkräftemangel', 'fachkräftemangel', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la escasez de profesionales', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la escasez de profesionales', 'la escasez de profesionales')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2873,17 +2873,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: gründen
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('gründen', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('gründen', 'gründen', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'fundar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'fundar', 'fundar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2909,17 +2909,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Wettbewerbsfähigkeit
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Wettbewerbsfähigkeit', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Wettbewerbsfähigkeit', 'wettbewerbsfähigkeit', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la competitividad', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la competitividad', 'la competitividad')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2945,17 +2945,17 @@ Os fundadores avaliam com particular severidade o fosso entre as declarações p
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Herausforderung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Herausforderung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Herausforderung', 'herausforderung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el desafío', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el desafío', 'el desafío')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -2992,7 +2992,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -3003,7 +3003,7 @@ BEGIN
     'ki-verbessert-unwetter-vorhersagen',
     'Wettervorhersage und künstliche Intelligenz',
     'ciencia',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -3161,17 +3161,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   -- Vocabulary
 
   -- Word: die Vorhersage
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Vorhersage', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Vorhersage', 'vorhersage', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la predicción', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la predicción', 'la predicción')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3197,17 +3197,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Hurrikan
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Hurrikan', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Hurrikan', 'hurrikan', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el huracán', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el huracán', 'el huracán')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3233,17 +3233,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Zugbahn
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Zugbahn', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Zugbahn', 'zugbahn', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la trayectoria', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la trayectoria', 'la trayectoria')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3269,17 +3269,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Fehlerquote
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Fehlerquote', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Fehlerquote', 'fehlerquote', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la tasa de error', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la tasa de error', 'la tasa de error')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3305,17 +3305,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: verarbeiten
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('verarbeiten', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('verarbeiten', 'verarbeiten', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'procesar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'procesar', 'procesar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3341,17 +3341,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Katastrophenschutz
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Katastrophenschutz', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Katastrophenschutz', 'katastrophenschutz', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la protección civil', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la protección civil', 'la protección civil')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3377,17 +3377,17 @@ Ao mesmo tempo, os meteorologistas alertam para que não se sobrevalorize a tecn
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Evakuierung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Evakuierung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Evakuierung', 'evakuierung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la evacuación', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la evacuación', 'la evacuación')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3424,7 +3424,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -3435,7 +3435,7 @@ BEGIN
     'proteste-in-europaeischen-staedten',
     'Soziale Proteste in Europa',
     'politica',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -3605,17 +3605,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   -- Vocabulary
 
   -- Word: die Demonstration
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Demonstration', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Demonstration', 'demonstration', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la manifestación', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la manifestación', 'la manifestación')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3641,17 +3641,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Gewerkschaft
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Gewerkschaft', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Gewerkschaft', 'gewerkschaft', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el sindicato', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el sindicato', 'el sindicato')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3677,17 +3677,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Wohnraum
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Wohnraum', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Wohnraum', 'wohnraum', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la vivienda', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la vivienda', 'la vivienda')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3713,17 +3713,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Ungleichheit
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Ungleichheit', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Ungleichheit', 'ungleichheit', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la desigualdad', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la desigualdad', 'la desigualdad')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3749,17 +3749,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: fordern
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('fordern', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('fordern', 'fordern', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'exigir', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'exigir', 'exigir')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3785,17 +3785,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Lebenshaltungskosten
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Lebenshaltungskosten', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Lebenshaltungskosten', 'lebenshaltungskosten', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el coste de vida', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el coste de vida', 'el coste de vida')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3821,17 +3821,17 @@ A Comissão Europeia reagiu com o anúncio de um pacote de medidas contra a cris
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Kaufkraft
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Kaufkraft', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Kaufkraft', 'kaufkraft', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el poder adquisitivo', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el poder adquisitivo', 'el poder adquisitivo')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -3868,7 +3868,7 @@ DECLARE
   v_version_a2_id bigint;
   v_version_b1_id bigint;
   v_version_b2_id bigint;
-  v_vocab_id bigint;
+  v_lemma_id bigint;
   v_meaning_id bigint;
 BEGIN
 
@@ -3879,7 +3879,7 @@ BEGIN
     'digitale-bildung-europas-schulen',
     'Digitale Bildung und Technologie in Schulen',
     'educacion',
-    'public',
+    'premium',
     NOW()
   )
   ON CONFLICT (slug) DO UPDATE SET slug = EXCLUDED.slug
@@ -4049,17 +4049,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   -- Vocabulary
 
   -- Word: die Bildung
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Bildung', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Bildung', 'bildung', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la educación', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la educación', 'la educación')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4085,17 +4085,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Lernfortschritt
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Lernfortschritt', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Lernfortschritt', 'lernfortschritt', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el progreso de aprendizaje', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el progreso de aprendizaje', 'el progreso de aprendizaje')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4121,17 +4121,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: der Datenschutz
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('der Datenschutz', 'der', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('der Datenschutz', 'datenschutz', 'der', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la protección de datos', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la protección de datos', 'la protección de datos')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4157,17 +4157,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Wissenslücke
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Wissenslücke', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Wissenslücke', 'wissenslücke', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la laguna de conocimiento', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la laguna de conocimiento', 'la laguna de conocimiento')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4193,17 +4193,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: anpassen
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('anpassen', NULL, 'Verb')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('anpassen', 'anpassen', NULL, 'Verb')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'adaptar', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'adaptar', 'adaptar')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4229,17 +4229,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: die Kluft
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('die Kluft', 'die', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('die Kluft', 'kluft', 'die', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'la brecha', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'la brecha', 'la brecha')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
@@ -4265,17 +4265,17 @@ Outro problema estrutural é a exclusão digital. Enquanto as escolas em regiõe
   ON CONFLICT (meaning_id, language) DO UPDATE SET term = EXCLUDED.term;
 
   -- Word: das Förderprogramm
-  INSERT INTO vocabulario (german, article, word_type)
-  VALUES ('das Förderprogramm', 'das', 'Nomen')
-  ON CONFLICT (german) DO UPDATE SET german = EXCLUDED.german
-  RETURNING id INTO v_vocab_id;
+  INSERT INTO vocabulary_lemmas (german, normalized_german, article, word_type)
+  VALUES ('das Förderprogramm', 'förderprogramm', 'das', 'Nomen')
+  ON CONFLICT (normalized_german, word_type, article) DO UPDATE SET german = EXCLUDED.german
+  RETURNING id INTO v_lemma_id;
 
-  INSERT INTO vocabulary_meanings (vocabulario_id, spanish, example_es)
-  VALUES (v_vocab_id, 'el programa de ayudas', NULL)
-  ON CONFLICT DO NOTHING
+  INSERT INTO vocabulary_meanings (lemma_id, spanish, normalized_spanish)
+  VALUES (v_lemma_id, 'el programa de ayudas', 'el programa de ayudas')
+  ON CONFLICT (lemma_id, normalized_spanish) DO NOTHING
   RETURNING id INTO v_meaning_id;
   IF v_meaning_id IS NULL THEN
-    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE vocabulario_id = v_vocab_id LIMIT 1;
+    SELECT id INTO v_meaning_id FROM vocabulary_meanings WHERE lemma_id = v_lemma_id LIMIT 1;
   END IF;
 
   -- Link meaning to all versions
