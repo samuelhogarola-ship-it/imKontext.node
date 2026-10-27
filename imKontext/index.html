@@ -80,7 +80,20 @@
         </picture>
         <span><span class="app-nav-logo-im">im</span> Kontext</span>
       </a>
-      <div class="app-nav-links">
+      <div class="app-nav-right">
+        <div class="app-nav-auth">
+          <button class="auth-btn" id="auth-header-btn" type="button">Iniciar sesión</button>
+          <div class="auth-user-info" id="auth-user-info" style="display:none">
+            <span class="auth-user-email" id="auth-user-email"></span>
+            <button class="auth-logout-btn" id="auth-logout-btn" type="button">Salir</button>
+          </div>
+        </div>
+        <button class="app-nav-hamburger" id="nav-hamburger" type="button" aria-label="Menú" aria-expanded="false">
+          <span class="hamburger-label">Vokabel World</span>
+          <span class="hamburger-chevron">▾</span>
+        </button>
+      </div>
+      <div class="app-nav-links" id="nav-links-menu">
         <a href="https://www.samuelcoachdealeman.com/" target="_blank" rel="noreferrer">Samuel Coach de alemán</a>
         <span class="app-nav-sep">|</span>
         <a href="https://www.vokabellab.com/" target="_blank" rel="noreferrer">Vokabel Lab</a>
@@ -93,6 +106,32 @@
     </div>
   </nav>
 </header>
+
+<!-- ═══════════════════════════════════════════════════
+     AUTH MODAL
+═══════════════════════════════════════════════════ -->
+<div class="auth-modal-overlay" id="auth-modal" aria-hidden="true">
+  <div class="auth-modal" role="dialog" aria-labelledby="auth-modal-title">
+    <button class="auth-modal-close" id="auth-modal-close" type="button" aria-label="Cerrar">&#x2715;</button>
+    <h2 class="auth-modal-title" id="auth-modal-title">Iniciar sesión</h2>
+    <form id="auth-form" autocomplete="on">
+      <div class="auth-field">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" name="email" autocomplete="email" required placeholder="tu@email.com">
+      </div>
+      <div class="auth-field">
+        <label for="auth-password">Contraseña</label>
+        <input type="password" id="auth-password" name="password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+      </div>
+      <div class="auth-error-msg" id="auth-error-msg" style="display:none" role="alert"></div>
+      <div class="auth-success-msg" id="auth-success-msg" style="display:none" role="status"></div>
+      <button class="auth-submit-btn" id="auth-submit-btn" type="submit">Entrar</button>
+    </form>
+    <p class="auth-toggle">
+      <span id="auth-toggle-text">¿No tienes cuenta? </span><a href="#" id="auth-toggle-link">Regístrate</a>
+    </p>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════
      PANTALLA 1 — LANDING
@@ -509,6 +548,8 @@
   </nav>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"></script>
+<script src="/auth.js?v=1"></script>
 <script src="/shared/google-analytics-core.js?v=1"></script>
 <script src="/shared/cookie-banner-core.js?v=1"></script>
 <script src="/cookie-banner.js?v=1"></script>
@@ -517,5 +558,6 @@
 <script src="/shared/result-view-core.js?v=1"></script>
 <script src="/app.js?v=11"></script>
 <script src="/practice.js?v=2"></script>
+<script src="/auth-ui.js?v=1"></script>
 </body>
 </html>
