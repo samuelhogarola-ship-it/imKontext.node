@@ -33,6 +33,15 @@ CREATE TABLE IF NOT EXISTS public.imk_meaning_localizations (
   CHECK (language <> 'fi' OR article IS NULL)
 );
 
+-- Production may already have the smaller localization shape from 2026-10-26.
+-- Nullable columns extend that shape without rewriting existing translations.
+ALTER TABLE public.imk_text_localizations ADD COLUMN IF NOT EXISTS topic text;
+ALTER TABLE public.imk_meaning_localizations
+  ADD COLUMN IF NOT EXISTS plural_form text,
+  ADD COLUMN IF NOT EXISTS infinitive text,
+  ADD COLUMN IF NOT EXISTS past_simple text,
+  ADD COLUMN IF NOT EXISTS past_participle text;
+
 ALTER TABLE public.imk_text_localizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.imk_version_localizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.imk_meaning_localizations ENABLE ROW LEVEL SECURITY;
