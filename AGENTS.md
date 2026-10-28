@@ -31,3 +31,9 @@ Al cerrar una sesión, deja claro:
 - archivos tocados
 - pruebas hechas
 - riesgo pendiente, si existe
+
+## Publicación
+
+- Código y web exclusivamente mediante Git: rama, commit, push, PR/merge y autodeploy/CI configurado.
+- No usar Hostinger directamente: ni panel, API, MCP, CLI, FTP ni File Manager, ni editar producción manualmente.
+- Si el autodeploy falla, detenerse y reportarlo; no sustituirlo por un despliegue manual.

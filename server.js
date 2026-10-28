@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { registerLocalizedRoutes } from "./server/localized-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +56,8 @@ app.get("/api/health", (req, res) => {
     supabaseConfigured: hasSupabaseConfig()
   });
 });
+
+registerLocalizedRoutes(app, supabaseFetch);
 
 app.get("/api/texts", async (req, res) => {
   try {
@@ -137,7 +140,7 @@ app.get("/api/text-version-vocabulary-core", async (req, res) => {
 
   try {
     const rows = await supabaseFetch(
-      `text_version_vocabulary_core?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de,example_sentence_es,level`
+      `text_version_vocabulary_core?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=*`
     );
     res.json(rows);
   } catch (error) {

@@ -59,8 +59,9 @@ function getModoForIdx(idx, selectedModos, fallbackModos) {
 }
 
 /* ── BLANK BUILDER ───────────────────────────────────────────── */
-// Replaces the German word in a sentence with ______, or returns null.
-function blankifyWord(sentence, german) {
+// Replaces the target word in a sentence with ______, or returns null.
+// Uses stripArticle() from i18n.js when available, falls back to German articles.
+function blankifyWord(sentence, word) {
   if (!sentence) return null;
 
   function escRx(str) {
@@ -68,16 +69,28 @@ function blankifyWord(sentence, german) {
   }
 
   const tryReplace = (term) => {
-    const re = new RegExp(`\\b${escRx(term)}\\b`, 'i');
+    const unicode = typeof getTargetLang === 'function' && getTargetLang() !== 'de';
+    const re = unicode
+      ? new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escRx(term)}(?![\\p{L}\\p{M}\\p{N}])`, 'iu')
+      : new RegExp(`\\b${escRx(term)}\\b`, 'i');
     return re.test(sentence) ? sentence.replace(re, '______') : null;
   };
 
-  let result = tryReplace(german);
+  if (typeof getTargetLang === 'function' && getTargetLang() !== 'de' && typeof targetWordVariants === 'function') {
+    for (const term of targetWordVariants(word)) {
+      const matched = tryReplace(term);
+      if (matched) return matched;
+    }
+    return null;
+  }
+
+  let result = tryReplace(word);
   if (result) return result;
 
-  // Try without leading article (der/die/das/den/dem/des/ein/eine/einen/einem/einer)
-  const noArticle = german.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/i, '');
-  if (noArticle !== german) {
+  const noArticle = typeof stripArticle === 'function'
+    ? stripArticle(word)
+    : word.replace(/^(der|die|das|den|dem|des|ein|eine|einen|einem|einer)\s+/i, '');
+  if (noArticle !== word) {
     result = tryReplace(noArticle);
     if (result) return result;
   }

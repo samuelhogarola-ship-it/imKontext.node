@@ -20,7 +20,7 @@ async function startPractice() {
   if (!selectedText) return;
 
   $('btn-empezar').disabled = true;
-  $('btn-empezar').textContent = 'Cargando…';
+  $('btn-empezar').textContent = t('activity.loading');
 
   try {
     const version = selectedTextVersion && String(selectedTextVersion.level || '').toLowerCase() === selectedLevel
@@ -36,8 +36,11 @@ async function startPractice() {
     currentVocab = vocab;
 
     // Build queue using all available words (numPalabras set by updateSliderMax)
+    const eligible = getTargetLang() === 'de' || !selectedModos.length
+      ? vocab : vocab.filter(word => practiceModesForWord(word, selectedModos).length > 0);
+    if (!eligible.length) throw new Error(t('activity.no_matching_exercises'));
     const count = numPalabras > 0 ? numPalabras : vocab.length;
-    queue = buildQueue(vocab, count, getPersistedErrorIds());
+    queue = buildQueue(eligible, count, getPersistedErrorIds());
     clearPersistedErrors();
 
     currentIdx = 0;
@@ -45,7 +48,7 @@ async function startPractice() {
     wrongWords = [];
     questionStates = [];
 
-    const pKey = `progress_${selectedText.id}_${selectedLevel}`;
+    const pKey = languageProgressKey(selectedText.id,selectedLevel);
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
     localStorage.setItem(pKey, JSON.stringify({
       total: vocab.length,
@@ -56,11 +59,12 @@ async function startPractice() {
     buildExercise();
 
   } catch (err) {
+    if(err.name==='AbortError') return;
     console.error(err);
     $('error-msg').textContent = `Error: ${err.message}`;
   } finally {
     $('btn-empezar').disabled = false;
-    $('btn-empezar').textContent = 'Empezar práctica 🚀';
+    $('btn-empezar').textContent = t('activity.start');
   }
 }
 
@@ -95,13 +99,15 @@ function resetTraduccionToggle() {
   panel.style.display = 'none';
   toggle.style.display = 'none';
   toggle.setAttribute('aria-expanded', 'false');
-  toggle.textContent = 'Ver traducción';
+  toggle.textContent = t('exercise.show_translation');
 }
 
 function getRevealLines(word) {
   const lines = [];
-  if (word?.spanish) lines.push(`Traducción: ${word.spanish}`);
-  if (word?.example_sentence_de) lines.push(`Ejemplo: ${word.example_sentence_de}`);
+  const native = getNativeWord(word);
+  if (native) lines.push(t('exercise.translation', { word: native }));
+  const targetEx = getTargetExample(word);
+  if (targetEx) lines.push(`${t('exercise.example')}: ${targetEx}`);
   return lines;
 }
 
@@ -119,7 +125,7 @@ function revealTranslationText(text) {
   panel.style.display = 'block';
   toggle.style.display = 'inline-flex';
   toggle.setAttribute('aria-expanded', 'true');
-  toggle.textContent = 'Ocultar traducción';
+  toggle.textContent = t('exercise.hide_translation');
 }
 
 function revealTranslation(word) {
@@ -144,7 +150,7 @@ function renderQuestionHint(text) {
 
   sub.innerHTML = `
     <button class="pregunta-hint-toggle" id="pregunta-hint-toggle" type="button" aria-expanded="false">
-      💡 Tipp
+      ${t('exercise.hint')}
     </button>
     <div class="pregunta-hint-panel" id="pregunta-hint-panel">${escapeHtml(text)}</div>
   `;
@@ -155,19 +161,19 @@ function renderQuestionHint(text) {
     const isOpen = panel.classList.contains('visible');
     panel.classList.toggle('visible', !isOpen);
     toggle.setAttribute('aria-expanded', String(!isOpen));
-    toggle.textContent = !isOpen ? 'Ocultar tipp' : '💡 Tipp';
+    toggle.textContent = !isOpen ? t('exercise.hide_hint') : t('exercise.hint');
   });
 }
 
 function renderSentenceContext(word) {
   const wrap = $('sentence-context-wrap');
   if (!wrap) return;
-  const sentence = word && word.example_sentence_es;
+  const sentence = word && getNativeExample(word);
   if (!sentence) { wrap.innerHTML = ''; return; }
 
   wrap.innerHTML = `
     <button class="sentence-ctx-toggle" id="sentence-ctx-toggle" type="button" aria-expanded="false">
-      Mostrar traducción
+      ${t('exercise.show_context')}
     </button>
     <div class="sentence-ctx-panel" id="sentence-ctx-panel">${escapeHtml(sentence)}</div>
   `;
@@ -178,7 +184,7 @@ function renderSentenceContext(word) {
     const open = panel.classList.contains('visible');
     panel.classList.toggle('visible', !open);
     toggle.setAttribute('aria-expanded', String(!open));
-    toggle.textContent = !open ? 'Ocultar traducción' : 'Mostrar traducción';
+    toggle.textContent = !open ? t('exercise.hide_context') : t('exercise.show_context');
   });
 }
 
@@ -193,7 +199,7 @@ function renderNoSeButton(onClick) {
   btn.type = 'button';
   btn.id = 'btn-no-se';
   btn.className = 'btn-back practice-skip-btn';
-  btn.textContent = 'No la sé';
+  btn.textContent = t('exercise.dont_know');
   btn.addEventListener('click', onClick);
   wrap.appendChild(btn);
 }
@@ -218,7 +224,7 @@ function handleNoSe(word, correctLabel) {
 
 function buildQuestionState(index, correct, word, extras = {}) {
   const answerMode = extras.mode || getModo(index);
-  const feedbackText = extras.feedbackText || (correct ? '✓ ¡Correcto!' : `✗ Era: "${extras.solutionText || extras.correctAnswer || ''}"`);
+  const feedbackText = extras.feedbackText || (correct ? t('exercise.correct') : t('exercise.wrong', { answer: extras.solutionText || extras.correctAnswer || '' }));
   return {
     answered: true,
     correct,
@@ -321,7 +327,7 @@ function renderCountdown(seg, rem) {
   if (!el) return;
   const pct = (rem / seg) * 100;
   el.innerHTML = `
-    <span class="cd-label">Siguiente en</span>
+    <span class="cd-label">${t('exercise.next_in')}</span>
     <span class="cd-circle">
       <svg viewBox="0 0 36 36" class="cd-svg" aria-hidden="true">
         <circle class="cd-track" cx="18" cy="18" r="15.9"/>
@@ -366,7 +372,9 @@ function startCountdown(callback, seg = EXERCISE_CONFIG.autoNextDelay) {
 const MODOS = ['test', 'flashcards', 'ordenar', 'articulo', 'lueckentext'];
 
 function getModo(idx) {
-  return getModoForIdx(idx, selectedModos, MODOS);
+  if(getTargetLang()==='de')return getModoForIdx(idx,selectedModos,MODOS);
+  const available=practiceModesForWord(queue[idx],selectedModos.length?selectedModos:MODOS);
+  return getModoForIdx(idx,available,available.length?available:['test']);
 }
 
 function buildExercise() {
@@ -392,7 +400,9 @@ function buildExercise() {
 
   const labels = {
     test: '🎯 Test', flashcards: '🃏 Flashcard',
-    ordenar: '🔀 Ordenar', articulo: '📖 Artículo', lueckentext: '✏️ Lückentext'
+    ordenar: '🔀 ' + t('exercise.badge_ordenar'),
+    articulo: '📖 ' + t('exercise.badge_articulo'),
+    lueckentext: '✏️ Lückentext'
   };
   $('tipo-badge').textContent = labels[modo] || modo;
 
@@ -425,11 +435,13 @@ function buildExercise() {
 
 /* ── TEST ────────────────────────────────────────────────────── */
 function buildTest(word) {
-  $('pregunta-texto').textContent = word.german;
+  $('pregunta-texto').textContent = getTargetWord(word);
   renderQuestionHint(word.word_type || '');
 
+  const nativeCol = getNativeWordCol();
   const wrong3 = getRandomWrong(word, currentVocab, 3);
-  const opts = shuffle([word.spanish, ...wrong3.map(w => w.spanish)]);
+  const answer = getNativeWord(word);
+  const opts = shuffle([answer, ...wrong3.map(w => w[nativeCol] || '')]);
 
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
@@ -438,8 +450,8 @@ function buildTest(word) {
     btn.className = 'opcion';
     btn.textContent = opt;
     btn.addEventListener('click', () => {
-      const correct = opt === word.spanish;
-      markAnswer(btn, correct, word, correct ? null : word.spanish, { selectedAnswer: opt, correctAnswer: word.spanish });
+      const correct = opt === answer;
+      markAnswer(btn, correct, word, correct ? null : answer, { selectedAnswer: opt, correctAnswer: answer });
       disableOptions();
       disableNoSeButton();
       autoNext();
@@ -447,7 +459,7 @@ function buildTest(word) {
     wrap.appendChild(btn);
   });
 
-  renderNoSeButton(() => handleNoSe(word, word.spanish));
+  renderNoSeButton(() => handleNoSe(word, answer));
 }
 
 /* ── FLASHCARD ───────────────────────────────────────────────── */
@@ -459,26 +471,28 @@ function buildFlashcard(word) {
 
   const fc = $('flashcard-card');
   fc.classList.remove('flipped');
-  $('flashcard-front').textContent = word.german;
-  $('flashcard-back').textContent  = word.spanish;
+  const target  = getTargetWord(word);
+  const native  = getNativeWord(word);
+  $('flashcard-front').textContent = target;
+  $('flashcard-back').textContent  = native;
 
   fc.onclick = () => fc.classList.toggle('flipped');
 
   $('btn-flashcard-si').onclick = () => {
     recordAnswerOnce(currentIdx, true, word, {
       mode: 'flashcards',
-      selectedAnswer: 'Sí',
-      solutionText: word.spanish || word.german || '',
-      feedbackText: '✓ ¡Correcto!'
+      selectedAnswer: t('flashcard.yes'),
+      solutionText: native || target || '',
+      feedbackText: t('exercise.correct')
     });
     nextWord();
   };
   $('btn-flashcard-no').onclick = () => {
     recordAnswerOnce(currentIdx, false, word, {
       mode: 'flashcards',
-      selectedAnswer: 'No la sé',
-      solutionText: word.spanish || word.german || '',
-      feedbackText: `✗ Era: "${word.spanish || word.german || ''}"`,
+      selectedAnswer: t('flashcard.no'),
+      solutionText: native || target || '',
+      feedbackText: t('exercise.wrong', { answer: native || target || '' }),
       wasNoSe: true,
       translationShown: true
     });
@@ -488,8 +502,8 @@ function buildFlashcard(word) {
 
 /* ── ORDENAR ─────────────────────────────────────────────────── */
 function buildOrdenar(word) {
-  const sentence = word.example_sentence_de || word.german;
-  $('pregunta-texto').textContent = `Ordena las palabras:`;
+  const sentence = getTargetExample(word) || getTargetWord(word);
+  $('pregunta-texto').textContent = t('exercise.order_words');
   renderQuestionHint(word.word_type || '');
 
   const tokens = shuffle(sentence.split(' '));
@@ -524,7 +538,7 @@ function checkOrdenar(original) {
   const allUsed = $('banco-palabras').querySelectorAll('.palabra-token').length === 0;
   if (allUsed) {
     const correct = built.trim() === original.trim();
-    $('respuesta-feedback').textContent = correct ? '✓ ¡Correcto!' : `✗ Era: "${original}"`;
+    $('respuesta-feedback').textContent = correct ? t('exercise.correct') : t('exercise.wrong', { answer: original });
     $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
     recordAnswerOnce(currentIdx, correct, queue[currentIdx], {
       mode: 'ordenar',
@@ -544,16 +558,16 @@ function buildArticulo(word) {
   const article = word.article?.toLowerCase();
 
   // Word has no article (e.g. verb, adverb) — fall back to test mode.
-  if (!article) {
+  if (!article || !learningArticleOptions().includes(article)) {
     $('tipo-badge').textContent = '🎯 Test';
     buildTest(word);
     return;
   }
 
-  $('pregunta-texto').innerHTML = `<em>___</em> ${word.german}`;
+  $('pregunta-texto').innerHTML = `<em>___</em> ${escapeHtml(stripArticle(getTargetWord(word), getTargetLang()))}`;
   renderQuestionHint(word.word_type || '');
 
-  const opts = ['der', 'die', 'das'];
+  const opts = learningArticleOptions();
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
 
@@ -576,8 +590,9 @@ function buildArticulo(word) {
 
 /* ── LÜCKENTEXT ──────────────────────────────────────────────── */
 function buildLueckentext(word) {
-  const sentence = word.example_sentence_de || '';
-  const blanked  = blankifyWord(sentence, word.german);
+  const targetWord = getTargetWord(word);
+  const sentence   = getTargetExample(word) || '';
+  const blanked    = blankifyWord(sentence, targetWord);
 
   // No example sentence — fall back to test mode.
   if (!blanked) {
@@ -592,8 +607,9 @@ function buildLueckentext(word) {
   );
   renderQuestionHint(word.word_type || '');
 
+  const targetCol = getTargetWordCol();
   const wrong3 = getRandomWrong(word, currentVocab, 3);
-  const opts   = shuffle([word.german, ...wrong3.map(w => w.german)]);
+  const opts   = shuffle([targetWord, ...wrong3.map(w => w[targetCol] || '')]);
 
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
@@ -602,8 +618,8 @@ function buildLueckentext(word) {
     btn.className = 'opcion';
     btn.textContent = opt;
     btn.addEventListener('click', () => {
-      const correct = opt === word.german;
-      markAnswer(btn, correct, word, correct ? null : word.german, { selectedAnswer: opt, correctAnswer: word.german });
+      const correct = opt === targetWord;
+      markAnswer(btn, correct, word, correct ? null : targetWord, { selectedAnswer: opt, correctAnswer: targetWord });
       disableOptions();
       disableNoSeButton();
       autoNext();
@@ -611,7 +627,7 @@ function buildLueckentext(word) {
     wrap.appendChild(btn);
   });
 
-  renderNoSeButton(() => handleNoSe(word, word.german));
+  renderNoSeButton(() => handleNoSe(word, targetWord));
 }
 
 /* ── HELPERS ─────────────────────────────────────────────────── */
@@ -688,29 +704,29 @@ function showResultado() {
   const pct   = getProgressPercent(score.correct, total);
 
   $('punt-grande').textContent = `${pct}%`;
-  $('punt-label').textContent  = pct >= 80 ? '¡Sehr gut! 🎉' : pct >= 60 ? '¡Gut gemacht! 👍' : 'Sigue practicando 💪';
+  $('punt-label').textContent  = pct >= 80 ? t('result.great') : pct >= 60 ? t('result.good') : t('result.keep_going');
 
   $('result-stats').innerHTML = `
-    <div class="stat-item"><span class="stat-val">${score.correct}</span><span class="stat-lbl">Correctas</span></div>
-    <div class="stat-item"><span class="stat-val">${score.wrong}</span><span class="stat-lbl">Errores</span></div>
-    <div class="stat-item"><span class="stat-val">${queue.length}</span><span class="stat-lbl">Palabras</span></div>
+    <div class="stat-item"><span class="stat-val">${score.correct}</span><span class="stat-lbl">${t('result.correct')}</span></div>
+    <div class="stat-item"><span class="stat-val">${score.wrong}</span><span class="stat-lbl">${t('result.wrong')}</span></div>
+    <div class="stat-item"><span class="stat-val">${queue.length}</span><span class="stat-lbl">${t('result.words')}</span></div>
   `;
 
   // Populate answer-by-answer summary
-  $('resumen-lista').innerHTML = renderResumenHTML(buildResumenRows(questionStates, queue));
+  $('resumen-lista').innerHTML = renderResumenHTML(buildResumenRows(questionStates, queue, getTargetWord));
 
   // Show "Repasar solo errores" only when there are errors
   const btnRepasar = $('btn-repasar-errores');
   if (wrongWords.length > 0) {
     btnRepasar.style.display = 'block';
-    btnRepasar.textContent   = `Repasar solo errores (${wrongWords.length})`;
+    btnRepasar.textContent   = t('result.review_errors', { n: wrongWords.length });
   } else {
     btnRepasar.style.display = 'none';
   }
 
   // Save progress
   if (selectedText) {
-    const pKey = `progress_${selectedText.id}_${selectedLevel}`;
+    const pKey = languageProgressKey(selectedText.id,selectedLevel);
     const existing = JSON.parse(localStorage.getItem(pKey) || '{}');
     localStorage.setItem(pKey, JSON.stringify({
       total: existing.total || queue.length,
@@ -762,11 +778,11 @@ $('btn-toggle-traduccion').addEventListener('click', () => {
     panel.classList.remove('visible');
     panel.style.display = 'none';
     btn.setAttribute('aria-expanded', 'false');
-    btn.textContent = 'Ver traducción';
+    btn.textContent = t('exercise.show_translation');
   } else {
     panel.classList.add('visible');
     panel.style.display = 'block';
     btn.setAttribute('aria-expanded', 'true');
-    btn.textContent = 'Ocultar traducción';
+    btn.textContent = t('exercise.hide_translation');
   }
 });

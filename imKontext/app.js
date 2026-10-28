@@ -5,8 +5,11 @@
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── API CONFIG ──────────────────────────────────────────────── */
+let languageRequestGeneration = 0;
 async function apiFetch(path) {
-  const res = await fetch(path);
+  const generation = languageRequestGeneration;
+  const res = await fetch(localizedApiPath(path));
+  if (generation !== languageRequestGeneration) throw new DOMException('Language changed', 'AbortError');
   if (!res.ok) {
     let details = "";
     try {
@@ -15,7 +18,9 @@ async function apiFetch(path) {
     } catch {}
     throw new Error(details || `API error ${res.status}`);
   }
-  return res.json();
+  const data = await res.json();
+  if (generation !== languageRequestGeneration) throw new DOMException('Language changed', 'AbortError');
+  return data;
 }
 
 /* ── STATE ───────────────────────────────────────────────────── */
@@ -53,21 +58,23 @@ const screens = {
   dashboard: $('screen-dashboard'),
 };
 
-const CATEGORY_LABELS = {
-  tecnologia: 'Tecnología',
-  sociedad: 'Sociedad',
-  deporte: 'Deporte',
-  movilidad: 'Movilidad',
-  medioambiente: 'Medioambiente',
-  salud: 'Salud',
-  educacion: 'Educación',
-  trabajo: 'Trabajo',
-  ciencia: 'Ciencia',
-  cultura: 'Cultura',
-  internacional: 'Internacional',
-  politica: 'Política',
-  economia: 'Economía',
-};
+function getCategoryLabels() {
+  return {
+    tecnologia: t('cat.tecnologia'),
+    sociedad: t('cat.sociedad'),
+    deporte: t('cat.deporte'),
+    movilidad: t('cat.movilidad'),
+    medioambiente: t('cat.medioambiente'),
+    salud: t('cat.salud'),
+    educacion: t('cat.educacion'),
+    trabajo: t('cat.trabajo'),
+    ciencia: t('cat.ciencia'),
+    cultura: t('cat.cultura'),
+    internacional: t('cat.internacional'),
+    politica: t('cat.politica'),
+    economia: t('cat.economia'),
+  };
+}
 
 function setReadingMode(active) {
   isReaderModeActive = active;
@@ -76,7 +83,7 @@ function setReadingMode(active) {
   const btn = $('btn-toggle-reading-mode');
   if (btn) {
     btn.setAttribute('aria-pressed', String(active));
-    btn.textContent = active ? 'Salir lectura ×' : 'Modo lectura ⤢';
+    btn.textContent = active ? t('content.exit_reading') : t('content.reading_mode');
   }
 }
 
@@ -156,8 +163,7 @@ function updateSEOMeta({ title, description, canonical }) {
 }
 
 function getTextUrl(text, level) {
-  const base = `/textos/${encodeURIComponent(text.slug)}`;
-  return level ? `${base}?nivel=${level.toUpperCase()}` : base;
+  return learningTextPath(text.slug, level);
 }
 
 function showLanding() {
@@ -166,18 +172,22 @@ function showLanding() {
   $('app-header').classList.add('app-is-landing');
   const footer = $('app-footer');
   if (footer) footer.style.display = 'none';
+  const deck = $('ln-deck');
+  if (deck) deck.innerHTML = t('landing.deck') + '<br>' + t('landing.deck2');
   updateSEOMeta({
-    title: 'imKontext | Aprende alemán con textos y noticias reales',
-    description: 'Aprende alemán con textos y noticias reales. Practica vocabulario en contexto con imKontext y ejercicios por niveles.',
-    canonical: window.location.origin + '/'
+    title: t('seo.home_title'),
+    description: t('seo.home_desc'),
+    canonical: window.location.origin + learningHomePath()
   });
+  applyI18nToDOM();
 }
 
 async function openTextBySlug(slug) {
   if (!allTexts.length) {
     try {
       allTexts = await apiFetch('/api/texts');
-    } catch {
+    } catch (error) {
+      if (error.name === 'AbortError') return;
       showScreen('textos');
       $('txsel-loading').style.display = 'none';
       $('txsel-error').style.display = 'block';
@@ -190,7 +200,7 @@ async function openTextBySlug(slug) {
     $('txsel-loading').style.display = 'none';
     const errEl = $('txsel-error');
     errEl.style.display = 'block';
-    errEl.textContent = 'No se encontró el texto solicitado.';
+    errEl.textContent = t('textos.not_found');
     return;
   }
   await selectText(text, { pushState: false });
@@ -202,30 +212,17 @@ $('btn-share-text').addEventListener('click', async () => {
   const btn = $('btn-share-text');
   try {
     await navigator.clipboard.writeText(url);
-    btn.textContent = '¡Copiado! ✓';
+    btn.textContent = t('content.shared');
   } catch {
-    prompt('Copia este enlace:', url);
+    prompt(t('misc.copy_link'), url);
     return;
   }
-  setTimeout(() => { btn.textContent = 'Compartir ↗'; }, 2000);
+  setTimeout(() => { btn.textContent = t('content.share'); }, 2000);
 });
 
 /* ── POPSTATE ────────────────────────────────────────────────── */
 window.addEventListener('popstate', async () => {
-  const pathname = window.location.pathname;
-  const levelParam = new URLSearchParams(window.location.search).get('nivel');
-
-  if (pathname === '/textos') {
-    await goToTextos({ pushState: false });
-  } else if (pathname.startsWith('/textos/')) {
-    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
-    if (levelParam) selectedLevel = levelParam.toLowerCase();
-    await openTextBySlug(slug);
-  } else {
-    selectedTopic = null;
-    selectedCategory = null;
-    showLanding();
-  }
+  await routeCurrentLanguage();
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -240,14 +237,15 @@ $('btn-entrar').addEventListener('click', async () => {
 ══════════════════════════════════════════════════════════════ */
 async function goToTextos({ pushState: doPush = true } = {}) {
   if (doPush) {
-    history.pushState({ screen: 'textos' }, '', '/textos');
+    history.pushState({ screen: 'textos' }, '', learningCatalogPath());
   }
   updateSEOMeta({
-    title: 'imKontext | Elige un texto para practicar alemán',
-    description: 'Explora textos reales en alemán y elige el artículo que quieres leer y practicar hoy.',
-    canonical: window.location.origin + '/textos'
+    title: t('seo.textos_title'),
+    description: t('seo.textos_desc'),
+    canonical: window.location.origin + learningCatalogPath()
   });
   showScreen('textos');
+  applyI18nToDOM();
   currentTextsPage = 0;
 
   // If already loaded, just render
@@ -268,6 +266,7 @@ async function goToTextos({ pushState: doPush = true } = {}) {
     buildTopicChips();
     renderTextGrid(getFilteredTexts());
   } catch (err) {
+    if (err.name === 'AbortError') return;
     console.error(err);
     $('txsel-loading').style.display = 'none';
     $('txsel-error').style.display   = 'block';
@@ -289,7 +288,7 @@ function renderTextGrid(list) {
   });
 
   if (list.length === 0) {
-    grid.innerHTML = '<div class="txsel-empty">No se encontraron textos.</div>';
+    grid.innerHTML = `<div class="txsel-empty">${escapeHtml(t('textos.empty'))}</div>`;
     return;
   }
 
@@ -308,10 +307,10 @@ function renderTextGrid(list) {
     featuredWrap.innerHTML = `
       ${renderArchiveNotice(sorted)}
       <div class="tx-featured-head">
-        <p class="tx-featured-kicker">Destacado de la semana</p>
+        <p class="tx-featured-kicker">${escapeHtml(t('textos.featured'))}</p>
         ${renderFeaturedAccessTag(featured)}
       </div>
-      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="${escapeHtml(t('textos.open_featured', { title: featured.title }))}">
         <div class="tx-featured-media" aria-hidden="true">
           <img class="tx-featured-image" src="/textos-featured-hero.png" alt="">
         </div>
@@ -351,7 +350,7 @@ function createTextRow(text, position) {
   row.dataset.testid = 'text-row';
   row.setAttribute('type', 'button');
   row.setAttribute('role', 'listitem');
-  row.setAttribute('aria-label', `Seleccionar texto: ${text.title}`);
+  row.setAttribute('aria-label', t('textos.select_text', { title: text.title }));
 
   row.innerHTML = `
     <span class="tx-row-num">${String(position).padStart(2, '0')}</span>
@@ -388,7 +387,7 @@ function canAccessText(text) {
 
 function renderAccessTag(text) {
   if (isFreemiumText(text)) {
-    return '<span class="tx-access-tag tx-access-tag--freemium">PREMIUM · GRATIS AHORA</span>';
+    return `<span class="tx-access-tag tx-access-tag--freemium">${escapeHtml(t('textos.premium_promo_tag'))}</span>`;
   }
   if (text.access_status === 'premium') {
     return '<span class="tx-access-tag tx-access-tag--premium">PREMIUM</span>';
@@ -417,8 +416,8 @@ function pickPreferredLevel(levels = []) {
 }
 
 function getEditorialSourceLabel(text) {
-  const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || 'Archivo').trim();
-  return raw || 'Archivo';
+  const raw = String(text?.source || text?.topic || getCategoryLabel(text?.categoria) || t('textos.archive')).trim();
+  return raw || t('textos.archive');
 }
 
 function renderFeaturedSummary(text) {
@@ -440,14 +439,14 @@ function renderArchiveNotice(list = []) {
   return `
     <div class="tx-archive-note" role="note">
       <span class="tx-archive-note-icon" aria-hidden="true">✦</span>
-      <p class="tx-archive-note-copy"><strong>Esta selección incluye textos premium.</strong> El texto destacado semanal sigue apareciendo primero para entrar directamente.</p>
+      <p class="tx-archive-note-copy"><strong>${escapeHtml(t('textos.archive_intro'))}</strong> ${escapeHtml(t('textos.archive_note'))}</p>
     </div>
   `;
 }
 
 function formatShortDate(value) {
   if (!value) return '';
-  return new Date(value).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  return new Date(value).toLocaleDateString(getDateLocale(), { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function sortTextsByDate(list) {
@@ -468,7 +467,7 @@ function getFeaturedText(list) {
 
 function renderFeaturedAccessTag(text) {
   if (isFreemiumText(text)) {
-    return '<span class="tx-access-tag tx-access-tag--freemium">PROMO · GRATIS AHORA</span>';
+    return `<span class="tx-access-tag tx-access-tag--freemium">${escapeHtml(t('textos.promo_tag'))}</span>`;
   }
   if (text.access_status === 'free') {
     return '<span class="tx-access-tag tx-access-tag--free">FREE</span>';
@@ -481,10 +480,10 @@ function renderFeaturedAccessTag(text) {
 
 function renderFeaturedDescription(text) {
   if (isFreemiumText(text)) {
-    return 'Promoción activa: este texto premium está desbloqueado gratis por tiempo limitado. Entra aquí para aprovecharlo.';
+    return t('textos.promo_description');
   }
 
-  return 'Este es el texto gratuito más reciente. Entra aquí para empezar por el tema destacado de esta semana.';
+  return t('textos.free_description');
 }
 
 function getFilteredTexts() {
@@ -517,17 +516,17 @@ function renderTextsPagination(totalTexts) {
       class="txsel-page-btn"
       id="txsel-page-prev"
       type="button"
-      aria-label="Ver textos anteriores"
+      aria-label="${escapeHtml(t('textos.previous_page'))}"
       ${currentTextsPage === 0 ? 'disabled' : ''}
     >
       ←
     </button>
-    <p class="txsel-page-status">${start}-${end} de ${totalTexts}</p>
+    <p class="txsel-page-status">${escapeHtml(t('textos.page_range', { start, end, total: totalTexts }))}</p>
     <button
       class="txsel-page-btn"
       id="txsel-page-next"
       type="button"
-      aria-label="Ver más textos"
+      aria-label="${escapeHtml(t('textos.next_page'))}"
       ${currentTextsPage >= totalPages - 1 ? 'disabled' : ''}
     >
       →
@@ -562,7 +561,7 @@ function buildTopicChips() {
     return;
   }
 
-  const options = [{ value: null, label: 'Todas' }, ...categories.map(value => ({
+  const options = [{ value: null, label: getUILang() === 'es' ? 'Todas' : getUILang() === 'de' ? 'Alle' : getUILang() === 'fi' ? 'Kaikki' : getUILang() === 'it' ? 'Tutte' : getUILang() === 'pt' ? 'Todas' : 'All' }, ...categories.map(value => ({
     value,
     label: getCategoryLabel(value),
   }))];
@@ -593,7 +592,7 @@ function updateTopicChips() {
 }
 
 function getCategoryLabel(slug) {
-  return CATEGORY_LABELS[slug] || slug;
+  return getCategoryLabels()[slug] || slug;
 }
 
 // Live search
@@ -605,7 +604,7 @@ $('txsel-search').addEventListener('input', () => {
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
   selectedCategory = null;
-  history.pushState({ screen: 'landing' }, '', '/');
+  history.pushState({ screen: 'landing' }, '', learningHomePath());
   showLanding();
 });
 
@@ -617,7 +616,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing' }, '', learningHomePath());
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -636,14 +635,12 @@ function parseDashboardEntries() {
   const entries = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (!key.startsWith('progress_')) continue;
+    const parsed = parseLanguageProgressKey(key);
+    if (!parsed || parsed.language !== getTargetLang()) continue;
     try {
       const data = JSON.parse(localStorage.getItem(key));
       if (!data || typeof data.done !== 'number') continue;
-      const withoutPrefix = key.slice('progress_'.length);
-      const lastUnderscore = withoutPrefix.lastIndexOf('_');
-      const textId = withoutPrefix.slice(0, lastUnderscore);
-      const level  = withoutPrefix.slice(lastUnderscore + 1);
+      const { textId, level } = parsed;
       if (!textId || !level) continue;
       const text = allTexts.find(t => String(t.id) === textId) || null;
       entries.push({ key, textId, level, done: data.done || 0, total: data.total || 0, text });
@@ -683,15 +680,15 @@ async function showDashboard() {
   $('db-stats-grid').innerHTML = `
     <div class="db-stat-col">
       <span class="db-stat-num">${totalDone}</span>
-      <span class="db-stat-lbl">Palabras<br>practicadas</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.words_practiced')).replaceAll('\n', '<br>')}</span>
     </div>
     <div class="db-stat-col">
       <span class="db-stat-num">${activeTexts}</span>
-      <span class="db-stat-lbl">Textos<br>activos</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.active_texts')).replaceAll('\n', '<br>')}</span>
     </div>
     <div class="db-stat-col db-stat-col--circle">
       <span class="db-global-circle ${globalScoreClass}">${globalPct}%</span>
-      <span class="db-stat-lbl">Progreso<br>global</span>
+      <span class="db-stat-lbl">${escapeHtml(t('dashboard.overall_progress')).replaceAll('\n', '<br>')}</span>
     </div>
   `;
 
@@ -729,7 +726,7 @@ async function showDashboard() {
         </span>
       </span>
       <span class="db-rank-score ${scoreClass}">${pct}%</span>
-      <button class="db-rank-reset" type="button" aria-label="Reiniciar progreso">×</button>
+      <button class="db-rank-reset" type="button" aria-label="${escapeHtml(t('dashboard.reset_label'))}">×</button>
     `;
 
     const goToText = e.text
@@ -741,7 +738,7 @@ async function showDashboard() {
     row.querySelector('.db-rank-reset').addEventListener('click', ev => {
       ev.stopPropagation();
       localStorage.removeItem(e.key);
-      localStorage.removeItem(`queue_${e.textId}_${e.level}`);
+      localStorage.removeItem(languageQueueKey(e.textId,e.level));
       showDashboard();
     });
 
@@ -767,7 +764,7 @@ document.getElementById('btn-dashboard-go-textos').addEventListener('click', asy
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing' }, '', learningHomePath());
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -787,11 +784,9 @@ async function selectText(text, { pushState: doPush = true } = {}) {
 
   syncLevelControls(available);
 
-  $('content-title').textContent = text.title || 'Texto';
-  $('content-description').textContent =
-    `Lee "${text.title}" directamente desde Supabase y vuelve cuando estés listo para practicar el vocabulario.`;
+  $('content-title').textContent = text.title || t('content.default_title');
   $('content-meta').innerHTML = renderTextMeta(text);
-  $('act-text-title').textContent = text.title || 'Configura tu práctica';
+  $('act-text-title').textContent = text.title || t('activity.title');
 
   const canAccess = canAccessText(text);
   const freemiumNotice = $('freemium-notice');
@@ -802,7 +797,7 @@ async function selectText(text, { pushState: doPush = true } = {}) {
   $('btn-toggle-reading-mode').style.display = canAccess ? '' : 'none';
 
   if (canAccess) {
-    $('content-body').innerHTML = '<p class="txdet-empty">Cargando la versión del texto para este nivel…</p>';
+    $('content-body').innerHTML = `<p class="txdet-empty">${escapeHtml(t('content.loading_version'))}</p>`;
     await refreshSelectedTextVersion();
   } else {
     $('content-body').innerHTML = renderPremiumGateBody(text);
@@ -818,11 +813,12 @@ async function selectText(text, { pushState: doPush = true } = {}) {
 
   updateSEOMeta({
     title: `${text.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
-    description: `Lee y practica vocabulario alemán en contexto con "${text.title}". Nivel ${selectedLevel.toUpperCase()} en imKontext.`,
+    description: t('seo.text_detail_desc', { title: text.title, level: selectedLevel.toUpperCase() }),
     canonical: window.location.origin + getTextUrl(text, selectedLevel)
   });
 
   showScreen('content');
+  applyI18nToDOM();
 }
 
 $('btn-volver-textos').addEventListener('click', async () => {
@@ -889,26 +885,13 @@ document.querySelectorAll('#practice-selector .config-chip').forEach(btn => {
 
 function updateModoHint() {
   const hint = $('practice-hint');
-  const labels = {
-    ordenar:     'Ordenar frases',
-    test:        'Test de vocabulario',
-    flashcards:  'Flashcards',
-    articulo:    'Artículos (der/die/das)',
-    lueckentext: 'Lückentext',
-  };
   if (!selectedModos.length) {
-    hint.textContent = 'Sin filtro: practicarás con todos los formatos.';
+    hint.textContent = t('hint.none');
   } else if (selectedModos.length === 1) {
-    const descriptions = {
-      ordenar:     'Ordenarás frases en el orden correcto.',
-      test:        'Elegirás la traducción correcta entre 4 opciones.',
-      flashcards:  'Verás la palabra y decidirás si la sabes o no.',
-      articulo:    'Elegirás el artículo correcto (der/die/das).',
-      lueckentext: 'Completarás huecos en frases con 4 opciones.',
-    };
-    hint.textContent = descriptions[selectedModos[0]] || '';
+    hint.textContent = t(`mode_desc.${selectedModos[0]}`) || '';
   } else {
-    hint.textContent = `Alternando: ${selectedModos.map(m => labels[m] || m).join(' → ')}.`;
+    const modeNames = selectedModos.map(m => t(`mode.${m}`) || m).join(' → ');
+    hint.textContent = t('hint.multiple', { modes: modeNames });
   }
 }
 
@@ -937,7 +920,7 @@ document.querySelectorAll('.content-lvl-chip').forEach(btn => {
         );
         updateSEOMeta({
           title: `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext`,
-          description: `Lee y practica vocabulario alemán en contexto con "${selectedText.title}". Nivel ${selectedLevel.toUpperCase()} en imKontext.`,
+          description: t('seo.text_detail_desc', { title: selectedText.title, level: selectedLevel.toUpperCase() }),
           canonical: window.location.origin + getTextUrl(selectedText, selectedLevel)
         });
       }
@@ -993,6 +976,7 @@ async function refreshSelectedTextVersion(options = {}) {
     );
     selectedTextVersion = versions[0] || null;
   } catch (error) {
+    if (error.name === 'AbortError') throw error;
     selectedTextVersion = null;
     throw error;
   }
@@ -1004,7 +988,8 @@ async function refreshSelectedTextVersion(options = {}) {
         currentTextVocab = await apiFetch(
           `/api/text-version-vocabulary-core?textVersionId=${encodeURIComponent(selectedTextVersion.id)}`
         );
-      } catch {
+      } catch (error) {
+        if (error.name === 'AbortError') throw error;
         currentTextVocab = [];
       }
     } else {
@@ -1056,58 +1041,58 @@ function updateLevelStatus(vocabCount) {
   const levelLabel = selectedLevel.toUpperCase();
   const available = getAvailableLevels(selectedText);
   if (available.length && !available.includes(selectedLevel)) {
-    status.textContent = `El nivel ${levelLabel} no está disponible para este texto.`;
+    status.textContent = t('level.unavailable', { level: levelLabel });
     $('btn-empezar').disabled = true;
     return;
   }
 
   if (!selectedTextVersion) {
-    status.textContent = `No se ha encontrado una versión ${levelLabel} para este texto.`;
+    status.textContent = t('level.no_version', { level: levelLabel });
     $('btn-empezar').disabled = true;
     return;
   }
 
   if (typeof vocabCount === 'number') {
     status.textContent = vocabCount > 0
-      ? `Nivel ${levelLabel} listo: ${vocabCount} palabras disponibles para practicar.`
-      : `Nivel ${levelLabel} cargado, pero todavía sin vocabulario asociado.`;
+      ? t('level.vocab_count', { count: vocabCount, level: levelLabel })
+      : t('level.no_vocab', { level: levelLabel });
     return;
   }
 
-  status.textContent = `Nivel ${levelLabel} seleccionado. Cargando vocabulario disponible…`;
+  status.textContent = t('level.selected', { level: levelLabel });
 }
 
 function updateProgressPanel() {
   if (!selectedText) return;
-  const key = `progress_${selectedText.id}_${selectedLevel}`;
+  const key = languageProgressKey(selectedText.id,selectedLevel);
   const data = JSON.parse(localStorage.getItem(key) || 'null');
   const lvlLabel = selectedLevel.toUpperCase();
 
-  $('weekly-progress-title').textContent = `Progreso ${lvlLabel}`;
+  $('weekly-progress-title').textContent = t('progress.title', { level: lvlLabel });
 
   if (data) {
     const pct = data.total > 0 ? Math.round((data.done / data.total) * 100) : 0;
-    $('weekly-progress-pct').textContent = `${pct}% completado`;
+    $('weekly-progress-pct').textContent = t('progress.pct', { pct });
     $('weekly-progress-fill').style.width = `${pct}%`;
-    $('weekly-progress-main').textContent = `${data.done} / ${data.total} palabras practicadas`;
-    $('weekly-progress-sub').textContent  = `${data.total} palabras en nivel ${lvlLabel}`;
+    $('weekly-progress-main').textContent = t('progress.words_done', { done: data.done, total: data.total });
+    $('weekly-progress-sub').textContent  = t('progress.words_in_level', { total: data.total, level: lvlLabel });
   } else {
     const total = numPalabras || 0;
-    $('weekly-progress-pct').textContent  = '0% completado';
+    $('weekly-progress-pct').textContent  = t('progress.zero_pct');
     $('weekly-progress-fill').style.width = '0%';
-    $('weekly-progress-main').textContent = `0 / ${total} palabras practicadas`;
-    $('weekly-progress-sub').textContent  = total > 0 ? `${total} palabras en nivel ${lvlLabel}` : `Nivel ${lvlLabel}`;
+    $('weekly-progress-main').textContent = t('progress.zero_words', { total });
+    $('weekly-progress-sub').textContent  = t('progress.words_in_level', { total, level: lvlLabel });
   }
 }
 
 function checkSavedProgress() {
   if (!selectedText) return;
-  const key = `queue_${selectedText.id}_${selectedLevel}`;
+  const key = languageQueueKey(selectedText.id,selectedLevel);
   const saved = localStorage.getItem(key);
   const banner = $('progreso-guardado-banner');
   if (saved) {
     const q = JSON.parse(saved);
-    $('prog-guardado-txt').textContent = `${q.length} palabras pendientes`;
+    $('prog-guardado-txt').textContent = t('activity.words_pending', { n: q.length });
     banner.style.display = 'block';
   } else {
     banner.style.display = 'none';
@@ -1116,8 +1101,8 @@ function checkSavedProgress() {
 
 $('btn-reset-progress').addEventListener('click', () => {
   if (!selectedText) return;
-  const key = `progress_${selectedText.id}_${selectedLevel}`;
-  const qkey = `queue_${selectedText.id}_${selectedLevel}`;
+  const key = languageProgressKey(selectedText.id,selectedLevel);
+  const qkey = languageQueueKey(selectedText.id,selectedLevel);
   localStorage.removeItem(key);
   localStorage.removeItem(qkey);
   updateProgressPanel();
@@ -1160,13 +1145,17 @@ function buildVocabData(vocab) {
   const termToId = new Map(); // lowercase term → vocab id
 
   vocab.forEach(item => {
-    const g  = String(item.german || '').trim();
+    const g  = String(getTargetWord(item) || '').trim();
     if (!g) return;
 
     const wt   = String(item.word_type || '').toLowerCase().trim();
-    const bare = g.replace(ARTICLE_PREFIX_RE, '');
+    const bare = getTargetLang() === 'de' ? g.replace(ARTICLE_PREFIX_RE, '') : stripArticle(g);
 
-    const add = t => { if (t) { terms.add(t); termToId.set(t.toLowerCase(), item.id); } };
+    const add = term => {
+      for (const t of getTargetLang() === 'de' ? [term] : targetWordVariants(term)) {
+        if (t) { terms.add(t); termToId.set(t.toLowerCase(), item.id); }
+      }
+    };
 
     add(g);
     if (bare !== g) add(bare);
@@ -1179,7 +1168,7 @@ function buildVocabData(vocab) {
         const v = String(f || '').trim();
         if (v) add(v);
       });
-    } else if (wt === 'adjective') {
+    } else if (wt === 'adjective' && getTargetLang() === 'de') {
       ADJ_ENDINGS.forEach(sfx => add(bare + sfx));
     }
   });
@@ -1188,10 +1177,11 @@ function buildVocabData(vocab) {
   const escaped = [...terms]
     .sort((a, b) => b.length - a.length)
     .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const edges = getTargetLang() === 'de' ? VOCAB_WORD_EDGE : '\\p{L}\\p{M}\\p{N}';
   return {
     pattern: new RegExp(
-      `(?<![${VOCAB_WORD_EDGE}])(${escaped.join('|')})(?![${VOCAB_WORD_EDGE}])`,
-      'gi'
+      `(?<![${edges}])(${escaped.join('|')})(?![${edges}])`,
+      getTargetLang() === 'de' ? 'gi' : 'giu'
     ),
     termToId
   };
@@ -1211,8 +1201,8 @@ function renderTextBody(text, vocab) {
   if (!raw) {
     return `
       <p class="txdet-empty">
-        Este texto todavía no tiene contenido base guardado en Supabase.
-        Puedes continuar igualmente a los ejercicios si el vocabulario del nivel ya está cargado.
+        ${escapeHtml(t('content.empty_text'))}
+        ${escapeHtml(t('content.empty_hint'))}
       </p>
     `;
   }
@@ -1242,14 +1232,16 @@ function openVocabPanel(item, triggerEl) {
     articleEl.textContent = item.article || '';
     articleEl.hidden = !item.article;
   }
-  set('vp-word', item.german);
+  set('vp-word', getTargetWord(item));
 
   // Detail rows — only shown when data is present
-  row('vp-row-meaning',    !!item.spanish);           set('vp-meaning',    item.spanish);
+  const native = getNativeWord(item);
+  row('vp-row-meaning',    !!native);                 set('vp-meaning',    native);
   row('vp-row-type',       !!item.word_type);         set('vp-type',       item.word_type);
   row('vp-row-plural',     !!item.plural_form);       set('vp-plural',     item.plural_form);
   row('vp-row-infinitive', !!item.infinitive);        set('vp-infinitive', item.infinitive);
-  row('vp-row-example',    !!item.example_sentence_de); set('vp-example',  item.example_sentence_de);
+  const targetEx = getTargetExample(item);
+  row('vp-row-example',    !!targetEx);               set('vp-example',    targetEx);
 
   const panel = $('vocab-panel');
   panel.removeAttribute('aria-hidden');
@@ -1302,8 +1294,8 @@ function renderPremiumGateBody(text) {
         <svg class="premium-gate-icon" width="28" height="32" viewBox="0 0 28 32" fill="none" aria-hidden="true"><rect x="1.5" y="13" width="25" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M7 13V9a7 7 0 0 1 14 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         <p class="premium-gate-title">${escapeHtml(text.title)}</p>
         ${text.topic ? `<p class="premium-gate-topic">${escapeHtml(text.topic)}</p>` : ''}
-        <p class="premium-gate-msg">Este texto es premium. Escríbenos para obtener acceso.</p>
-        <a class="btn-back premium-gate-cta" href="mailto:${SUPPORT_EMAIL}">Contactar → ${SUPPORT_EMAIL}</a>
+        <p class="premium-gate-msg">${escapeHtml(t('content.premium_msg'))}</p>
+        <a class="btn-back premium-gate-cta" href="mailto:${SUPPORT_EMAIL}">${escapeHtml(t('content.premium_cta'))} ${SUPPORT_EMAIL}</a>
       </div>
     </div>
   `;
@@ -1313,7 +1305,7 @@ function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
 
-  return new Intl.DateTimeFormat('es-ES', {
+  return new Intl.DateTimeFormat(getDateLocale(), {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
@@ -1323,28 +1315,173 @@ function formatDate(value) {
 /* ══════════════════════════════════════════════════════════════
    INIT — resolve URL and route
 ══════════════════════════════════════════════════════════════ */
-(async function initRouting() {
-  const pathname = window.location.pathname;
-  const levelParam = new URLSearchParams(window.location.search).get('nivel');
+if (typeof onAuthChange === 'function') onAuthChange(() => {
+  if (allTexts.length > 0 && screens.textos.style.display !== 'none') {
+    renderTextGrid(getFilteredTexts());
+  }
+});
 
-  if (pathname === '/textos') {
-    $('main-app').style.display = 'block';
-    screens.landing.style.display = 'none';
-    await goToTextos({ pushState: false });
-  } else if (pathname.startsWith('/textos/')) {
-    const slug = decodeURIComponent(pathname.slice('/textos/'.length));
-    if (levelParam) selectedLevel = levelParam.toLowerCase();
+/* ── LANGUAGE SELECTOR ─────────────────────────────────────── */
+(function initLangSelector() {
+  const btn = $('lang-selector-btn');
+  const dropdown = $('lang-selector-dropdown');
+  const flagEl = $('lang-selector-flag');
+  const codeEl = $('lang-selector-code');
+  const grid = $('lang-ui-grid');
+  if (!btn || !dropdown || !grid) return;
+
+  function updateSelectorDisplay() {
+    const lang = getUILang();
+    const info = LANG_NAMES[lang];
+    if (info) {
+      flagEl.textContent = info.flag;
+      codeEl.textContent = lang.toUpperCase();
+    }
+  }
+
+  function buildGrid() {
+    grid.innerHTML = '';
+    const currentLang = getUILang();
+    SUPPORTED_UI_LANGS.forEach(lang => {
+      const info = LANG_NAMES[lang];
+      if (!info) return;
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'lang-option' + (lang === currentLang ? ' active' : '');
+      item.dataset.lang = lang;
+      item.setAttribute('role', 'menuitem');
+      item.innerHTML = `<span class="lang-option-flag">${info.flag}</span><span class="lang-option-name">${info.native}</span>`;
+      item.addEventListener('click', () => {
+        setUILang(lang);
+        applyI18nToDOM();
+        updateSelectorDisplay();
+        syncLearningSelectors();
+        buildGrid();
+        closeDropdown();
+        if (screens.textos.getClientRects().length) {
+          buildTopicChips();
+          renderTextGrid(getFilteredTexts());
+        } else if (screens.dashboard.getClientRects().length) {
+          showDashboard();
+        }
+        const deck = $('ln-deck');
+        if (deck) deck.innerHTML = t('landing.deck') + '<br>' + t('landing.deck2');
+        const route = getTargetLang() === 'de' ? null : resolveLearningRoute(window.location.pathname);
+        const detail = route?.screen === 'content' && selectedText;
+        updateSEOMeta({
+          title: detail ? `${selectedText.title} | Nivel ${selectedLevel.toUpperCase()} | imKontext` : t(route?.screen === 'textos' ? 'seo.textos_title' : 'seo.home_title'),
+          description: detail ? t('seo.text_detail_desc', {title:selectedText.title,level:selectedLevel.toUpperCase()}) : t(route?.screen === 'textos' ? 'seo.textos_desc' : 'seo.home_desc'),
+          canonical: window.location.origin + (detail ? getTextUrl(selectedText,selectedLevel) : route?.screen === 'textos' ? learningCatalogPath() : learningHomePath())
+        });
+      });
+      grid.appendChild(item);
+    });
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      buildGrid();
+      dropdown.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#lang-selector')) closeDropdown();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDropdown();
+  });
+
+  updateSelectorDisplay();
+})();
+
+// Resolve explicit shared-link language before the first content request.
+async function routeCurrentLanguage() {
+  const route = resolveLearningRoute(window.location.pathname);
+  if (route && route.language !== getTargetLang()) {
+    setTargetLang(route.language);
+    resetLanguageSession();
+  }
+  const levelParam = new URLSearchParams(window.location.search).get('nivel');
+  if (levelParam && ['a2','b1','b2','c1'].includes(levelParam.toLowerCase())) selectedLevel = levelParam.toLowerCase();
+  syncLearningSelectors();
+  applyI18nToDOM();
+  if (route?.screen === 'textos') return goToTextos({pushState:false});
+  if (route?.screen === 'content') {
     $('main-app').style.display = 'block';
     screens.landing.style.display = 'none';
     $('app-header').classList.remove('app-is-landing');
-    await openTextBySlug(slug);
-  } else {
-    // Default: landing
-    $('main-app').style.display = 'none';
-    updateSEOMeta({
-      title: 'imKontext | Aprende alemán con textos y noticias reales',
-      description: 'Aprende alemán con textos y noticias reales. Practica vocabulario en contexto con imKontext y ejercicios por niveles.',
-      canonical: window.location.origin + '/'
-    });
+    return openTextBySlug(route.slug);
   }
+  showLanding();
+}
+
+function resetLanguageSession() {
+  languageRequestGeneration++;
+  allTexts=[]; selectedText=null; selectedTextVersion=null;
+  currentVocab=[]; currentTextVocab=[]; queue=[]; selectedModos=[];
+  selectedTopic=null; selectedCategory=null; currentTextsPage=0; numPalabras=0;
+  clearPersistedErrors();
+  if(typeof clearCountdown==='function') clearCountdown();
+  document.querySelectorAll('[data-modo]').forEach(button=>button.classList.remove('active'));
+  closeVocabPanel();
+}
+
+let availableLearningLanguages = new Set(['de']);
+function syncLearningSelectors() {
+  const target=$('learning-language'); const native=$('native-language');
+  if(!target||!native) return;
+  target.replaceChildren(); native.replaceChildren();
+  SUPPORTED_TARGET_LANGS.forEach(lang=>{
+    const option=document.createElement('option'); option.value=lang;
+    option.textContent=LANG_NAMES[lang].native;
+    option.disabled=!availableLearningLanguages.has(lang);
+    option.selected=lang===getTargetLang(); target.appendChild(option);
+    if(lang!==getTargetLang()) {
+      const known=document.createElement('option'); known.value=lang;
+      known.textContent=LANG_NAMES[lang].native;
+      known.disabled=!['de','es'].includes(lang)&&!availableLearningLanguages.has(lang);
+      known.selected=lang===getNativeLang(); native.appendChild(known);
+    }
+  });
+  const articleMode=document.querySelector('[data-modo="articulo"]');
+  if(articleMode) articleMode.disabled=learningArticleOptions().length===0;
+  const status=$('learning-availability');
+  if(status) status.textContent=availableLearningLanguages.has(getTargetLang())?'':t('learning.pending');
+}
+
+$('learning-language')?.addEventListener('change',async event=>{
+  const lang=event.target.value;
+  if(!availableLearningLanguages.has(lang)) return;
+  setTargetLang(lang); resetLanguageSession(); syncLearningSelectors(); applyI18nToDOM();
+  history.pushState({},'',learningCatalogPath());
+  await goToTextos({pushState:false});
+});
+$('native-language')?.addEventListener('change',async event=>{
+  if(!setNativeLang(event.target.value)) return;
+  resetLanguageSession(); syncLearningSelectors();
+  history.pushState({},'',learningCatalogPath());
+  await goToTextos({pushState:false});
+});
+(async()=>{
+  try {
+    const response=await fetch('/api/learning-languages');
+    if(response.ok) {
+      const languages=await response.json();
+      if(Array.isArray(languages)) availableLearningLanguages=new Set(['de',...languages.filter(x=>x.available&&SUPPORTED_TARGET_LANGS.includes(x.code)).map(x=>x.code)]);
+    }
+  } catch {}
+  syncLearningSelectors();
 })();
+routeCurrentLanguage();
