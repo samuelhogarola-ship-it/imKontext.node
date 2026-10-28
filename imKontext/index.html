@@ -91,12 +91,10 @@
         <span class="app-nav-sep">|</span>
         <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
       </div>
-      <button class="app-nav-dashboard" id="nav-dashboard" type="button" onclick="document.getElementById('auth-container')?.scrollIntoView({behavior:'smooth'})">Cuenta</button>
+      <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
     </div>
   </nav>
 </header>
-
-<section id="auth-container" class="auth-container" aria-label="Cuenta"></section>
 
 <!-- ═══════════════════════════════════════════════════
      PANTALLA 1 — LANDING
@@ -454,6 +452,8 @@
         <div class="txdet-kicker">Tu progreso</div>
         <h2 class="act-title">Dashboard</h2>
       </div>
+
+      <section id="auth-container" class="auth-container auth-container--visible" aria-label="Cuenta"></section>
 
       <div class="db-empty" id="db-empty" style="display:none">
         <p>Todavía no tienes sesiones registradas. ¡Empieza a practicar para ver tu progreso aquí!</p>

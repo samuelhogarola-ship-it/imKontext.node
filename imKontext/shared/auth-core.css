@@ -1,3 +1,6 @@
+.auth-container { display: none; }
+.auth-container.auth-container--visible { display: block; }
+
 .auth-panel {
   display: flex;
   flex-direction: column;
