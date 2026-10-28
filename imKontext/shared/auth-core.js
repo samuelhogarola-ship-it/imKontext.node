@@ -33,22 +33,17 @@
   let _recoveryEmail = '';
   let _authSubscription = null;
   let _installListenerBound = false;
-  const POST_AUTH_DESTINATION_KEY = 'imkontext_post_auth_destination';
-
-  function getAuthCallbackUrl(destination) {
-    const next = destination && destination.startsWith('/') && !destination.startsWith('//') ? destination : '/';
-    return window.location.origin + '/auth/callback?next=' + encodeURIComponent(next);
-  }
+  const POST_AUTH_DESTINATION_KEY = 'vokabellab_post_auth_destination';
 
   function getPostAuthDestination() {
     const pathname = window.location.pathname || '/';
     const languagePrefix = /^\/(espanol|english|suomi)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
-    const fallback = '/';
+    const fallback = languagePrefix + '/dashboard';
     try {
       const saved = window.sessionStorage?.getItem(POST_AUTH_DESTINATION_KEY);
       if (!saved || !saved.startsWith('/') || saved.startsWith('//')) return fallback;
       const url = new URL(saved, window.location.origin);
-      if (url.origin !== window.location.origin || !/^\/(?:auth\/callback)?$/.test(url.pathname) && url.pathname !== '/') return fallback;
+      if (url.origin !== window.location.origin || !/^\/(?:(?:espanol|english|suomi)\/)?dashboard\/?$/.test(url.pathname)) return fallback;
       return url.pathname + url.search + url.hash;
     } catch (_) {
       return fallback;
@@ -58,7 +53,7 @@
   function rememberPostAuthDestination() {
     const pathname = window.location.pathname || '/';
     const languagePrefix = /^\/(espanol|english|suomi)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
-    const destination = '/' + (window.location.search || '') + (window.location.hash || '');
+    const destination = languagePrefix + '/dashboard' + (window.location.search || '') + (window.location.hash || '');
     try {
       window.sessionStorage?.setItem(POST_AUTH_DESTINATION_KEY, destination);
     } catch (_) {}
@@ -648,7 +643,7 @@
     rememberPostAuthDestination();
     const { error } = await client.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: getAuthCallbackUrl(getPostAuthDestination()) }
+      options: { redirectTo: window.location.origin + getPostAuthDestination() }
     });
     if (error) {
       const copy = authText();
@@ -707,7 +702,7 @@
     if (btn) { btn.disabled = true; btn.textContent = copy.sending; }
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: getAuthCallbackUrl('/?auth=recovery')
+      redirectTo: window.location.origin + '/?auth=recovery'
     });
 
     if (error) {
@@ -782,7 +777,7 @@
     rememberPostAuthDestination();
     const { error } = await client.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: getAuthCallbackUrl(getPostAuthDestination()) }
+      options: { emailRedirectTo: window.location.origin + getPostAuthDestination() }
     });
 
     if (error) {

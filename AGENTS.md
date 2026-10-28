@@ -22,6 +22,13 @@ Guía corta para trabajar en `imKontext.node`.
 - Cambios grandes o de varios archivos: rama dedicada y PR.
 - Mantén `LabWorldCore` solo como compatibilidad legacy si aparece en código existente.
 
+## Política de Hostinger
+
+- Nunca uses el panel, API, MCP, CLI, FTP, File Manager ni edición directa de Hostinger.
+- Nunca despliegues ni modifiques producción manualmente en Hostinger.
+- Todo cambio y despliegue debe pasar por Git: rama, commit, push, PR/revisión, merge y el CI/CD o autodeploy configurado.
+- Si el autodeploy falla o no existe, detente y repórtalo. No uses Hostinger como atajo.
+
 ## Handover
 
 Al cerrar una sesión, deja claro:

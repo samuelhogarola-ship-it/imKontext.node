@@ -215,7 +215,9 @@ window.addEventListener('popstate', async () => {
   const pathname = window.location.pathname;
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
 
-  if (pathname === '/textos') {
+  if (pathname === '/dashboard') {
+    await showDashboard();
+  } else if (pathname === '/textos') {
     await goToTextos({ pushState: false });
   } else if (pathname.startsWith('/textos/')) {
     const slug = decodeURIComponent(pathname.slice('/textos/'.length));
@@ -626,6 +628,9 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
 // Nav: "Dashboard"
 document.getElementById('nav-dashboard').addEventListener('click', async e => {
   e.preventDefault();
+  if (window.location.pathname !== '/dashboard') {
+    history.pushState({ screen: 'dashboard' }, '', '/dashboard');
+  }
   await showDashboard();
 });
 
@@ -1327,7 +1332,11 @@ function formatDate(value) {
   const pathname = window.location.pathname;
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
 
-  if (pathname === '/textos') {
+  if (pathname === '/dashboard') {
+    $('main-app').style.display = 'block';
+    screens.landing.style.display = 'none';
+    await showDashboard();
+  } else if (pathname === '/textos') {
     $('main-app').style.display = 'block';
     screens.landing.style.display = 'none';
     await goToTextos({ pushState: false });
