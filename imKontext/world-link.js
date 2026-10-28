@@ -1,5 +1,8 @@
 /* Vokabel World integration — back-to-hub floating button */
 (function () {
+  if (window.VokabelWorldContext && typeof window.VokabelWorldContext.ensure === 'function') {
+    window.VokabelWorldContext.ensure({ sourceLang: new URLSearchParams(window.location.search).get('native_lang') || 'es', targetLang: 'de', label: 'ImKontext · alemán en contexto' }).catch(function () {});
+  }
   var params = new URLSearchParams(window.location.search);
   if (params.get('from') === 'world') {
     try { sessionStorage.setItem('vokabel_from_world', '1'); } catch (e) {}
