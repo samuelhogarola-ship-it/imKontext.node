@@ -55,6 +55,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css?v=28">
 <link rel="stylesheet" href="/shared/cookie-banner-core.css?v=1">
+<link rel="stylesheet" href="/shared/auth-core.css?v=20261028">
   <script defer src="/shared/umami-analytics.js"></script>
   <script src="/shared/learning-context-bridge.js?v=20261028"></script>
   <script src="/world-link.js"></script>
@@ -90,10 +91,12 @@
         <span class="app-nav-sep">|</span>
         <a href="#" class="nav-active" id="nav-imkontext-link">imKontext</a>
       </div>
-      <span class="app-nav-dashboard" id="nav-dashboard" aria-disabled="true">Dashboard</span>
+      <button class="app-nav-dashboard" id="nav-dashboard" type="button" onclick="document.getElementById('auth-container')?.scrollIntoView({behavior:'smooth'})">Cuenta</button>
     </div>
   </nav>
 </header>
+
+<section id="auth-container" class="auth-container" aria-label="Cuenta"></section>
 
 <!-- ═══════════════════════════════════════════════════
      PANTALLA 1 — LANDING
@@ -514,9 +517,15 @@
 <script src="/shared/cookie-banner-core.js?v=1"></script>
 <script src="/cookie-banner.js?v=1"></script>
 <script src="/common.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/shared/auth-core.js?v=20261028"></script>
+<script src="/shared/auth-callback.js?v=20261028"></script>
 <script src="/shared/practice-core.js?v=1"></script>
 <script src="/shared/result-view-core.js?v=1"></script>
 <script src="/app.js?v=11"></script>
 <script src="/practice.js?v=2"></script>
+<script>
+  if (window.AuthCore) window.AuthCore.init(['auth-container']);
+</script>
 </body>
 </html>
