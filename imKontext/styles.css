@@ -1818,7 +1818,16 @@ body.reader-mode-active .txdet-article p:last-child {
 /* Nav buttons */
 .nav-btns {
   display: flex; gap: .75rem; margin-bottom: .75rem; margin-top: 1.5rem;
+  position: sticky;
+  bottom: .75rem;
+  z-index: 8;
+  padding: .55rem;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(26,24,20,.08);
+  box-shadow: 0 8px 24px rgba(26,24,20,.10);
 }
+#screen-ejercicio { padding-bottom: 1.5rem; }
 /* ejercicio — next button rectangular + ink */
 .nav-btns .btn-main {
   background: var(--ink);

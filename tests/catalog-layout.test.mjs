@@ -12,3 +12,8 @@ test('catalog uses category filters without the non-functional search sidebar', 
   assert.match(app, /getCategoryLabels\(\)/);
   assert.match(styles, /\.tx-featured-card\.catalog-compact/);
 });
+
+test('exercise controls reserve a stable viewport position after feedback', () => {
+  assert.match(styles, /\.nav-btns\s*\{[^}]*position:\s*sticky/s);
+  assert.match(styles, /#screen-ejercicio\s*\{[^}]*padding-bottom:/s);
+});
