@@ -191,8 +191,8 @@ input, select { font-family: inherit; }
   padding-top: 0;
 }
 .ln-logo-img {
-  width: min(100%, 280px);
-  max-width: 280px;
+  width: min(100%, 360px);
+  max-width: 360px;
   filter: drop-shadow(0 12px 20px rgba(26,24,20,.14));
 }
 
@@ -236,7 +236,7 @@ input, select { font-family: inherit; }
 }
 .ln-portada-headline {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
   font-weight: 700; line-height: 1.05; margin-bottom: .2rem;
   letter-spacing: -.03em;
 }
@@ -518,6 +518,112 @@ input, select { font-family: inherit; }
 .app-nav-sep {
   color: var(--border);
   font-size: .75rem;
+}
+
+/* ── Language Selector ──────────────────────────────────────── */
+.lang-selector {
+  position: relative;
+  flex-shrink: 0;
+}
+.lang-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .8rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+  line-height: 1.4;
+}
+.lang-selector-btn:hover {
+  border-color: var(--vl-blue);
+}
+.lang-selector-flag {
+  font-size: 1rem;
+  line-height: 1;
+}
+.lang-selector-code {
+  letter-spacing: .04em;
+}
+.lang-selector-caret {
+  opacity: .5;
+  transition: transform .2s;
+}
+.lang-selector-btn[aria-expanded="true"] .lang-selector-caret {
+  transform: rotate(180deg);
+}
+
+.lang-selector-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.12);
+  z-index: 200;
+  padding: 8px;
+  animation: lang-drop-in .15s ease-out;
+}
+.lang-selector-dropdown.open {
+  display: block;
+}
+@keyframes lang-drop-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lang-dropdown-label {
+  display: block;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 2px 6px 6px;
+}
+.lang-dropdown-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-size: .85rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background .12s;
+  text-align: left;
+}
+.lang-option:hover {
+  background: var(--bg-hover, rgba(0,0,0,.05));
+}
+.lang-option.active {
+  background: var(--vl-blue);
+  color: #fff;
+  font-weight: 500;
+}
+.lang-option.active:hover {
+  background: var(--vl-blue);
+}
+.lang-option-flag {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 /* Mobile — landing: stacked nav with all links */
@@ -1712,7 +1818,16 @@ body.reader-mode-active .txdet-article p:last-child {
 /* Nav buttons */
 .nav-btns {
   display: flex; gap: .75rem; margin-bottom: .75rem; margin-top: 1.5rem;
+  position: sticky;
+  bottom: .75rem;
+  z-index: 8;
+  padding: .55rem;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(26,24,20,.08);
+  box-shadow: 0 8px 24px rgba(26,24,20,.10);
 }
+#screen-ejercicio { padding-bottom: 1.5rem; }
 /* ejercicio — next button rectangular + ink */
 .nav-btns .btn-main {
   background: var(--ink);
@@ -2818,6 +2933,25 @@ body.reader-mode-active .txdet-article p:last-child {
   text-decoration-thickness: 2px;
   text-underline-offset: .38rem;
 }
+
+/* Compact catalog: keep the featured story visible without hiding the list. */
+.tx-featured-card.catalog-compact {
+  min-height: 220px;
+  grid-template-columns: minmax(160px, .42fr) minmax(0, 1fr) auto;
+}
+.tx-featured-card.catalog-compact .tx-featured-media { min-height: 220px; }
+.tx-featured-card.catalog-compact .tx-featured-title { font-size: clamp(1.25rem, 2.5vw, 2rem); }
+.txsel-category-select {
+  min-height: 38px;
+  border: 1px solid rgba(26,24,20,.18);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 .9rem;
+  font: inherit;
+}
+.txsel-sidebar--compact { padding-top: .35rem; }
+.txsel-sidebar-title { margin: 0; color: var(--ink); font-weight: 700; }
 
 /* ── Mobile: restore stacked layout ── */
 @media (max-width: 680px) {

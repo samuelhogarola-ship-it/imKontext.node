@@ -10,7 +10,7 @@
     "prepare": "node .husky/install.mjs",
     "lint:staged": "lint-staged --no-stash --no-hide-partially-staged",
     "start": "node server.js",
-    "test:unit": "node --test e2e/umami-analytics.test.mjs && node tests/auth-login-contract.mjs",
+    "test:unit": "node --test e2e/umami-analytics.test.mjs && node tests/auth-login-contract.mjs && node --test tests/imkontext-ui-regression.test.mjs tests/translation-status.test.mjs tests/translation-availability.test.mjs tests/catalog-layout.test.mjs tests/navigation-labels.test.mjs",
     "test:e2e": "node --test e2e/umami-analytics.test.mjs && playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:integration": "playwright test --config playwright.integration.config.js"

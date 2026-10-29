@@ -137,7 +137,7 @@ app.get("/api/text-version-vocabulary-core", async (req, res) => {
 
   try {
     const rows = await supabaseFetch(
-      `text_version_vocabulary_core?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=id,german,spanish,article,word_type,plural_form,infinitive,past_simple,past_participle,example_sentence_de,example_sentence_es,level`
+      `text_version_vocabulary_core?text_version_id=eq.${encodeURIComponent(textVersionId)}&select=*`
     );
     res.json(rows);
   } catch (error) {
