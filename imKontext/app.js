@@ -319,7 +319,7 @@ function renderTextGrid(list) {
         <p class="tx-featured-kicker">Destacado de la semana</p>
         ${renderFeaturedAccessTag(featured)}
       </div>
-      <button class="tx-featured-card" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
+      <button class="tx-featured-card catalog-compact" data-testid="featured-card" type="button" aria-label="Abrir tema principal: ${escapeHtml(featured.title)}">
         <div class="tx-featured-media" aria-hidden="true">
           <img class="tx-featured-image" src="/textos-featured-hero.png" alt="">
         </div>
@@ -496,12 +496,10 @@ function renderFeaturedDescription(text) {
 }
 
 function getFilteredTexts() {
-  const q = $('txsel-search').value.toLowerCase().trim();
   let list = allTexts;
   if (selectedCategory) {
     list = list.filter(t => t.categoria === selectedCategory);
   }
-  if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
   return list;
 }
 
@@ -570,7 +568,10 @@ function buildTopicChips() {
     return;
   }
 
-  const options = [{ value: null, label: getUILang() === 'es' ? 'Todas' : getUILang() === 'de' ? 'Alle' : getUILang() === 'fi' ? 'Kaikki' : getUILang() === 'it' ? 'Tutte' : getUILang() === 'pt' ? 'Todas' : 'All' }, ...categories.map(value => ({
+  const allLabel = getUILang() === 'es' ? 'Todas' : getUILang() === 'de' ? 'Alle' : getUILang() === 'fi' ? 'Kaikki' : getUILang() === 'it' ? 'Tutte' : getUILang() === 'pt' ? 'Todas' : 'All';
+  const featuredCategories = ['tecnologia', 'sociedad', 'medioambiente'].filter(value => categories.includes(value));
+  const visibleCategories = [...featuredCategories, ...categories.filter(value => !featuredCategories.includes(value))].slice(0, 3);
+  const options = [{ value: null, label: allLabel }, ...visibleCategories.map(value => ({
     value,
     label: getCategoryLabel(value),
   }))];
@@ -591,6 +592,21 @@ function buildTopicChips() {
     });
     container.appendChild(btn);
   });
+
+  if (categories.length > 3) {
+    const select = document.createElement('select');
+    select.className = 'txsel-category-select';
+    select.setAttribute('aria-label', allLabel);
+    select.innerHTML = `<option value="">${escapeHtml(allLabel)}</option>${categories.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(getCategoryLabel(value))}</option>`).join('')}`;
+    select.value = selectedCategory || '';
+    select.addEventListener('change', () => {
+      selectedCategory = select.value || null;
+      currentTextsPage = 0;
+      updateTopicChips();
+      renderTextGrid(getFilteredTexts());
+    });
+    container.appendChild(select);
+  }
 }
 
 function updateTopicChips() {
@@ -603,12 +619,6 @@ function updateTopicChips() {
 function getCategoryLabel(slug) {
   return getCategoryLabels()[slug] || slug;
 }
-
-// Live search
-$('txsel-search').addEventListener('input', () => {
-  currentTextsPage = 0;
-  renderTextGrid(getFilteredTexts());
-});
 
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;

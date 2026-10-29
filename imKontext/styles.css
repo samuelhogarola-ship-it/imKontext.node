@@ -2925,6 +2925,25 @@ body.reader-mode-active .txdet-article p:last-child {
   text-underline-offset: .38rem;
 }
 
+/* Compact catalog: keep the featured story visible without hiding the list. */
+.tx-featured-card.catalog-compact {
+  min-height: 220px;
+  grid-template-columns: minmax(160px, .42fr) minmax(0, 1fr) auto;
+}
+.tx-featured-card.catalog-compact .tx-featured-media { min-height: 220px; }
+.tx-featured-card.catalog-compact .tx-featured-title { font-size: clamp(1.25rem, 2.5vw, 2rem); }
+.txsel-category-select {
+  min-height: 38px;
+  border: 1px solid rgba(26,24,20,.18);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 .9rem;
+  font: inherit;
+}
+.txsel-sidebar--compact { padding-top: .35rem; }
+.txsel-sidebar-title { margin: 0; color: var(--ink); font-weight: 700; }
+
 /* ── Mobile: restore stacked layout ── */
 @media (max-width: 680px) {
   .card.is-textos {

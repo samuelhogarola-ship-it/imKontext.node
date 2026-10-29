@@ -238,26 +238,9 @@
       <div id="txsel-topic-filter" class="txsel-topic-filter" aria-label="Filtrar por categoría"></div>
 
       <div class="txsel-layout">
-        <aside class="txsel-sidebar">
-          <div class="txsel-search-panel">
-            <p class="txsel-search-label" data-i18n="textos.search">Buscar texto</p>
-            <div class="txsel-search-wrap">
-              <svg class="txsel-search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-              <input
-                type="search"
-                id="txsel-search"
-                class="txsel-search"
-                placeholder="Buscar texto..."
-                data-i18n-placeholder="textos.search_placeholder"
-                autocomplete="off"
-                aria-label="Buscar texto"
-              >
-            </div>
-            <p class="txsel-search-help" data-i18n="textos.search_help">Filtra por título mientras exploras los textos disponibles.</p>
-          </div>
+        <aside class="txsel-sidebar txsel-sidebar--compact">
+          <p class="txsel-sidebar-title" data-i18n="textos.categories">Categorías</p>
+          <p class="txsel-search-help" data-i18n="textos.category_help">Explora por tema y nivel.</p>
 
           <button class="btn-back section-back txsel-back" id="btn-volver-landing-from-textos" data-i18n="textos.back">← Volver</button>
         </aside>
