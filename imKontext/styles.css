@@ -191,8 +191,8 @@ input, select { font-family: inherit; }
   padding-top: 0;
 }
 .ln-logo-img {
-  width: min(100%, 280px);
-  max-width: 280px;
+  width: min(100%, 360px);
+  max-width: 360px;
   filter: drop-shadow(0 12px 20px rgba(26,24,20,.14));
 }
 
@@ -236,7 +236,7 @@ input, select { font-family: inherit; }
 }
 .ln-portada-headline {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
   font-weight: 700; line-height: 1.05; margin-bottom: .2rem;
   letter-spacing: -.03em;
 }
