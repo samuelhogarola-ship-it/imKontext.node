@@ -1322,11 +1322,13 @@ function formatDate(value) {
 /* ══════════════════════════════════════════════════════════════
    INIT — resolve URL and route
 ══════════════════════════════════════════════════════════════ */
-onAuthChange(() => {
-  if (allTexts.length > 0 && screens.textos.style.display !== 'none') {
-    renderTextGrid(getFilteredTexts());
-  }
-});
+if (typeof onAuthChange === 'function') {
+  onAuthChange(() => {
+    if (allTexts.length > 0 && screens.textos.style.display !== 'none') {
+      renderTextGrid(getFilteredTexts());
+    }
+  });
+}
 
 /* ── LANGUAGE SELECTOR ─────────────────────────────────────── */
 (function initLangSelector() {
