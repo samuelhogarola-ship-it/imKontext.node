@@ -38,7 +38,10 @@ export async function disableAnimations(page) {
 }
 
 export async function waitForVisualStability(page, locator) {
-  await page.waitForLoadState('networkidle');
+  // Analytics and other background integrations may keep a request open in CI.
+  // Visual assertions only need the document and fonts to be ready, not a
+  // globally idle network.
+  await page.waitForLoadState('domcontentloaded');
   await page.evaluate(async () => {
     if (document.fonts?.ready) {
       await document.fonts.ready;
