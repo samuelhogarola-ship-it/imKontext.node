@@ -353,7 +353,8 @@ input, select { font-family: inherit; }
     gap: .45rem;
   }
   .ln-logo-img {
-    max-width: 230px;
+    width: 205%;
+    max-width: none;
   }
   .ln-portada {
     padding: 1rem 1.8rem .9rem;
