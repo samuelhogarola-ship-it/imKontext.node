@@ -18,6 +18,18 @@ async function reachExercise(page) {
   await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
 }
 
+async function reachTestExercise(page) {
+  await page.goto('/deutsch/textos');
+  await page.locator('[data-testid="featured-card"]').first().waitFor({ state: 'visible', timeout: 10_000 });
+  await page.locator('[data-testid="featured-card"]').first().click();
+  await expect(page.locator('#screen-content')).toBeVisible();
+  await page.locator('#btn-ir-actividad').click();
+  await expect(page.locator('#screen-activity')).toBeVisible();
+  await page.locator('#practice-selector [data-modo="test"]').click();
+  await page.locator('#btn-empezar').click();
+  await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+}
+
 // Answer whatever exercise mode is currently rendered.
 async function respondToExercise(page) {
   const badge = await page.locator('#tipo-badge').textContent();
@@ -44,6 +56,28 @@ test('exercise screen loads with first question', async ({ page }) => {
   await expect(page.locator('#tipo-badge')).toBeVisible();
   await expect(page.locator('#prog-actual')).toHaveText('1');
   await expect(page.locator('#prog-total')).not.toHaveText('0');
+});
+
+test('Test direction button starts reversed and swaps the visible language sides', async ({ page }) => {
+  await reachTestExercise(page);
+
+  const first = await page.evaluate(() => ({
+    native: getNativeWord(queue[currentIdx]),
+    target: getTargetWord(queue[currentIdx]),
+  }));
+  const direction = page.locator('#test-direction-toggle');
+
+  await expect(direction).toBeVisible();
+  await expect(direction).toContainText('🇪🇸');
+  await expect(direction).toContainText('🇩🇪');
+  await expect(direction).toContainText('→');
+  await expect(page.locator('#pregunta-texto')).toHaveText(first.native);
+  await expect(page.locator('.opcion', { hasText: first.target })).toHaveCount(1);
+
+  await direction.click();
+
+  await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
+  await expect(page.locator('.opcion', { hasText: first.native })).toHaveCount(1);
 });
 
 test('answering a question shows correct or wrong feedback', async ({ page }) => {

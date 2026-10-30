@@ -93,6 +93,36 @@ function getTestDirectionData(word, direction = getTestDirectionForQuestion(curr
   }, direction);
 }
 
+function getTestDirectionLanguageLabel(lang) {
+  const info = LANG_NAMES[lang] || {};
+  const rawName = info[getUILang()] || info.native || lang;
+  const name = rawName ? rawName.charAt(0).toUpperCase() + rawName.slice(1) : lang;
+  return `${info.flag || ''} ${name}`.trim();
+}
+
+function renderTestDirectionToggle(direction, answered) {
+  const button = $('test-direction-toggle');
+  if (!button) return;
+  const targetLang = getTargetLang();
+  const nativeLang = getUILang();
+  if (targetLang === nativeLang) {
+    button.hidden = true;
+    button.disabled = true;
+    return;
+  }
+
+  const reverse = direction !== 'forward';
+  const from = getTestDirectionLanguageLabel(reverse ? nativeLang : targetLang);
+  const to = getTestDirectionLanguageLabel(reverse ? targetLang : nativeLang);
+  button.innerHTML = `<span>${escapeHtml(from)}</span><span class="test-direction-arrow" aria-hidden="true">→</span><span>${escapeHtml(to)}</span>`;
+  const action = t('exercise.reverse_direction', { from, to });
+  button.setAttribute('aria-label', action);
+  button.title = action;
+  button.dataset.direction = reverse ? 'reverse' : 'forward';
+  button.disabled = Boolean(answered);
+  button.hidden = false;
+}
+
 function clearCountdown() {
   if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
   const el = $('next-countdown');
@@ -239,6 +269,7 @@ function handleNoSe(word, correctLabel, extras = {}) {
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className = 'respuesta-feedback wrong';
   revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
   autoNext();
 }
 
@@ -290,6 +321,7 @@ function applyAnsweredState(state, word) {
   if (state.translationShown) {
     revealTranslationText(state.translationText || getRevealLines(word).join('\n'));
   }
+  if (state.testDirection) renderTestDirectionToggle(state.testDirection, true);
 
   if (state.mode === 'flashcards') {
     $('flashcard-card').classList.add('flipped');
@@ -425,6 +457,9 @@ function buildExercise() {
   };
   $('tipo-badge').textContent = labels[modo] || modo;
 
+  const directionToggle = $('test-direction-toggle');
+  if (directionToggle) directionToggle.hidden = true;
+
   $('opciones-wrap').innerHTML = '';
   $('opciones-wrap').style.display = 'none';
   $('flashcard-wrap').style.display = 'none';
@@ -455,6 +490,7 @@ function buildExercise() {
 /* ── TEST ────────────────────────────────────────────────────── */
 function buildTest(word) {
   const data = getTestDirectionData(word);
+  renderTestDirectionToggle(data.direction, Boolean(questionStates[currentIdx]?.answered));
   $('pregunta-texto').textContent = data.prompt;
   renderQuestionHint(word.word_type || '');
 
@@ -476,6 +512,7 @@ function buildTest(word) {
         translationText: answer,
         testDirection: data.direction,
       });
+      renderTestDirectionToggle(data.direction, true);
       disableOptions();
       disableNoSeButton();
       autoNext();
@@ -673,6 +710,7 @@ function markAnswer(btn, correct, word, correctLabel, extras = {}) {
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
   revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
 }
 
 function disableOptions() {
@@ -812,4 +850,10 @@ $('btn-toggle-traduccion').addEventListener('click', () => {
     btn.setAttribute('aria-expanded', 'true');
     btn.textContent = t('exercise.hide_translation');
   }
+});
+
+$('test-direction-toggle').addEventListener('click', () => {
+  if (questionStates[currentIdx]?.answered) return;
+  setTestDirection(testDirection === 'reverse' ? 'forward' : 'reverse');
+  buildExercise();
 });
