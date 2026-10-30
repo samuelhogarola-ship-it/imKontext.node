@@ -18,6 +18,7 @@ test('navigation exposes a Panel control and normal footer destinations', () => 
 });
 
 test('landing hero gives the fox/brand and language promise more visual weight', () => {
-  assert.match(styles, /\.ln-logo-img\s*\{[\s\S]*?max-width:\s*360px/);
+  assert.match(styles, /\.ln-fox-frame\s*\{[\s\S]*?aspect-ratio:\s*1\s*\/\s*1/);
+  assert.match(styles, /\.ln-logo-img\s*\{[\s\S]*?object-position:\s*left\s+center/);
   assert.match(styles, /\.ln-portada-headline\s*\{[\s\S]*?font-size:\s*clamp\(2\.2rem/);
 });
