@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mockApi } from './helpers/mock-api.js';
 
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('imkontext_cookie_consent', 'rejected'));
   await mockApi(page);
 });
 
@@ -76,6 +77,8 @@ test('Test direction button starts reversed and swaps the visible language sides
   await expect(direction).toContainText('🇪🇸');
   await expect(direction).toContainText('🇩🇪');
   await expect(direction).toContainText('→');
+  await expect(direction).toHaveAttribute('aria-label', 'Cambiar dirección: 🇩🇪 Alemán a 🇪🇸 Español');
+  await expect(direction).toHaveAttribute('title', 'Cambiar dirección: 🇩🇪 Alemán a 🇪🇸 Español');
   await expect(page.locator('#pregunta-texto')).toHaveText(first.native);
   await expect(page.locator('.opcion', { hasText: first.target })).toHaveCount(1);
 
@@ -84,6 +87,7 @@ test('Test direction button starts reversed and swaps the visible language sides
 
   await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
   await expect(page.locator('.opcion', { hasText: first.native })).toHaveCount(1);
+  await expect(direction).toHaveAttribute('aria-label', 'Cambiar dirección: 🇪🇸 Español a 🇩🇪 Alemán');
   await expect.poll(() => page.evaluate(() => ({ currentIdx, score: { ...score } }))).toEqual(stateBeforeToggle);
 });
 
@@ -149,14 +153,20 @@ test('a newly started Test session resets to reverse after a previous forward se
   await expect(page.locator('#pregunta-texto')).toHaveText(restarted.native);
 });
 
-test('Test direction labels follow an English interface without changing the German target', async ({ page }) => {
+test('Test shows a clear fallback when the selected language pair is unavailable', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('imk_ui_lang', 'en'));
   await reachTestExercise(page);
 
   const direction = page.locator('#test-direction-toggle');
-  await expect(direction).toContainText('🇬🇧 English');
-  await expect(direction).toContainText('🇩🇪 German');
-  await expect(direction).toHaveAttribute('aria-label', /Switch direction/);
+  await expect(direction).toBeHidden();
+  await expect(page.locator('#pregunta-texto')).toHaveText(
+    'No translation is available between 🇬🇧 English and 🇩🇪 German. Use Next to continue.'
+  );
+  await expect(page.locator('.opcion')).toHaveCount(0);
+  await expect(page.locator('#btn-no-se')).toHaveCount(0);
+  await expect(page.locator('#btn-siguiente')).toBeEnabled();
+  await page.locator('#btn-siguiente').click();
+  await expect(page.locator('#prog-actual')).toHaveText('2');
 });
 
 test('same target and interface language hides the direction control and keeps Test answerable', async ({ page }) => {

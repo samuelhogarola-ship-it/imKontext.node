@@ -53,6 +53,10 @@ function buildTestDirectionData(fields, direction) {
   };
 }
 
+function hasUsableTestPair(data) {
+  return Boolean(normalize(data?.prompt) && normalize(data?.answer));
+}
+
 /* ── QUEUE BUILDER ───────────────────────────────────────────── */
 // Builds a capped, shuffled queue. Words in errorIds are placed first.
 function buildQueue(vocab, n, errorIds) {

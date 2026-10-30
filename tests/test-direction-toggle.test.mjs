@@ -46,3 +46,9 @@ test('unknown Test direction safely defaults to reverse', () => {
   assert.equal(context.buildTestDirectionData(directionFixture, 'unexpected').direction, 'reverse');
   assert.equal(context.buildTestDirectionData(directionFixture).answer, 'laufen');
 });
+
+test('Test direction rejects a language pair when either visible side is blank', () => {
+  assert.equal(context.hasUsableTestPair({ prompt: '', answer: 'laufen' }), false);
+  assert.equal(context.hasUsableTestPair({ prompt: 'laufen', answer: '   ' }), false);
+  assert.equal(context.hasUsableTestPair({ prompt: 'correr', answer: 'laufen' }), true);
+});

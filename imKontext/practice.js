@@ -115,12 +115,33 @@ function renderTestDirectionToggle(direction, answered) {
   const from = getTestDirectionLanguageLabel(reverse ? nativeLang : targetLang);
   const to = getTestDirectionLanguageLabel(reverse ? targetLang : nativeLang);
   button.innerHTML = `<span>${escapeHtml(from)}</span><span class="test-direction-arrow" aria-hidden="true">→</span><span>${escapeHtml(to)}</span>`;
-  const action = t('exercise.reverse_direction', { from, to });
+  const action = t('exercise.reverse_direction', { from: to, to: from });
   button.setAttribute('aria-label', action);
   button.title = action;
   button.dataset.direction = reverse ? 'reverse' : 'forward';
   button.disabled = Boolean(answered);
   button.hidden = false;
+}
+
+function renderUnavailableTestPair(data) {
+  const button = $('test-direction-toggle');
+  if (button) {
+    button.hidden = true;
+    button.disabled = true;
+  }
+
+  const from = getTestDirectionLanguageLabel(data.promptLang);
+  const to = getTestDirectionLanguageLabel(data.answerLang);
+  $('pregunta-texto').textContent = t('exercise.language_pair_unavailable', { from, to });
+  renderQuestionHint('');
+  $('opciones-wrap').innerHTML = '';
+  $('opciones-wrap').style.display = 'none';
+  $('btn-siguiente').disabled = false;
+  setNextHandler(() => {
+    clearCountdown();
+    if (!lockAdvance()) return;
+    nextWord();
+  });
 }
 
 function clearCountdown() {
@@ -491,6 +512,10 @@ function buildExercise() {
 /* ── TEST ────────────────────────────────────────────────────── */
 function buildTest(word) {
   const data = getTestDirectionData(word);
+  if (!hasUsableTestPair(data)) {
+    renderUnavailableTestPair(data);
+    return;
+  }
   renderTestDirectionToggle(data.direction, Boolean(questionStates[currentIdx]?.answered));
   $('pregunta-texto').textContent = data.prompt;
   renderQuestionHint(word.word_type || '');
