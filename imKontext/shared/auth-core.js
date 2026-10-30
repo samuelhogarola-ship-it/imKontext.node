@@ -37,13 +37,13 @@
 
   function getPostAuthDestination() {
     const pathname = window.location.pathname || '/';
-    const languagePrefix = /^\/(espanol|english|suomi)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
+    const languagePrefix = /^\/(espanol|english|suomi|deutsch|italiano|portugues)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
     const fallback = languagePrefix + '/dashboard';
     try {
       const saved = window.sessionStorage?.getItem(POST_AUTH_DESTINATION_KEY);
       if (!saved || !saved.startsWith('/') || saved.startsWith('//')) return fallback;
       const url = new URL(saved, window.location.origin);
-      if (url.origin !== window.location.origin || !/^\/(?:(?:espanol|english|suomi)\/)?dashboard\/?$/.test(url.pathname)) return fallback;
+      if (url.origin !== window.location.origin || !/^\/(?:(?:espanol|english|suomi|deutsch|italiano|portugues)\/)?dashboard\/?$/.test(url.pathname)) return fallback;
       return url.pathname + url.search + url.hash;
     } catch (_) {
       return fallback;
@@ -52,7 +52,7 @@
 
   function rememberPostAuthDestination() {
     const pathname = window.location.pathname || '/';
-    const languagePrefix = /^\/(espanol|english|suomi)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
+    const languagePrefix = /^\/(espanol|english|suomi|deutsch|italiano|portugues)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
     const destination = languagePrefix + '/dashboard' + (window.location.search || '') + (window.location.hash || '');
     try {
       window.sessionStorage?.setItem(POST_AUTH_DESTINATION_KEY, destination);

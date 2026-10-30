@@ -152,12 +152,21 @@
 
   <div class="ln-center">
     <div class="ln-hero">
-      <a class="ln-logo-link" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a Vokabel Lab imKontext">
+      <a class="ln-logo-link ln-fox-frame" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a Vokabel Lab imKontext">
         <picture>
           <source srcset="/landing.logo2.webp?v=1" type="image/webp">
           <img class="ln-logo-img" src="/landing.logo2.png?v=1" alt="Vokabel Lab imKontext" width="280" height="187" fetchpriority="high">
         </picture>
       </a>
+      <div class="ln-brand-lockup" aria-label="imKontext"><span>im</span>Kontext</div>
+      <nav id="landing-language-world" class="ln-language-world" aria-label="Elige el idioma que quieres aprender">
+        <a class="ln-language-card" href="/english" data-target-language="en"><span class="ln-language-flag">🇬🇧</span><strong>English</strong><small>Inglés</small></a>
+        <a class="ln-language-card" href="/suomi" data-target-language="fi"><span class="ln-language-flag">🇫🇮</span><strong>Suomi</strong><small>Finés</small></a>
+        <a class="ln-language-card" href="/espanol" data-target-language="es"><span class="ln-language-flag">🇪🇸</span><strong>Español</strong><small>Español</small></a>
+        <a class="ln-language-card" href="/deutsch" data-target-language="de"><span class="ln-language-flag">🇩🇪</span><strong>Deutsch</strong><small>Alemán</small></a>
+        <a class="ln-language-card" href="/italiano" data-target-language="it"><span class="ln-language-flag">🇮🇹</span><strong>Italiano</strong><small>Italiano</small></a>
+        <a class="ln-language-card" href="/portugues" data-target-language="pt"><span class="ln-language-flag">🇧🇷</span><strong>Português</strong><small>Portugués</small></a>
+      </nav>
       <div class="ln-portada">
         <div class="ln-edition-bar" aria-label="Edición semanal">
           <span class="ln-edition-label" data-i18n="landing.edition_label">Número de la semana</span>
@@ -174,11 +183,16 @@
           <span class="ln-tag">B2</span><span class="ln-tag-dot">·</span>
           <span class="ln-tag">C1</span>
         </div>
-        <button class="ln-btn-entrar" id="btn-entrar">
-          <span class="ln-btn-text" data-i18n="landing.cta">Empieza ahora</span>
+        <div class="ln-action-row">
+        <button class="ln-btn-entrar ln-btn-secondary" id="btn-login" type="button">
+          <span class="ln-btn-text" data-i18n="landing.login">Iniciar sesión</span>
+        </button>
+        <button class="ln-btn-entrar" id="btn-entrar" type="button">
+          <span class="ln-btn-text" data-i18n="landing.start">Empezar ahora</span>
           <span class="ln-btn-fire">🔥</span>
           <span class="ln-btn-arrow">→</span>
         </button>
+        </div>
         <p class="ln-footer-line" data-i18n="landing.activities">Flashcards · Test · Lückentext · Ordenar · Artículo</p>
       </div>
     </div>
