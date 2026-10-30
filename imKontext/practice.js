@@ -291,6 +291,7 @@ function buildQuestionState(index, correct, word, extras = {}) {
     revealCorrectAnswer: extras.revealCorrectAnswer !== false,
     builtSentence: extras.builtSentence ?? null,
     testDirection: extras.testDirection ?? null,
+    testOptions: Array.isArray(extras.testOptions) ? [...extras.testOptions] : null,
   };
 }
 
@@ -494,9 +495,14 @@ function buildTest(word) {
   $('pregunta-texto').textContent = data.prompt;
   renderQuestionHint(word.word_type || '');
 
-  const wrong3 = getRandomWrong(word, currentVocab, 3);
   const answer = data.answer;
-  const opts = shuffle([...new Set([answer, ...wrong3.map(w => w[data.answerColumn] || '')].filter(Boolean))]);
+  const storedOptions = questionStates[currentIdx]?.testOptions;
+  const opts = Array.isArray(storedOptions) && storedOptions.length
+    ? [...storedOptions]
+    : (() => {
+        const wrong3 = getRandomWrong(word, currentVocab, 3);
+        return shuffle([...new Set([answer, ...wrong3.map(w => w[data.answerColumn] || '')].filter(Boolean))]);
+      })();
 
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
@@ -511,6 +517,7 @@ function buildTest(word) {
         correctAnswer: answer,
         translationText: answer,
         testDirection: data.direction,
+        testOptions: opts,
       });
       renderTestDirectionToggle(data.direction, true);
       disableOptions();
@@ -523,6 +530,7 @@ function buildTest(word) {
   renderNoSeButton(() => handleNoSe(word, answer, {
     translationText: answer,
     testDirection: data.direction,
+    testOptions: opts,
   }));
 }
 

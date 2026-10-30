@@ -79,10 +79,12 @@ test('Test direction button starts reversed and swaps the visible language sides
   await expect(page.locator('#pregunta-texto')).toHaveText(first.native);
   await expect(page.locator('.opcion', { hasText: first.target })).toHaveCount(1);
 
+  const stateBeforeToggle = await page.evaluate(() => ({ currentIdx, score: { ...score } }));
   await direction.click();
 
   await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
   await expect(page.locator('.opcion', { hasText: first.native })).toHaveCount(1);
+  await expect.poll(() => page.evaluate(() => ({ currentIdx, score: { ...score } }))).toEqual(stateBeforeToggle);
 });
 
 test('Test direction persists across questions and repeat while answered questions restore their own direction', async ({ page }) => {
@@ -91,7 +93,9 @@ test('Test direction persists across questions and repeat while answered questio
 
   await direction.click();
   const first = await currentLanguagePair(page);
-  await page.locator('.opcion', { hasText: first.native }).click();
+  const originalOptions = await page.locator('.opcion').allTextContents();
+  const wrongAnswer = originalOptions.find(option => option !== first.native);
+  await page.locator('.opcion', { hasText: wrongAnswer }).click();
   await expect(direction).toBeDisabled();
   await page.locator('#btn-siguiente').click();
 
@@ -107,15 +111,26 @@ test('Test direction persists across questions and repeat while answered questio
   await expect(direction).toHaveAttribute('data-direction', 'forward');
   await expect(direction).toBeDisabled();
   await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
+  await expect(page.locator('.opcion')).toHaveText(originalOptions);
+  await expect(page.locator('.opcion.wrong-ans')).toHaveText(wrongAnswer);
 
   await page.locator('#btn-siguiente').click();
   await expect(direction).toHaveAttribute('data-direction', 'reverse');
+  await direction.click();
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+  await page.locator('#btn-terminar').click();
+  await page.locator('#btn-repasar-errores').click();
+
+  const review = await currentLanguagePair(page);
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+  await expect(page.locator('#pregunta-texto')).toHaveText(review.target);
+
   await page.locator('#btn-terminar').click();
   await page.locator('#btn-reiniciar').click();
 
   const repeated = await currentLanguagePair(page);
-  await expect(direction).toHaveAttribute('data-direction', 'reverse');
-  await expect(page.locator('#pregunta-texto')).toHaveText(repeated.native);
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+  await expect(page.locator('#pregunta-texto')).toHaveText(repeated.target);
 });
 
 test('a newly started Test session resets to reverse after a previous forward session', async ({ page }) => {
