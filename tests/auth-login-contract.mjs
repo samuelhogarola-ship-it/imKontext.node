@@ -18,6 +18,6 @@ assert.match(auth, /options: \{ emailRedirectTo: window\.location\.origin \+ get
 assert.doesNotMatch(auth, /getAuthCallbackUrl/);
 
 assert.match(app, /pathname === '\/dashboard'/);
-assert.match(app, /history\.pushState\(\{ screen: 'dashboard' \}, '', '\/dashboard'\)/);
+assert.match(app, /history\.pushState\(\{ screen: 'dashboard', targetLang: getTargetLang\(\) \}, '', withLanguagePath\('\/dashboard'\)\)/);
 
 console.log('imkontext-auth-login-contract-ok');

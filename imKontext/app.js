@@ -39,6 +39,69 @@ let numPalabras    = 0;
 let isReaderModeActive = false;
 const TEXTS_PER_PAGE = 10;
 
+/* ── TARGET LANGUAGE ROUTES ──────────────────────────────────── */
+const LANGUAGE_ROUTE_MAP = Object.freeze({
+  de: { canonical: 'deutsch', aliases: ['deutsch', 'german'] },
+  es: { canonical: 'espanol', aliases: ['espanol', 'español', 'spanish'] },
+  en: { canonical: 'english', aliases: ['english', 'inglés', 'ingles'] },
+  fi: { canonical: 'suomi', aliases: ['suomi', 'finés', 'fines', 'finnish'] },
+  it: { canonical: 'italiano', aliases: ['italiano', 'italian'] },
+  pt: { canonical: 'portugues', aliases: ['portugues', 'português', 'portuguese'] },
+});
+let activeLanguagePrefix = '';
+
+function normalizeLanguageRouteSegment(segment) {
+  return decodeURIComponent(String(segment || ''))
+    .trim()
+    .toLocaleLowerCase('es')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function resolveLanguageRoute(pathname = window.location.pathname) {
+  const segment = String(pathname || '').split('/').filter(Boolean)[0];
+  const normalized = normalizeLanguageRouteSegment(segment);
+  if (!normalized) return null;
+
+  for (const [targetLang, config] of Object.entries(LANGUAGE_ROUTE_MAP)) {
+    const alias = config.aliases.find(candidate => normalizeLanguageRouteSegment(candidate) === normalized);
+    if (alias) {
+      return {
+        targetLang,
+        canonicalPath: `/${config.canonical}`,
+        isAlias: normalizeLanguageRouteSegment(alias) !== config.canonical,
+      };
+    }
+  }
+  return null;
+}
+
+function languagePathPrefix() {
+  return activeLanguagePrefix;
+}
+
+function withLanguagePath(pathname) {
+  const base = pathname === '/' ? '' : String(pathname || '').replace(/\/$/, '');
+  return `${languagePathPrefix()}${base || '/'}`;
+}
+
+function applyLanguageRoute(pathname = window.location.pathname, { replaceAlias = true } = {}) {
+  const route = resolveLanguageRoute(pathname);
+  if (!route) {
+    activeLanguagePrefix = '';
+    return { pathname, route: null };
+  }
+
+  setTargetLang(route.targetLang);
+  activeLanguagePrefix = route.canonicalPath;
+  const rest = pathname.slice(pathname.indexOf('/', 1)) || '/';
+  const canonicalPath = withLanguagePath(rest);
+  if (replaceAlias && (route.isAlias || pathname !== canonicalPath)) {
+    history.replaceState({ screen: rest === '/' ? 'landing' : 'app', targetLang: route.targetLang }, '', canonicalPath);
+  }
+  return { pathname: rest, route };
+}
+
 /* ── DOM REFS ────────────────────────────────────────────────── */
 const $  = id => document.getElementById(id);
 const $$ = sel => document.querySelector(sel);
@@ -158,7 +221,7 @@ function updateSEOMeta({ title, description, canonical }) {
 }
 
 function getTextUrl(text, level) {
-  const base = `/textos/${encodeURIComponent(text.slug)}`;
+  const base = withLanguagePath(`/textos/${encodeURIComponent(text.slug)}`);
   return level ? `${base}?nivel=${level.toUpperCase()}` : base;
 }
 
@@ -173,7 +236,7 @@ function showLanding() {
   updateSEOMeta({
     title: t('seo.home_title'),
     description: t('seo.home_desc'),
-    canonical: window.location.origin + '/'
+    canonical: window.location.origin + withLanguagePath('/')
   });
   applyI18nToDOM();
 }
@@ -217,7 +280,7 @@ $('btn-share-text').addEventListener('click', async () => {
 
 /* ── POPSTATE ────────────────────────────────────────────────── */
 window.addEventListener('popstate', async () => {
-  const pathname = window.location.pathname;
+  const { pathname } = applyLanguageRoute(window.location.pathname);
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
 
   if (pathname === '/dashboard') {
@@ -241,18 +304,21 @@ window.addEventListener('popstate', async () => {
 $('btn-entrar').addEventListener('click', async () => {
   await goToTextos({ pushState: true });
 });
+$('btn-login')?.addEventListener('click', () => {
+  $('auth-header-btn')?.click();
+});
 
 /* ══════════════════════════════════════════════════════════════
    PANTALLA 2 — SELECCIÓN DE TEXTOS
 ══════════════════════════════════════════════════════════════ */
 async function goToTextos({ pushState: doPush = true } = {}) {
   if (doPush) {
-    history.pushState({ screen: 'textos' }, '', '/textos');
+    history.pushState({ screen: 'textos', targetLang: getTargetLang() }, '', withLanguagePath('/textos'));
   }
   updateSEOMeta({
     title: t('seo.textos_title'),
     description: t('seo.textos_desc'),
-    canonical: window.location.origin + '/textos'
+    canonical: window.location.origin + withLanguagePath('/textos')
   });
   showScreen('textos');
   applyI18nToDOM();
@@ -623,7 +689,7 @@ function getCategoryLabel(slug) {
 $('btn-volver-landing-from-textos').addEventListener('click', () => {
   selectedTopic = null;
   selectedCategory = null;
-  history.pushState({ screen: 'landing' }, '', '/');
+  history.pushState({ screen: 'landing', targetLang: getTargetLang() }, '', withLanguagePath('/'));
   showLanding();
 });
 
@@ -635,7 +701,7 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing', targetLang: getTargetLang() }, '', withLanguagePath('/'));
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -644,8 +710,8 @@ $('btn-volver-landing-from-textos').addEventListener('click', () => {
 // Nav: "Dashboard"
 document.getElementById('nav-dashboard').addEventListener('click', async e => {
   e.preventDefault();
-  if (window.location.pathname !== '/dashboard') {
-    history.pushState({ screen: 'dashboard' }, '', '/dashboard');
+  if (window.location.pathname !== withLanguagePath('/dashboard')) {
+    history.pushState({ screen: 'dashboard', targetLang: getTargetLang() }, '', withLanguagePath('/dashboard'));
   }
   await showDashboard();
 });
@@ -788,7 +854,7 @@ document.getElementById('btn-dashboard-go-textos').addEventListener('click', asy
     e.preventDefault();
     selectedTopic = null;
     selectedCategory = null;
-    history.pushState({ screen: 'landing' }, '', '/');
+    history.pushState({ screen: 'landing', targetLang: getTargetLang() }, '', withLanguagePath('/'));
     showLanding();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -1381,7 +1447,7 @@ if (typeof onAuthChange === 'function') {
         updateSEOMeta({
           title: t('seo.home_title'),
           description: t('seo.home_desc'),
-          canonical: window.location.origin + '/'
+          canonical: window.location.origin + withLanguagePath('/')
         });
       });
       grid.appendChild(item);
@@ -1417,7 +1483,7 @@ if (typeof onAuthChange === 'function') {
 })();
 
 (async function initRouting() {
-  const pathname = window.location.pathname;
+  const { pathname } = applyLanguageRoute(window.location.pathname);
   const levelParam = new URLSearchParams(window.location.search).get('nivel');
 
   if (pathname === '/dashboard') {
@@ -1444,7 +1510,7 @@ if (typeof onAuthChange === 'function') {
     updateSEOMeta({
       title: t('seo.home_title'),
       description: t('seo.home_desc'),
-      canonical: window.location.origin + '/'
+      canonical: window.location.origin + withLanguagePath('/')
     });
   }
 })();
