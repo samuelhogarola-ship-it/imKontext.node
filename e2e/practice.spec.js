@@ -26,8 +26,16 @@ async function reachTestExercise(page) {
   await page.locator('#btn-ir-actividad').click();
   await expect(page.locator('#screen-activity')).toBeVisible();
   await page.locator('#practice-selector [data-modo="test"]').click();
+  await page.evaluate(() => { EXERCISE_CONFIG.autoNextDelay = 999; });
   await page.locator('#btn-empezar').click();
   await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+}
+
+async function currentLanguagePair(page) {
+  return page.evaluate(() => ({
+    native: getNativeWord(queue[currentIdx]),
+    target: getTargetWord(queue[currentIdx]),
+  }));
 }
 
 // Answer whatever exercise mode is currently rendered.
@@ -61,10 +69,7 @@ test('exercise screen loads with first question', async ({ page }) => {
 test('Test direction button starts reversed and swaps the visible language sides', async ({ page }) => {
   await reachTestExercise(page);
 
-  const first = await page.evaluate(() => ({
-    native: getNativeWord(queue[currentIdx]),
-    target: getTargetWord(queue[currentIdx]),
-  }));
+  const first = await currentLanguagePair(page);
   const direction = page.locator('#test-direction-toggle');
 
   await expect(direction).toBeVisible();
@@ -78,6 +83,83 @@ test('Test direction button starts reversed and swaps the visible language sides
 
   await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
   await expect(page.locator('.opcion', { hasText: first.native })).toHaveCount(1);
+});
+
+test('Test direction persists across questions and repeat while answered questions restore their own direction', async ({ page }) => {
+  await reachTestExercise(page);
+  const direction = page.locator('#test-direction-toggle');
+
+  await direction.click();
+  const first = await currentLanguagePair(page);
+  await page.locator('.opcion', { hasText: first.native }).click();
+  await expect(direction).toBeDisabled();
+  await page.locator('#btn-siguiente').click();
+
+  const second = await currentLanguagePair(page);
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+  await expect(page.locator('#pregunta-texto')).toHaveText(second.target);
+
+  await direction.click();
+  await expect(direction).toHaveAttribute('data-direction', 'reverse');
+  await expect(page.locator('#pregunta-texto')).toHaveText(second.native);
+
+  await page.locator('#btn-atras').click();
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+  await expect(direction).toBeDisabled();
+  await expect(page.locator('#pregunta-texto')).toHaveText(first.target);
+
+  await page.locator('#btn-siguiente').click();
+  await expect(direction).toHaveAttribute('data-direction', 'reverse');
+  await page.locator('#btn-terminar').click();
+  await page.locator('#btn-reiniciar').click();
+
+  const repeated = await currentLanguagePair(page);
+  await expect(direction).toHaveAttribute('data-direction', 'reverse');
+  await expect(page.locator('#pregunta-texto')).toHaveText(repeated.native);
+});
+
+test('a newly started Test session resets to reverse after a previous forward session', async ({ page }) => {
+  await reachTestExercise(page);
+  const direction = page.locator('#test-direction-toggle');
+  await direction.click();
+  await expect(direction).toHaveAttribute('data-direction', 'forward');
+
+  await page.locator('#btn-terminar').click();
+  await page.locator('#btn-volver-menu').click();
+  await page.locator('#btn-empezar').click();
+  await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+
+  const restarted = await currentLanguagePair(page);
+  await expect(direction).toHaveAttribute('data-direction', 'reverse');
+  await expect(page.locator('#pregunta-texto')).toHaveText(restarted.native);
+});
+
+test('Test direction labels follow an English interface without changing the German target', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('imk_ui_lang', 'en'));
+  await reachTestExercise(page);
+
+  const direction = page.locator('#test-direction-toggle');
+  await expect(direction).toContainText('🇬🇧 English');
+  await expect(direction).toContainText('🇩🇪 German');
+  await expect(direction).toHaveAttribute('aria-label', /Switch direction/);
+});
+
+test('same target and interface language hides the direction control and keeps Test answerable', async ({ page }) => {
+  await page.goto('/espanol/textos');
+  await page.locator('[data-testid="featured-card"]').first().waitFor({ state: 'visible', timeout: 10_000 });
+  await page.locator('[data-testid="featured-card"]').first().click();
+  await page.locator('#btn-ir-actividad').click();
+  await page.locator('#practice-selector [data-modo="test"]').click();
+  await page.evaluate(() => { EXERCISE_CONFIG.autoNextDelay = 999; });
+  await page.locator('#btn-empezar').click();
+  await expect(page.locator('#screen-ejercicio')).toBeVisible({ timeout: 15_000 });
+
+  const pair = await currentLanguagePair(page);
+  await expect(page.locator('#test-direction-toggle')).toBeHidden();
+  await expect(page.locator('#pregunta-texto')).toHaveText(pair.native);
+  await expect(page.locator('.opcion', { hasText: pair.target })).toHaveCount(1);
+  await page.locator('.opcion', { hasText: pair.target }).click();
+  await expect(page.locator('#respuesta-feedback')).not.toHaveText('');
 });
 
 test('answering a question shows correct or wrong feedback', async ({ page }) => {

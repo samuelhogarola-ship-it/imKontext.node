@@ -141,7 +141,7 @@ test.describe('visual regression with mocked app data', () => {
     await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
     await reachExercise(page, 'test');
     const answer = await page.evaluate(() => ({
-      correct: queue[currentIdx]?.spanish || '',
+      correct: getTargetWord(queue[currentIdx]),
     }));
     await page.locator('.opcion', { hasText: answer.correct }).click();
     const exercise = page.locator('#screen-ejercicio');
@@ -157,7 +157,7 @@ test.describe('visual regression with mocked app data', () => {
     await gotoVisualRoute(page, '/textos', { mock: true, viewport: VIEWPORTS.desktop });
     await reachExercise(page, 'test');
     const answer = await page.evaluate(() => {
-      const correct = queue[currentIdx]?.spanish || '';
+      const correct = getTargetWord(queue[currentIdx]);
       const wrong = Array.from(document.querySelectorAll('.opcion'))
         .map(option => option.textContent || '')
         .find(option => option !== correct) || '';
