@@ -1648,6 +1648,33 @@ body.reader-mode-active .txdet-article p:last-child {
   background: transparent; color: var(--muted);
   margin-bottom: 1.25rem;
 }
+.test-direction-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 30rem);
+  margin: -.45rem 0 1.25rem;
+  padding: .75rem 1rem;
+  border: 1px solid rgba(26,24,20,.22);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  font: 700 .9rem/1.2 var(--font-body);
+  letter-spacing: .01em;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(26,24,20,.07);
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.test-direction-toggle[hidden] { display: none; }
+.test-direction-toggle:hover:not(:disabled),
+.test-direction-toggle:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--vl-blue);
+  box-shadow: 0 8px 22px rgba(26,24,20,.1);
+}
+.test-direction-toggle:focus-visible { outline: 3px solid rgba(44,129,130,.2); outline-offset: 2px; }
+.test-direction-toggle:disabled { cursor: default; opacity: .62; box-shadow: none; }
+.test-direction-arrow { margin: 0 .55rem; color: var(--vl-blue); font-size: 1.1rem; }
 .pregunta {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 4vw, 2.2rem);

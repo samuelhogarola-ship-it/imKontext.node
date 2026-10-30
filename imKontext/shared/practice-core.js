@@ -36,6 +36,27 @@ function getRandomWrong(word, pool, n) {
   return [...sameType, ...fallback].slice(0, n);
 }
 
+/* ── TEST DIRECTION ─────────────────────────────────────────── */
+// Maps already-localized vocabulary fields into the visible Test sides.
+// Unknown values default to reverse so a new session asks for the language
+// the learner is practising.
+function buildTestDirectionData(fields, direction) {
+  const normalizedDirection = direction === 'forward' ? 'forward' : 'reverse';
+  const reverse = normalizedDirection === 'reverse';
+  return {
+    direction: normalizedDirection,
+    prompt: reverse ? fields.nativeWord : fields.targetWord,
+    answer: reverse ? fields.targetWord : fields.nativeWord,
+    answerColumn: reverse ? fields.targetColumn : fields.nativeColumn,
+    promptLang: reverse ? fields.nativeLang : fields.targetLang,
+    answerLang: reverse ? fields.targetLang : fields.nativeLang,
+  };
+}
+
+function hasUsableTestPair(data) {
+  return Boolean(normalize(data?.prompt) && normalize(data?.answer));
+}
+
 /* ── QUEUE BUILDER ───────────────────────────────────────────── */
 // Builds a capped, shuffled queue. Words in errorIds are placed first.
 function buildQueue(vocab, n, errorIds) {

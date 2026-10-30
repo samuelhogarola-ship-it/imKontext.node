@@ -44,6 +44,7 @@ async function startPractice() {
     score = createScore();
     wrongWords = [];
     questionStates = [];
+    setTestDirection('reverse');
 
     const pKey = `progress_${selectedText.id}_${selectedLevel}`;
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
@@ -70,6 +71,78 @@ async function startPractice() {
 let _cdTimer = null;
 let _advanceLocked = false;
 let questionStates = [];
+let testDirection = 'reverse';
+
+function setTestDirection(direction) {
+  testDirection = direction === 'forward' ? 'forward' : 'reverse';
+  return testDirection;
+}
+
+function getTestDirectionForQuestion(index) {
+  return questionStates[index]?.testDirection || testDirection;
+}
+
+function getTestDirectionData(word, direction = getTestDirectionForQuestion(currentIdx)) {
+  return buildTestDirectionData({
+    targetWord: getTargetWord(word),
+    nativeWord: getNativeWord(word),
+    targetColumn: getTargetWordCol(),
+    nativeColumn: getNativeWordCol(),
+    targetLang: getTargetLang(),
+    nativeLang: getUILang(),
+  }, direction);
+}
+
+function getTestDirectionLanguageLabel(lang) {
+  const info = LANG_NAMES[lang] || {};
+  const rawName = info[getUILang()] || info.native || lang;
+  const name = rawName ? rawName.charAt(0).toUpperCase() + rawName.slice(1) : lang;
+  return `${info.flag || ''} ${name}`.trim();
+}
+
+function renderTestDirectionToggle(direction, answered) {
+  const button = $('test-direction-toggle');
+  if (!button) return;
+  const targetLang = getTargetLang();
+  const nativeLang = getUILang();
+  if (targetLang === nativeLang) {
+    button.hidden = true;
+    button.disabled = true;
+    return;
+  }
+
+  const reverse = direction !== 'forward';
+  const from = getTestDirectionLanguageLabel(reverse ? nativeLang : targetLang);
+  const to = getTestDirectionLanguageLabel(reverse ? targetLang : nativeLang);
+  button.innerHTML = `<span>${escapeHtml(from)}</span><span class="test-direction-arrow" aria-hidden="true">→</span><span>${escapeHtml(to)}</span>`;
+  const action = t('exercise.reverse_direction', { from: to, to: from });
+  button.setAttribute('aria-label', action);
+  button.title = action;
+  button.dataset.direction = reverse ? 'reverse' : 'forward';
+  button.disabled = Boolean(answered);
+  button.hidden = false;
+}
+
+function renderUnavailableTestPair(data) {
+  const button = $('test-direction-toggle');
+  if (button) {
+    button.hidden = true;
+    button.disabled = true;
+  }
+
+  const from = getTestDirectionLanguageLabel(data.promptLang);
+  const to = getTestDirectionLanguageLabel(data.answerLang);
+  $('pregunta-texto').textContent = t('exercise.language_pair_unavailable', { from, to });
+  renderQuestionHint('');
+  $('opciones-wrap').innerHTML = '';
+  $('opciones-wrap').style.display = 'none';
+  $('btn-siguiente').disabled = false;
+  setNextHandler(() => {
+    clearCountdown();
+    if (!lockAdvance()) return;
+    nextWord();
+  });
+}
 
 function clearCountdown() {
   if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
@@ -200,21 +273,24 @@ function renderNoSeButton(onClick) {
   wrap.appendChild(btn);
 }
 
-function handleNoSe(word, correctLabel) {
+function handleNoSe(word, correctLabel, extras = {}) {
   revealCorrectOption(correctLabel);
   disableOptions();
   disableNoSeButton();
   const answerState = recordAnswerOnce(currentIdx, false, word, {
+    ...extras,
     selectedAnswer: null,
     correctAnswer: correctLabel || '',
     solutionText: correctLabel || '',
     wasNoSe: true,
     translationShown: true,
     revealCorrectAnswer: true,
+    testDirection: extras.testDirection ?? (getModo(currentIdx) === 'test' ? getTestDirectionForQuestion(currentIdx) : null),
   });
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className = 'respuesta-feedback wrong';
-  revealTranslation(word);
+  revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
   autoNext();
 }
 
@@ -235,6 +311,8 @@ function buildQuestionState(index, correct, word, extras = {}) {
     wasNoSe: Boolean(extras.wasNoSe),
     revealCorrectAnswer: extras.revealCorrectAnswer !== false,
     builtSentence: extras.builtSentence ?? null,
+    testDirection: extras.testDirection ?? null,
+    testOptions: Array.isArray(extras.testOptions) ? [...extras.testOptions] : null,
   };
 }
 
@@ -265,6 +343,7 @@ function applyAnsweredState(state, word) {
   if (state.translationShown) {
     revealTranslationText(state.translationText || getRevealLines(word).join('\n'));
   }
+  if (state.testDirection) renderTestDirectionToggle(state.testDirection, true);
 
   if (state.mode === 'flashcards') {
     $('flashcard-card').classList.add('flipped');
@@ -400,6 +479,9 @@ function buildExercise() {
   };
   $('tipo-badge').textContent = labels[modo] || modo;
 
+  const directionToggle = $('test-direction-toggle');
+  if (directionToggle) directionToggle.hidden = true;
+
   $('opciones-wrap').innerHTML = '';
   $('opciones-wrap').style.display = 'none';
   $('flashcard-wrap').style.display = 'none';
@@ -429,13 +511,23 @@ function buildExercise() {
 
 /* ── TEST ────────────────────────────────────────────────────── */
 function buildTest(word) {
-  $('pregunta-texto').textContent = getTargetWord(word);
+  const data = getTestDirectionData(word);
+  if (!hasUsableTestPair(data)) {
+    renderUnavailableTestPair(data);
+    return;
+  }
+  renderTestDirectionToggle(data.direction, Boolean(questionStates[currentIdx]?.answered));
+  $('pregunta-texto').textContent = data.prompt;
   renderQuestionHint(word.word_type || '');
 
-  const nativeCol = getNativeWordCol();
-  const wrong3 = getRandomWrong(word, currentVocab, 3);
-  const answer = getNativeWord(word);
-  const opts = shuffle([answer, ...wrong3.map(w => w[nativeCol] || '')]);
+  const answer = data.answer;
+  const storedOptions = questionStates[currentIdx]?.testOptions;
+  const opts = Array.isArray(storedOptions) && storedOptions.length
+    ? [...storedOptions]
+    : (() => {
+        const wrong3 = getRandomWrong(word, currentVocab, 3);
+        return shuffle([...new Set([answer, ...wrong3.map(w => w[data.answerColumn] || '')].filter(Boolean))]);
+      })();
 
   const wrap = $('opciones-wrap');
   wrap.style.display = 'flex';
@@ -445,7 +537,14 @@ function buildTest(word) {
     btn.textContent = opt;
     btn.addEventListener('click', () => {
       const correct = opt === answer;
-      markAnswer(btn, correct, word, correct ? null : answer, { selectedAnswer: opt, correctAnswer: answer });
+      markAnswer(btn, correct, word, correct ? null : answer, {
+        selectedAnswer: opt,
+        correctAnswer: answer,
+        translationText: answer,
+        testDirection: data.direction,
+        testOptions: opts,
+      });
+      renderTestDirectionToggle(data.direction, true);
       disableOptions();
       disableNoSeButton();
       autoNext();
@@ -453,7 +552,11 @@ function buildTest(word) {
     wrap.appendChild(btn);
   });
 
-  renderNoSeButton(() => handleNoSe(word, answer));
+  renderNoSeButton(() => handleNoSe(word, answer, {
+    translationText: answer,
+    testDirection: data.direction,
+    testOptions: opts,
+  }));
 }
 
 /* ── FLASHCARD ───────────────────────────────────────────────── */
@@ -639,7 +742,8 @@ function markAnswer(btn, correct, word, correctLabel, extras = {}) {
   });
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
-  revealTranslation(word);
+  revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
 }
 
 function disableOptions() {
@@ -779,4 +883,10 @@ $('btn-toggle-traduccion').addEventListener('click', () => {
     btn.setAttribute('aria-expanded', 'true');
     btn.textContent = t('exercise.hide_translation');
   }
+});
+
+$('test-direction-toggle').addEventListener('click', () => {
+  if (questionStates[currentIdx]?.answered) return;
+  setTestDirection(testDirection === 'reverse' ? 'forward' : 'reverse');
+  buildExercise();
 });
