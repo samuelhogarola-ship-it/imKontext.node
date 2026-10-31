@@ -46,6 +46,21 @@ async function supabaseFetch(pathname) {
   return response.json();
 }
 
+function requestedLanguage(req) {
+  const language = String(req.query.language || '').trim().toLowerCase();
+  return ['de', 'es', 'en', 'fi', 'it', 'pt'].includes(language) ? language : 'de';
+}
+
+async function supabaseFetchOptional(pathname) {
+  try {
+    return await supabaseFetch(pathname);
+  } catch {
+    // Localized tables may not exist on older production snapshots. The base
+    // German content remains a safe fallback until the migration is deployed.
+    return [];
+  }
+}
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
@@ -57,13 +72,20 @@ app.get("/api/health", (req, res) => {
 });
 
 app.get("/api/texts", async (req, res) => {
+  const language = requestedLanguage(req);
   try {
-    const [texts, versions, vocabLinks] = await Promise.all([
+    const [texts, versions, vocabLinks, textLocalizations, versionLocalizations] = await Promise.all([
       supabaseFetch(
         "texts?select=id,title,slug,topic,categoria,access_status,published_at&order=published_at.desc.nullslast,id.desc"
       ),
       supabaseFetch("text_versions?select=id,text_id,level,content"),
-      supabaseFetch("text_version_meanings?select=text_version_id")
+      supabaseFetch("text_version_meanings?select=text_version_id"),
+      language === 'de' ? Promise.resolve([]) : supabaseFetchOptional(
+        `imk_text_localizations?language=eq.${language}&is_published=eq.true&select=text_id,title,slug`
+      ),
+      language === 'de' ? Promise.resolve([]) : supabaseFetchOptional(
+        `imk_version_localizations?language=eq.${language}&is_published=eq.true&select=text_version_id,content`
+      )
     ]);
 
     const versionsByTextId = {};
@@ -77,10 +99,13 @@ app.get("/api/texts", async (req, res) => {
     const versionIdsWithVocabulary = new Set(
       (vocabLinks || []).map((link) => link.text_version_id).filter(Boolean)
     );
+    const textLocById = new Map((textLocalizations || []).map((row) => [String(row.text_id), row]));
+    const versionLocById = new Map((versionLocalizations || []).map((row) => [String(row.text_version_id), row]));
 
     res.json(
       texts.map((text) => {
         const textVersions = versionsByTextId[text.id] || [];
+        const textLoc = textLocById.get(String(text.id)) || {};
         const preferredPreview =
           textVersions.find((version) => version.level === "B1") ||
           textVersions.find((version) => version.level === "A2") ||
@@ -92,11 +117,18 @@ app.get("/api/texts", async (req, res) => {
 
         return {
           ...text,
+          title: language === 'de' ? text.title : (textLoc.title || ''),
+          slug: language === 'de' ? text.slug : (textLoc.slug || ''),
           hasLoadedVocabulary,
           levels: textVersions.map((version) => version.level).sort(),
-          previewContent: preferredPreview?.content || ""
+          previewContent: preferredPreview
+            ? (language === 'de'
+              ? (preferredPreview.content || "")
+              : (versionLocById.get(String(preferredPreview.id))?.content || ""))
+            : ""
         };
       })
+      .filter((text) => language === 'de' || text.title)
     );
   } catch (error) {
     res.status(500).json({
@@ -109,6 +141,7 @@ app.get("/api/texts", async (req, res) => {
 app.get("/api/text-version", async (req, res) => {
   const textId = String(req.query.textId || "").trim();
   const level = String(req.query.level || "").trim().toUpperCase();
+  const language = requestedLanguage(req);
 
   if (!textId || !level) {
     return res.status(400).json({ error: "Faltan textId o level" });
@@ -118,7 +151,17 @@ app.get("/api/text-version", async (req, res) => {
     const versions = await supabaseFetch(
       `text_versions?text_id=eq.${encodeURIComponent(textId)}&level=eq.${encodeURIComponent(level)}&select=id,text_id,level,content`
     );
-    res.json(versions);
+    if (language === 'de' || versions.length === 0) return res.json(versions);
+
+    const versionIds = versions.map((version) => version.id).join(',');
+    const localizations = await supabaseFetchOptional(
+      `imk_version_localizations?text_version_id=in.(${encodeURIComponent(versionIds)})&language=eq.${language}&is_published=eq.true&select=text_version_id,content`
+    );
+    const localizedById = new Map((localizations || []).map((row) => [String(row.text_version_id), row]));
+    res.json(versions.map((version) => ({
+      ...version,
+      content: localizedById.get(String(version.id))?.content || ''
+    })));
   } catch (error) {
     res.status(500).json({
       error: "No se pudo cargar la versión del texto",
