@@ -172,8 +172,14 @@ function resetTraduccionToggle() {
 }
 
 function getTranslationContent(word) {
+  const activeTestDirection = getModo(currentIdx) === 'test'
+    ? getTestDirectionForQuestion(currentIdx)
+    : null;
+  const testData = activeTestDirection
+    ? getTestDirectionData(word, activeTestDirection)
+    : null;
   return {
-    word: getNativeWord(word) || '',
+    word: testData?.answer || getNativeWord(word) || '',
     example: getTargetExample(word) || '',
     exampleTranslation: getNativeExample(word) || '',
   };
