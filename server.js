@@ -117,15 +117,18 @@ app.get("/api/texts", async (req, res) => {
 
         return {
           ...text,
-          title: textLoc.title || text.title,
-          slug: textLoc.slug || text.slug,
+          title: language === 'de' ? text.title : (textLoc.title || ''),
+          slug: language === 'de' ? text.slug : (textLoc.slug || ''),
           hasLoadedVocabulary,
           levels: textVersions.map((version) => version.level).sort(),
           previewContent: preferredPreview
-            ? (versionLocById.get(String(preferredPreview.id))?.content || preferredPreview.content || "")
+            ? (language === 'de'
+              ? (preferredPreview.content || "")
+              : (versionLocById.get(String(preferredPreview.id))?.content || ""))
             : ""
         };
       })
+      .filter((text) => language === 'de' || text.title)
     );
   } catch (error) {
     res.status(500).json({
@@ -157,7 +160,7 @@ app.get("/api/text-version", async (req, res) => {
     const localizedById = new Map((localizations || []).map((row) => [String(row.text_version_id), row]));
     res.json(versions.map((version) => ({
       ...version,
-      content: localizedById.get(String(version.id))?.content || version.content
+      content: localizedById.get(String(version.id))?.content || ''
     })));
   } catch (error) {
     res.status(500).json({
