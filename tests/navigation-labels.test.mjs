@@ -7,8 +7,12 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const index = fs.readFileSync(path.join(root, 'imKontext/index.html'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'imKontext/styles.css'), 'utf8');
 
-test('navigation exposes a Panel control and normal footer destinations', () => {
-  assert.match(index, /<button[^>]+id="nav-dashboard"[^>]*>Panel<\/button>/);
+test('navigation exposes the shared learning controls and normal footer destinations', () => {
+  assert.match(index, /<button[^>]+id="nav-practice"[^>]*>Practicar<\/button>/);
+  assert.match(index, /<button[^>]+id="nav-dashboard"[^>]*>Stats<\/button>/);
+  assert.match(index, /<button[^>]+id="nav-profile"[^>]*>Perfil<\/button>/);
+  assert.match(index, /<dialog[^>]+id="account-dialog"/);
+  assert.match(index, /id="screen-profile"/);
   for (const id of ['footer-methodology', 'footer-contact', 'footer-legal']) {
     assert.match(index, new RegExp(`id="${id}"`));
   }

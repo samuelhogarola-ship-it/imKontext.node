@@ -53,7 +53,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles.css?v=28">
+<link rel="stylesheet" href="/styles.css?v=20261031-shell1">
 <link rel="stylesheet" href="/shared/cookie-banner-core.css?v=1">
 <link rel="stylesheet" href="/shared/auth-core.css?v=20261028">
   <script defer src="/shared/umami-analytics.js"></script>
@@ -110,7 +110,11 @@
           <button class="auth-logout-btn" id="auth-logout-btn" type="button">Salir</button>
         </div>
       </div>
-      <button class="app-nav-dashboard" id="nav-dashboard" type="button">Panel</button>
+      <div class="app-nav-primary" aria-label="Área de aprendizaje">
+        <button class="app-nav-dashboard" id="nav-practice" type="button">Practicar</button>
+        <button class="app-nav-dashboard" id="nav-dashboard" type="button">Stats</button>
+        <button class="app-nav-dashboard" id="nav-profile" type="button">Perfil</button>
+      </div>
     </div>
   </nav>
 </header>
@@ -487,6 +491,19 @@
       </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════
+         PANTALLA — PERFIL
+    ══════════════════════════════════════════════ -->
+    <div id="screen-profile" class="profile-view" style="display:none">
+      <div class="act-header">
+        <button class="txdet-back-btn" id="btn-volver-from-profile" type="button">← Volver</button>
+        <div class="txdet-kicker">Tu cuenta Vokabel World</div>
+        <h2 class="act-title">Perfil</h2>
+      </div>
+      <p class="profile-intro">Tu cuenta, tus preferencias y tu progreso compartido entre los mundos que hayas activado.</p>
+      <section id="profile-auth-container" class="auth-container auth-container--visible" aria-label="Perfil y cuenta"></section>
+    </div>
+
     <!-- ── RESULTADO ── -->
     <div id="screen-resultado" style="display:none">
       <p style="color:var(--muted);font-size:1rem" data-i18n="result.score_label">Puntuación final</p>
@@ -537,21 +554,32 @@
   </nav>
 </footer>
 
+<dialog class="account-dialog" id="account-dialog" aria-labelledby="account-dialog-title">
+  <div class="account-dialog-head">
+    <div>
+      <span class="txdet-kicker">Vokabel World</span>
+      <h2 id="account-dialog-title">Continúa tu aprendizaje</h2>
+    </div>
+    <button class="account-dialog-close" id="account-dialog-close" type="button" aria-label="Cerrar">×</button>
+  </div>
+  <section id="auth-modal-container" class="auth-container auth-container--visible" aria-label="Iniciar sesión"></section>
+</dialog>
+
 <script src="/shared/google-analytics-core.js?v=1"></script>
 <script src="/shared/cookie-banner-core.js?v=1"></script>
 <script src="/cookie-banner.js?v=1"></script>
 <script src="/i18n.js?v=1"></script>
 <script src="/common.js?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/shared/auth-core.js?v=20261028"></script>
+<script src="/shared/auth-core.js?v=20261031-shell1"></script>
 <script src="/account-client.js?v=20261031-account1"></script>
 <script src="/world-summary.js?v=20261031-account1"></script>
 <script src="/shared/practice-core.js?v=1"></script>
 <script src="/shared/result-view-core.js?v=1"></script>
-<script src="/app.js?v=11"></script>
+<script src="/app.js?v=20261031-shell1"></script>
 <script src="/practice.js?v=2"></script>
 <script>
-  if (window.AuthCore) window.AuthCore.init(['auth-container']);
+  if (window.AuthCore) window.AuthCore.init(['auth-container', 'profile-auth-container', 'auth-modal-container']);
 </script>
 </body>
 </html>
