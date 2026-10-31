@@ -1777,6 +1777,30 @@ body.reader-mode-active .txdet-article p:last-child {
   border-left: 3px solid var(--vl-blue);
   animation: fadeSlideDown 0.2s ease forwards;
 }
+.translation-word {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.translation-example-label {
+  margin-top: .75rem;
+  color: var(--ink);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.translation-example {
+  margin-top: .25rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.translation-example-translation {
+  margin-top: .2rem;
+  color: var(--ink-light);
+  font-style: italic;
+  line-height: 1.4;
+}
 @keyframes fadeSlideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
