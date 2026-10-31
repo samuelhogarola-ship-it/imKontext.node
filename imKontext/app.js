@@ -22,6 +22,7 @@ async function apiFetch(path) {
 function isPremiumUser() { return false; } // replace when auth exists
 const SUPPORT_EMAIL = 'www.vokabellab@pm.me';
 let allTexts       = [];   // [{id, title, slug, text_content, topic, ... levels:[]}]
+let loadedTextsLanguage = null;
 let selectedText   = null; // selected text object from Supabase
 let selectedTextVersion = null; // exact text_version for the selected text + level
 let selectedLevel  = 'b1';
@@ -247,9 +248,10 @@ function showLanding() {
 }
 
 async function openTextBySlug(slug) {
-  if (!allTexts.length) {
+  if (!allTexts.length || loadedTextsLanguage !== getTargetLang()) {
     try {
-      allTexts = await apiFetch('/api/texts');
+      allTexts = await apiFetch(`/api/texts?language=${encodeURIComponent(getTargetLang())}`);
+      loadedTextsLanguage = getTargetLang();
     } catch {
       showScreen('textos');
       $('txsel-loading').style.display = 'none';
@@ -355,8 +357,10 @@ async function goToTextos({ pushState: doPush = true } = {}) {
   applyI18nToDOM();
   currentTextsPage = 0;
 
-  // If already loaded, just render
-  if (allTexts.length > 0) {
+  // If already loaded for this target language, just render. A language route
+  // changes translated titles/slugs, so do not reuse the German catalog.
+  const targetLanguage = getTargetLang();
+  if (allTexts.length > 0 && loadedTextsLanguage === targetLanguage) {
     buildTopicChips();
     renderTextGrid(getFilteredTexts());
     return;
@@ -368,7 +372,8 @@ async function goToTextos({ pushState: doPush = true } = {}) {
   $('txsel-error').style.display   = 'none';
 
   try {
-    allTexts = await apiFetch('/api/texts');
+    allTexts = await apiFetch(`/api/texts?language=${encodeURIComponent(targetLanguage)}`);
+    loadedTextsLanguage = targetLanguage;
 
     buildTopicChips();
     renderTextGrid(getFilteredTexts());
@@ -800,8 +805,11 @@ function parseDashboardEntries() {
 }
 
 async function showDashboard() {
-  if (!allTexts.length) {
-    try { allTexts = await apiFetch('/api/texts'); } catch {}
+  if (!allTexts.length || loadedTextsLanguage !== getTargetLang()) {
+    try {
+      allTexts = await apiFetch(`/api/texts?language=${encodeURIComponent(getTargetLang())}`);
+      loadedTextsLanguage = getTargetLang();
+    } catch {}
   }
 
   const entries = parseDashboardEntries();
@@ -1122,7 +1130,7 @@ async function refreshSelectedTextVersion(options = {}) {
 
   try {
     const versions = await apiFetch(
-      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}`
+      `/api/text-version?textId=${encodeURIComponent(selectedText.id)}&level=${encodeURIComponent(selectedLevel)}&language=${encodeURIComponent(getTargetLang())}`
     );
     selectedTextVersion = versions[0] || null;
   } catch (error) {
