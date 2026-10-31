@@ -156,12 +156,6 @@
 
   <div class="ln-center">
     <div class="ln-hero">
-      <a class="ln-logo-link ln-fox-frame" href="https://www.samuelcoachdealeman.com" target="_blank" rel="noopener noreferrer" aria-label="Ir a Vokabel Lab imKontext">
-        <picture>
-          <source srcset="/landing.logo2.webp?v=1" type="image/webp">
-          <img class="ln-logo-img" src="/landing.logo2.png?v=1" alt="Vokabel Lab imKontext" width="280" height="187" fetchpriority="high">
-        </picture>
-      </a>
       <div class="ln-brand-lockup" aria-label="imKontext"><span>im</span>Kontext</div>
       <nav id="landing-language-world" class="ln-language-world" aria-label="Elige el idioma que quieres aprender">
         <a class="ln-language-card" href="/english" data-target-language="en"><span class="ln-language-flag">🇬🇧</span><strong>English</strong><small>Inglés</small></a>
@@ -187,15 +181,30 @@
           <span class="ln-tag">B2</span><span class="ln-tag-dot">·</span>
           <span class="ln-tag">C1</span>
         </div>
-        <div class="ln-action-row">
-        <button class="ln-btn-entrar ln-btn-secondary" id="btn-login" type="button">
-          <span class="ln-btn-text" data-i18n="landing.login">Iniciar sesión</span>
-        </button>
-        <button class="ln-btn-entrar" id="btn-entrar" type="button">
-          <span class="ln-btn-text" data-i18n="landing.start">Empezar ahora</span>
-          <span class="ln-btn-fire">🔥</span>
-          <span class="ln-btn-arrow">→</span>
-        </button>
+        <div class="ln-action-zone" aria-label="Acciones de acceso">
+          <button class="ln-fox-cta" id="btn-fox-start" type="button" data-i18n-aria="landing.start">
+            <span class="ln-logo-link ln-fox-frame" aria-hidden="true">
+              <picture>
+                <source srcset="/landing.logo2.webp?v=1" type="image/webp">
+                <img class="ln-logo-img" src="/landing.logo2.png?v=1" alt="" width="280" height="187" fetchpriority="high">
+              </picture>
+            </span>
+            <span class="ln-fox-cta-copy">
+              <span class="ln-fox-cta-kicker">imKontext</span>
+              <strong data-i18n="landing.start">Empezar ahora</strong>
+              <span class="ln-fox-cta-arrow" aria-hidden="true">→</span>
+            </span>
+          </button>
+          <div class="ln-action-buttons">
+            <button class="ln-btn-entrar ln-btn-secondary" id="btn-login" type="button">
+              <span class="ln-btn-text" data-i18n="landing.login">Iniciar sesión</span>
+            </button>
+            <button class="ln-btn-entrar" id="btn-entrar" type="button">
+              <span class="ln-btn-text" data-i18n="landing.start">Empezar ahora</span>
+              <span class="ln-btn-fire">🔥</span>
+              <span class="ln-btn-arrow">→</span>
+            </button>
+          </div>
         </div>
         <p class="ln-footer-line" data-i18n="landing.activities">Flashcards · Test · Lückentext · Ordenar · Artículo</p>
       </div>

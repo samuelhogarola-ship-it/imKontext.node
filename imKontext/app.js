@@ -311,6 +311,9 @@ window.addEventListener('popstate', async () => {
 $('btn-entrar').addEventListener('click', async () => {
   await goToTextos({ pushState: true });
 });
+$('btn-fox-start')?.addEventListener('click', () => {
+  $('btn-entrar')?.click();
+});
 $('btn-login')?.addEventListener('click', () => {
   openAccountDialog();
 });
