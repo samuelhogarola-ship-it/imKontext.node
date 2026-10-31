@@ -13,8 +13,10 @@ assert.doesNotMatch(page, /learning-context-bridge\.js/);
 
 assert.match(auth, /provider: 'google'/);
 assert.match(auth, /signInWithOtp/);
-assert.match(auth, /options: \{ redirectTo: window\.location\.origin \+ getPostAuthDestination\(\) \}/);
-assert.match(auth, /options: \{ emailRedirectTo: window\.location\.origin \+ getPostAuthDestination\(\) \}/);
+assert.match(auth, /options: \{ redirectTo: getAuthRedirectUrl\(\) \}/);
+assert.match(auth, /options: \{ emailRedirectTo: getAuthRedirectUrl\(\) \}/);
+assert.match(auth, /'www\.imkontext\.vokabellab\.com'/);
+assert.doesNotMatch(auth, /samuelcoachdealeman/);
 assert.doesNotMatch(auth, /getAuthCallbackUrl/);
 
 assert.match(app, /pathname === '\/dashboard'/);

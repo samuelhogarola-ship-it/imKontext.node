@@ -12,8 +12,9 @@
  *   Additional redirects:
  *     http://localhost:3000/
  *     http://localhost:3000/**
- *     https://www.vokabellab.com/
- *     https://www.vokabellab.com/**
+ *     http://127.0.0.1:3000/**
+ *     https://www.imkontext.vokabellab.com/
+ *     https://www.imkontext.vokabellab.com/**
  *
  *   redirectTo en signInWithOAuth / signInWithOtp apunta a window.location.origin + '/'.
  *   resetPasswordForEmail apunta a window.location.origin + '/?auth=recovery'.
@@ -34,6 +35,21 @@
   let _authSubscription = null;
   let _installListenerBound = false;
   const POST_AUTH_DESTINATION_KEY = 'vokabellab_post_auth_destination';
+  const ALLOWED_AUTH_HOSTS = new Set([
+    'www.imkontext.vokabellab.com',
+    'imkontext.vokabellab.com',
+    'localhost',
+    '127.0.0.1'
+  ]);
+
+  function getSafeAppOrigin() {
+    const url = new URL(window.location.href);
+    const isLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    if (!ALLOWED_AUTH_HOSTS.has(url.hostname) || (!isLocal && url.protocol !== 'https:')) {
+      throw new Error('Auth is disabled on this origin');
+    }
+    return url.origin;
+  }
 
   function getPostAuthDestination() {
     const pathname = window.location.pathname || '/';
@@ -44,7 +60,7 @@
       if (!saved || !saved.startsWith('/') || saved.startsWith('//')) return fallback;
       const url = new URL(saved, window.location.origin);
       if (url.origin !== window.location.origin || !/^\/(?:(?:espanol|english|suomi|deutsch|italiano|portugues)\/)?dashboard\/?$/.test(url.pathname)) return fallback;
-      return url.pathname + url.search + url.hash;
+      return url.pathname;
     } catch (_) {
       return fallback;
     }
@@ -53,11 +69,37 @@
   function rememberPostAuthDestination() {
     const pathname = window.location.pathname || '/';
     const languagePrefix = /^\/(espanol|english|suomi|deutsch|italiano|portugues)(?:\/|$)/.exec(pathname)?.[0].replace(/\/$/, '') || '';
-    const destination = languagePrefix + '/dashboard' + (window.location.search || '') + (window.location.hash || '');
+    const destination = languagePrefix + '/dashboard';
     try {
       window.sessionStorage?.setItem(POST_AUTH_DESTINATION_KEY, destination);
     } catch (_) {}
     return destination;
+  }
+
+  function getAuthRedirectUrl() {
+    const origin = getSafeAppOrigin();
+    const destination = getPostAuthDestination();
+    const redirect = new URL(destination, origin);
+    if (redirect.origin !== origin) throw new Error('Auth redirect must stay on the ImKontext origin');
+    redirect.search = '';
+    redirect.hash = '';
+    return redirect.href;
+  }
+
+  function showUnsafeOriginError(sourceEl, prefix) {
+    try {
+      return getSafeAppOrigin();
+    } catch (error) {
+      const targets = sourceEl ? [sourceEl] : _containers;
+      targets.forEach(el => {
+        const msg = el?.querySelector?.('.auth-message');
+        if (msg) {
+          msg.textContent = prefix + error.message;
+          msg.className = 'auth-message auth-message--error';
+        }
+      });
+      return null;
+    }
   }
 
   function getClient() {
@@ -640,13 +682,14 @@
   async function signInWithGoogle() {
     const client = getClient();
     if (!client) return;
+    const copy = authText();
+    if (!showUnsafeOriginError(null, copy.googleError)) return;
     rememberPostAuthDestination();
     const { error } = await client.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + getPostAuthDestination() }
+      options: { redirectTo: getAuthRedirectUrl() }
     });
     if (error) {
-      const copy = authText();
       _containers.forEach(el => {
         const msg = el.querySelector('.auth-message');
         if (msg) { msg.textContent = copy.googleError + error.message; msg.className = 'auth-message auth-message--error'; }
@@ -660,6 +703,7 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    if (!showUnsafeOriginError(sourceEl, copy.passwordError)) return;
     const inputs = sourceEl.querySelectorAll('.auth-password-form .auth-input');
     const email = inputs[0]?.value?.trim();
     const password = inputs[1]?.value || '';
@@ -689,6 +733,8 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    const safeOrigin = showUnsafeOriginError(sourceEl, copy.recoveryError);
+    if (!safeOrigin) return;
     const input = sourceEl.querySelector('.auth-recovery-form .auth-input[type="email"]');
     const email = input?.value?.trim();
 
@@ -702,7 +748,7 @@
     if (btn) { btn.disabled = true; btn.textContent = copy.sending; }
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/?auth=recovery'
+      redirectTo: safeOrigin + '/?auth=recovery'
     });
 
     if (error) {
@@ -720,6 +766,7 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    if (!showUnsafeOriginError(sourceEl, copy.updatePasswordError)) return;
     const inputs = sourceEl.querySelectorAll('.auth-update-password-form .auth-input');
     const password = inputs[0]?.value || '';
     const repeat = inputs[1]?.value || '';
@@ -757,6 +804,7 @@
     if (!client) return;
     const msg = sourceEl.querySelector('.auth-message');
     const copy = authText();
+    if (!showUnsafeOriginError(sourceEl, copy.googleError)) return;
 
     const checkbox = sourceEl.querySelector('.auth-consent-check');
     if (checkbox && !checkbox.checked) {
@@ -777,7 +825,7 @@
     rememberPostAuthDestination();
     const { error } = await client.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin + getPostAuthDestination() }
+      options: { emailRedirectTo: getAuthRedirectUrl() }
     });
 
     if (error) {
@@ -897,5 +945,13 @@
 
   // ── Exportar ────────────────────────────────────────────────────────────────
 
-  window.AuthCore = { init, signOut, getClient, refresh, getPostAuthDestination, rememberPostAuthDestination };
+  window.AuthCore = {
+    init,
+    signOut,
+    getClient,
+    refresh,
+    getPostAuthDestination,
+    rememberPostAuthDestination,
+    getAuthRedirectUrl
+  };
 })();
