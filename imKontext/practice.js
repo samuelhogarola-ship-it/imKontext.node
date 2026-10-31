@@ -541,7 +541,8 @@ function buildExercise() {
     case 'lueckentext': buildLueckentext(word); break;
   }
 
-  renderSentenceContext(word);
+  // The translation panel owns the example sentence and its translation.
+  // Keeping a second context toggle here would duplicate the same content.
   restoreQuestionState(currentIdx, word, modo);
 }
 
