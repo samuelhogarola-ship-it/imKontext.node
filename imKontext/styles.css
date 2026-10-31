@@ -2052,6 +2052,92 @@ body.reader-mode-active .txdet-article p:last-child {
   color: var(--vl-blue) !important;
 }
 
+.app-nav-primary {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.app-nav-dashboard.is-active {
+  color: var(--vl-blue) !important;
+  background: rgba(30,58,138,.07);
+}
+
+.profile-view {
+  animation: fadeUp .3s ease both;
+}
+
+.profile-intro {
+  max-width: 620px;
+  margin: -0.4rem auto 1.4rem;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.account-dialog {
+  width: min(560px, calc(100vw - 28px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(15,23,42,.28);
+}
+
+.account-dialog::backdrop {
+  background: rgba(15,23,42,.58);
+  backdrop-filter: blur(4px);
+}
+
+.account-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-dialog-head h2 {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+}
+
+.account-dialog-close {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.account-dialog .auth-container {
+  padding: 20px 24px 26px;
+}
+
+@media (max-width: 760px) {
+  .app-nav-auth { display: none; }
+  .app-nav-primary { margin-left: auto; }
+  .app-nav-dashboard { padding-inline: 7px; letter-spacing: .04em; }
+}
+
+@media (max-width: 430px) {
+  .app-nav-logo span { display: none; }
+  .app-nav-inner { gap: 6px; padding-inline: 10px; }
+  .app-nav-dashboard { font-size: .62rem; padding-inline: 6px; }
+  .lang-selector-code { display: none; }
+  .account-dialog-head,
+  .account-dialog .auth-container { padding-inline: 16px; }
+}
+
 /* Empty state */
 .db-empty {
   text-align: center;

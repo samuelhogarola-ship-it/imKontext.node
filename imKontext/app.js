@@ -114,6 +114,7 @@ const screens = {
   ejercicio: $('screen-ejercicio'),
   resultado: $('screen-resultado'),
   dashboard: $('screen-dashboard'),
+  profile:   $('screen-profile'),
 };
 
 function getCategoryLabels() {
@@ -186,12 +187,15 @@ async function showScreen(name) {
   $('main-app').style.display = name === 'landing' ? 'none' : 'block';
   screens.landing.style.display = name === 'landing' ? '' : 'none';
 
-  ['textos','content','activity','ejercicio','resultado','dashboard'].forEach(s => {
+  ['textos','content','activity','ejercicio','resultado','dashboard','profile'].forEach(s => {
     const el = screens[s];
     if (el) el.style.display = s === name ? '' : 'none';
   });
   $('main-card').classList.toggle('is-textos', name === 'textos');
   $('app-header').classList.toggle('app-is-landing', name === 'landing');
+  $('nav-practice')?.classList.toggle('is-active', ['textos','content','activity','ejercicio','resultado'].includes(name));
+  $('nav-dashboard')?.classList.toggle('is-active', name === 'dashboard');
+  $('nav-profile')?.classList.toggle('is-active', name === 'profile');
 
   const footer = $('app-footer');
   if (footer) footer.style.display = name === 'landing' ? 'none' : 'block';
@@ -285,6 +289,8 @@ window.addEventListener('popstate', async () => {
 
   if (pathname === '/dashboard') {
     await showDashboard();
+  } else if (pathname === '/profile' || pathname === '/perfil') {
+    await showProfile({ pushState: false });
   } else if (pathname === '/textos') {
     await goToTextos({ pushState: false });
   } else if (pathname.startsWith('/textos/')) {
@@ -305,7 +311,28 @@ $('btn-entrar').addEventListener('click', async () => {
   await goToTextos({ pushState: true });
 });
 $('btn-login')?.addEventListener('click', () => {
-  $('auth-header-btn')?.click();
+  openAccountDialog();
+});
+
+function openAccountDialog() {
+  const dialog = $('account-dialog');
+  if (!dialog) return;
+  window.AuthCore?.refresh?.();
+  if (!dialog.open) dialog.showModal();
+}
+
+function closeAccountDialog() {
+  const dialog = $('account-dialog');
+  if (dialog?.open) dialog.close();
+}
+
+$('account-dialog-close')?.addEventListener('click', closeAccountDialog);
+$('account-dialog')?.addEventListener('click', event => {
+  if (event.target === $('account-dialog')) closeAccountDialog();
+});
+$('auth-header-btn')?.addEventListener('click', () => {
+  if (window.VokabelLab?.user?.status === 'authenticated') showProfile();
+  else openAccountDialog();
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -714,6 +741,35 @@ document.getElementById('nav-dashboard').addEventListener('click', async e => {
     history.pushState({ screen: 'dashboard', targetLang: getTargetLang() }, '', withLanguagePath('/dashboard'));
   }
   await showDashboard();
+});
+
+document.getElementById('nav-practice').addEventListener('click', async e => {
+  e.preventDefault();
+  await goToTextos({ pushState: true });
+});
+
+async function showProfile({ pushState: doPush = true } = {}) {
+  if (doPush && window.location.pathname !== withLanguagePath('/profile')) {
+    history.pushState({ screen: 'profile', targetLang: getTargetLang() }, '', withLanguagePath('/profile'));
+  }
+  await window.AuthCore?.refresh?.();
+  await showScreen('profile');
+}
+
+document.getElementById('nav-profile').addEventListener('click', async e => {
+  e.preventDefault();
+  await showProfile();
+});
+
+document.getElementById('btn-volver-from-profile').addEventListener('click', async () => {
+  await goToTextos({ pushState: true });
+});
+
+window.addEventListener('vokabellab:auth-change', event => {
+  const authenticated = Boolean(event.detail?.authenticated);
+  const headerButton = $('auth-header-btn');
+  if (headerButton) headerButton.textContent = authenticated ? 'Mi perfil' : 'Iniciar sesión';
+  if (authenticated) closeAccountDialog();
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -1490,6 +1546,10 @@ if (typeof onAuthChange === 'function') {
     $('main-app').style.display = 'block';
     screens.landing.style.display = 'none';
     await showDashboard();
+  } else if (pathname === '/profile' || pathname === '/perfil') {
+    $('main-app').style.display = 'block';
+    screens.landing.style.display = 'none';
+    await showProfile({ pushState: false });
   } else if (pathname === '/textos') {
     $('main-app').style.display = 'block';
     screens.landing.style.display = 'none';

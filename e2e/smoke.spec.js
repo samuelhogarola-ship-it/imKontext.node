@@ -13,6 +13,20 @@ test('landing page loads', async ({ page }) => {
   await expect(page.locator('#btn-entrar')).toBeVisible();
 });
 
+test('login opens in a dialog and the common profile route is reachable', async ({ page }) => {
+  await page.goto('/');
+
+  await page.locator('#btn-login').click();
+  await expect(page.locator('#account-dialog')).toBeVisible();
+  await page.locator('#account-dialog-close').click();
+  await expect(page.locator('#account-dialog')).toBeHidden();
+
+  await page.locator('#nav-profile').click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.locator('#screen-profile')).toBeVisible();
+  await expect(page.locator('#nav-profile')).toHaveClass(/is-active/);
+});
+
 test('can navigate to text list and see texts', async ({ page }) => {
   await page.goto('/textos');
 

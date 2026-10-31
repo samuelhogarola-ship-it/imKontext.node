@@ -848,8 +848,7 @@
   // ── Lab.user sync ───────────────────────────────────────────────────────────
 
   async function updateLabUser(session) {
-    const Lab = window.VokabelLab;
-    if (!Lab) return;
+    const Lab = window.VokabelLab = window.VokabelLab || {};
     if (session?.user) {
       Lab.user = {
         status: 'authenticated',
