@@ -4,7 +4,7 @@
   function configuredBaseUrl() {
     const explicit = typeof scope.VOKABEL_ACCOUNT_BASE_URL === 'string' ? scope.VOKABEL_ACCOUNT_BASE_URL : '';
     const meta = scope.document?.querySelector?.('meta[name="vokabel-account-base-url"]')?.content || '';
-    return (explicit || meta).trim().replace(/\/$/, '');
+    return (explicit || meta || 'https://www.vokabellab.com').trim().replace(/\/$/, '');
   }
 
   async function session() {
