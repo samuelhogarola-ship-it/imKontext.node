@@ -192,6 +192,7 @@ async function showScreen(name) {
     if (el) el.style.display = s === name ? '' : 'none';
   });
   $('main-card').classList.toggle('is-textos', name === 'textos');
+  $('main-card').classList.toggle('is-exercise', name === 'ejercicio');
   $('app-header').classList.toggle('app-is-landing', name === 'landing');
   $('nav-practice')?.classList.toggle('is-active', ['textos','content','activity','ejercicio','resultado'].includes(name));
   $('nav-dashboard')?.classList.toggle('is-active', name === 'dashboard');

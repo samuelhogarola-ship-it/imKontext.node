@@ -1613,6 +1613,197 @@ body.reader-mode-active .txdet-article p:last-child {
    EJERCICIO
 ═══════════════════════════════════════════════════════════════ */
 #screen-ejercicio {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.card.is-exercise {
+  max-width: 1280px;
+}
+.exercise-shell {
+  display: grid;
+  grid-template-columns: minmax(210px, .7fr) minmax(0, 1.45fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  align-items: stretch;
+  min-height: min(690px, calc(100vh - 8rem));
+}
+.exercise-rail {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(1rem, 4vw, 2.5rem) 0;
+}
+.exercise-back {
+  align-self: flex-start;
+  margin-bottom: auto;
+}
+.exercise-rail-copy {
+  padding-block: 2rem;
+}
+.exercise-rail .tipo-badge {
+  margin-bottom: 1.25rem;
+}
+.exercise-mode-title {
+  max-width: 13ch;
+  margin: 0 0 .9rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.055em;
+  color: var(--ink);
+}
+.exercise-mode-description {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.exercise-score {
+  display: flex;
+  align-items: baseline;
+  gap: .55rem;
+  margin-top: 2.25rem;
+  color: var(--muted);
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+.exercise-score-value {
+  color: var(--vl-blue);
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: .8;
+}
+.exercise-finish {
+  align-self: flex-start;
+  margin-top: auto;
+}
+.exercise-card {
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 3.5rem);
+  border: 2px solid var(--ink);
+  border-radius: 2rem;
+  background: var(--surface);
+  box-shadow: 12px 14px 0 var(--ink);
+}
+.exercise-card .progreso {
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+.exercise-card-kicker {
+  margin-bottom: 1rem;
+  color: var(--vl-blue);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.exercise-card .pregunta {
+  max-width: 16ch;
+  margin-bottom: .75rem;
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  line-height: .92;
+  letter-spacing: -.055em;
+}
+.exercise-card .pregunta-sub {
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.exercise-card .test-direction-toggle {
+  width: auto;
+  margin: 0 0 1.5rem;
+  padding: .5rem .8rem;
+  border-radius: 999px;
+  box-shadow: none;
+  font-size: .75rem;
+}
+.exercise-card .translation-toggle {
+  margin-bottom: .75rem;
+}
+.exercise-card .translation-panel {
+  max-width: 44rem;
+  border-left-width: 4px;
+  border-radius: .75rem;
+}
+.exercise-card .opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+  margin-top: 1.75rem;
+}
+.exercise-card .opcion {
+  min-height: 4rem;
+  padding: 1rem 1.15rem;
+  border: 2px solid rgba(26,24,20,.18);
+  border-radius: 1rem;
+  background: #f8f9fc;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.exercise-card .opcion:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--ink);
+  box-shadow: 4px 5px 0 var(--ink);
+  transform: translate(-1px, -1px);
+}
+.exercise-card .respuesta-feedback {
+  margin-top: 1rem;
+}
+.exercise-card .nav-btns {
+  justify-content: flex-end;
+  margin-top: 1.75rem;
+}
+.exercise-card .nav-btns .btn-main {
+  min-width: 10rem;
+}
+.exercise-card .flashcard {
+  max-width: none;
+  height: 240px;
+}
+.exercise-card .flashcard-face {
+  border: 2px solid var(--ink);
+  border-radius: 1.25rem;
+  box-shadow: 6px 7px 0 var(--ink);
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+}
+
+@media (max-width: 760px) {
+  .exercise-shell {
+    display: block;
+    min-height: 0;
+  }
+  .exercise-rail {
+    min-height: 0;
+    padding: 0 0 1.5rem;
+  }
+  .exercise-rail-copy {
+    padding-block: 1.5rem 0;
+  }
+  .exercise-mode-title {
+    max-width: none;
+    font-size: clamp(2.5rem, 15vw, 4.5rem);
+  }
+  .exercise-mode-description,
+  .exercise-score,
+  .exercise-finish {
+    display: none;
+  }
+  .exercise-card {
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    box-shadow: 6px 7px 0 var(--ink);
+  }
+  .exercise-card .pregunta {
+    max-width: none;
+    font-size: clamp(2.5rem, 15vw, 4.5rem);
+  }
+  .exercise-card .opciones {
+    grid-template-columns: 1fr;
+  }
+}
+#screen-ejercicio {
   animation: fadeUp .3s ease both;
 }
 

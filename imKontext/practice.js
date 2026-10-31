@@ -45,6 +45,7 @@ async function startPractice() {
     wrongWords = [];
     questionStates = [];
     setTestDirection('reverse');
+    updateExerciseScore();
 
     const pKey = `progress_${selectedText.id}_${selectedLevel}`;
     const existing = JSON.parse(localStorage.getItem(pKey) || 'null');
@@ -72,6 +73,11 @@ let _cdTimer = null;
 let _advanceLocked = false;
 let questionStates = [];
 let testDirection = 'reverse';
+
+function updateExerciseScore() {
+  const el = $('exercise-score');
+  if (el) el.textContent = String(score?.correct || 0);
+}
 
 function setTestDirection(direction) {
   testDirection = direction === 'forward' ? 'forward' : 'reverse';
@@ -372,6 +378,7 @@ function recordAnswerOnce(index, correct, word, extras = {}) {
       wrongWords.push(word);
     }
   }
+  updateExerciseScore();
 
   return state;
 }
@@ -520,6 +527,15 @@ function buildExercise() {
     lueckentext: '✏️ Lückentext'
   };
   $('tipo-badge').textContent = labels[modo] || modo;
+  const modeLabel = t(`mode.${modo}`);
+  const modeDescription = t(`mode_desc.${modo}`);
+  const modeTitle = $('exercise-mode-title');
+  const modeDesc = $('exercise-mode-description');
+  const cardKicker = $('exercise-card-kicker');
+  if (modeTitle) modeTitle.textContent = modeLabel || modo;
+  if (modeDesc) modeDesc.textContent = modeDescription || '';
+  if (cardKicker) cardKicker.textContent = modeLabel || labels[modo] || modo;
+  updateExerciseScore();
 
   const directionToggle = $('test-direction-toggle');
   if (directionToggle) directionToggle.hidden = true;

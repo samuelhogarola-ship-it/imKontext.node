@@ -423,46 +423,62 @@
 
     <!-- ── EJERCICIO ── -->
     <div id="screen-ejercicio" style="display:none">
-      <div class="progreso">
-        <span class="progreso-num" id="prog-actual">1</span>
-        <div class="progreso-dots" id="progreso-dots" aria-label="Progreso de preguntas"></div>
-        <div class="progreso-bar"><div class="progreso-fill" id="prog-fill"></div></div>
-        <span class="progreso-num" id="prog-total">10</span>
-      </div>
-      <div class="tipo-badge" id="tipo-badge"></div>
-      <button class="test-direction-toggle" id="test-direction-toggle" type="button" hidden></button>
-      <div class="pregunta" id="pregunta-texto"></div>
-      <div class="pregunta-sub" id="pregunta-sub"></div>
-      <div id="sentence-context-wrap"></div>
-      <button class="translation-toggle" id="btn-toggle-traduccion" type="button" data-i18n="exercise.show_translation">Ver traducción</button>
-      <div class="translation-panel" id="translation-panel"></div>
-      <div class="respuesta-feedback" id="respuesta-feedback"></div>
-      <div class="next-countdown" id="next-countdown"></div>
-      <div class="opciones" id="opciones-wrap"></div>
-      <div id="flashcard-wrap" style="display:none">
-        <div class="flashcard" id="flashcard-card">
-          <div class="flashcard-face flashcard-front" id="flashcard-front"></div>
-          <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
+      <div class="exercise-shell">
+        <aside class="exercise-rail">
+          <button class="txdet-back-btn exercise-back" id="btn-atras" data-i18n="exercise.back">← Atrás</button>
+          <div class="exercise-rail-copy">
+            <div class="tipo-badge" id="tipo-badge"></div>
+            <h2 class="exercise-mode-title" id="exercise-mode-title"></h2>
+            <p class="exercise-mode-description" id="exercise-mode-description"></p>
+            <div class="exercise-score">
+              <span class="exercise-score-value" id="exercise-score">0</span>
+              <span data-i18n="result.correct">aciertos</span>
+            </div>
+          </div>
+          <button class="btn-terminar exercise-finish" id="btn-terminar" data-i18n="exercise.finish_test">Terminar test</button>
+        </aside>
+
+        <section class="exercise-card" aria-live="polite">
+          <div class="progreso">
+            <span class="progreso-num" id="prog-actual">1</span>
+            <div class="progreso-dots" id="progreso-dots" aria-label="Progreso de preguntas"></div>
+            <div class="progreso-bar"><div class="progreso-fill" id="prog-fill"></div></div>
+            <span class="progreso-num" id="prog-total">10</span>
+          </div>
+          <div class="exercise-card-kicker" id="exercise-card-kicker"></div>
+          <button class="test-direction-toggle" id="test-direction-toggle" type="button" hidden></button>
+          <div class="pregunta" id="pregunta-texto"></div>
+          <div class="pregunta-sub" id="pregunta-sub"></div>
+          <div id="sentence-context-wrap"></div>
+          <button class="translation-toggle" id="btn-toggle-traduccion" type="button" data-i18n="exercise.show_translation">Ver traducción</button>
+          <div class="translation-panel" id="translation-panel"></div>
+          <div class="respuesta-feedback" id="respuesta-feedback"></div>
+          <div class="next-countdown" id="next-countdown"></div>
+          <div class="opciones" id="opciones-wrap"></div>
+          <div id="flashcard-wrap" style="display:none">
+            <div class="flashcard" id="flashcard-card">
+              <div class="flashcard-face flashcard-front" id="flashcard-front"></div>
+              <div class="flashcard-face flashcard-back" id="flashcard-back"></div>
+            </div>
+            <div class="flashcard-actions">
+              <button class="btn-back flashcard-btn" id="btn-flashcard-no" data-i18n="flashcard.no">No la sé</button>
+              <button class="btn-main flashcard-btn" id="btn-flashcard-si" data-i18n="flashcard.yes">Sí</button>
+            </div>
+          </div>
+          <div class="input-wrap" id="input-wrap" style="display:none">
+            <input type="text" id="input-traduccion" placeholder="Escribe la traducción..." autocomplete="off">
+          </div>
+          <div id="ordenar-wrap" style="display:none">
+            <p class="orden-label" data-i18n="exercise.word_bank">Banco de palabras — clica para añadir</p>
+            <div class="palabras-banco" id="banco-palabras"></div>
+            <p class="orden-label" data-i18n="exercise.your_sentence">Tu frase</p>
+            <div class="orden-construccion" id="orden-construccion"></div>
+          </div>
+          <div class="nav-btns">
+            <button class="btn-main" id="btn-siguiente" disabled data-i18n="exercise.next">Siguiente →</button>
+          </div>
         </div>
-        <div class="flashcard-actions">
-          <button class="btn-back flashcard-btn" id="btn-flashcard-no" data-i18n="flashcard.no">No la sé</button>
-          <button class="btn-main flashcard-btn" id="btn-flashcard-si" data-i18n="flashcard.yes">Sí</button>
-        </div>
       </div>
-      <div class="input-wrap" id="input-wrap" style="display:none">
-        <input type="text" id="input-traduccion" placeholder="Escribe la traducción..." autocomplete="off">
-      </div>
-      <div id="ordenar-wrap" style="display:none">
-        <p class="orden-label" data-i18n="exercise.word_bank">Banco de palabras — clica para añadir</p>
-        <div class="palabras-banco" id="banco-palabras"></div>
-        <p class="orden-label" data-i18n="exercise.your_sentence">Tu frase</p>
-        <div class="orden-construccion" id="orden-construccion"></div>
-      </div>
-      <div class="nav-btns">
-        <button class="btn-back" id="btn-atras" data-i18n="exercise.back">← Atrás</button>
-        <button class="btn-main" id="btn-siguiente" disabled data-i18n="exercise.next">Siguiente →</button>
-      </div>
-      <button class="btn-terminar" id="btn-terminar" data-i18n="exercise.finish_test">Terminar test</button>
     </div>
 
     <!-- ══════════════════════════════════════════════
