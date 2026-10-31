@@ -86,6 +86,22 @@
     return redirect.href;
   }
 
+  function showUnsafeOriginError(sourceEl, prefix) {
+    try {
+      return getSafeAppOrigin();
+    } catch (error) {
+      const targets = sourceEl ? [sourceEl] : _containers;
+      targets.forEach(el => {
+        const msg = el?.querySelector?.('.auth-message');
+        if (msg) {
+          msg.textContent = prefix + error.message;
+          msg.className = 'auth-message auth-message--error';
+        }
+      });
+      return null;
+    }
+  }
+
   function getClient() {
     if (!_client) {
       if (!window.supabase) {
@@ -666,13 +682,14 @@
   async function signInWithGoogle() {
     const client = getClient();
     if (!client) return;
+    const copy = authText();
+    if (!showUnsafeOriginError(null, copy.googleError)) return;
     rememberPostAuthDestination();
     const { error } = await client.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: getAuthRedirectUrl() }
     });
     if (error) {
-      const copy = authText();
       _containers.forEach(el => {
         const msg = el.querySelector('.auth-message');
         if (msg) { msg.textContent = copy.googleError + error.message; msg.className = 'auth-message auth-message--error'; }
@@ -686,6 +703,7 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    if (!showUnsafeOriginError(sourceEl, copy.passwordError)) return;
     const inputs = sourceEl.querySelectorAll('.auth-password-form .auth-input');
     const email = inputs[0]?.value?.trim();
     const password = inputs[1]?.value || '';
@@ -715,6 +733,8 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    const safeOrigin = showUnsafeOriginError(sourceEl, copy.recoveryError);
+    if (!safeOrigin) return;
     const input = sourceEl.querySelector('.auth-recovery-form .auth-input[type="email"]');
     const email = input?.value?.trim();
 
@@ -728,7 +748,7 @@
     if (btn) { btn.disabled = true; btn.textContent = copy.sending; }
 
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: getSafeAppOrigin() + '/?auth=recovery'
+      redirectTo: safeOrigin + '/?auth=recovery'
     });
 
     if (error) {
@@ -746,6 +766,7 @@
     if (!client) return;
     const copy = authText();
     const msg = sourceEl.querySelector('.auth-message');
+    if (!showUnsafeOriginError(sourceEl, copy.updatePasswordError)) return;
     const inputs = sourceEl.querySelectorAll('.auth-update-password-form .auth-input');
     const password = inputs[0]?.value || '';
     const repeat = inputs[1]?.value || '';
@@ -783,6 +804,7 @@
     if (!client) return;
     const msg = sourceEl.querySelector('.auth-message');
     const copy = authText();
+    if (!showUnsafeOriginError(sourceEl, copy.googleError)) return;
 
     const checkbox = sourceEl.querySelector('.auth-consent-check');
     if (checkbox && !checkbox.checked) {

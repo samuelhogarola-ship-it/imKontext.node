@@ -35,5 +35,8 @@ assert.throws(() => copiedToSamuelCoach.getAuthRedirectUrl(), /disabled on this 
 
 assert.doesNotMatch(source, /redirectTo:\s*window\.location\.origin/);
 assert.doesNotMatch(source, /emailRedirectTo:\s*window\.location\.origin/);
+assert.match(source, /function showUnsafeOriginError/);
+assert.match(source, /showUnsafeOriginError\(sourceEl, copy\.passwordError\)/);
+assert.match(source, /const safeOrigin = showUnsafeOriginError\(sourceEl, copy\.recoveryError\)/);
 
 console.log('imkontext auth return ok');

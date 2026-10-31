@@ -1,6 +1,6 @@
 # ImKontext authentication redirects
 
-ImKontext accepts authentication returns only on its own production hosts or on local development hosts. The frontend rejects execution from any copied or unexpected origin, including Samuel Coach.
+ImKontext accepts redirect-based authentication returns only on its own production hosts or on local development hosts. Authentication attempts from a copied or unexpected origin, including Samuel Coach, are blocked with a visible error.
 
 The shared Supabase Auth project must include these exact entries under **Authentication → URL Configuration → Redirect URLs** before this branch is deployed:
 
