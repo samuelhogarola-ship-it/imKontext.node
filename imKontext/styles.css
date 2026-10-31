@@ -1786,9 +1786,12 @@ body.reader-mode-active .txdet-article p:last-child {
     font-size: clamp(2.5rem, 15vw, 4.5rem);
   }
   .exercise-mode-description,
-  .exercise-score,
-  .exercise-finish {
+  .exercise-score {
     display: none;
+  }
+  .exercise-finish {
+    display: inline-flex;
+    margin-top: 1rem;
   }
   .exercise-card {
     padding: 1.25rem;
