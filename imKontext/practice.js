@@ -832,6 +832,14 @@ function showResultado() {
     }));
   }
 
+  if (window.ImKontextWorldSummary) {
+    window.ImKontextWorldSummary.publish({
+      moduleId: selectedText ? `text:${selectedText.id}:${selectedLevel}` : '',
+      mistakes: wrongWords,
+      session: { correct: score.correct, wrong: score.wrong }
+    }).catch(() => {});
+  }
+
   $('btn-reiniciar').onclick = () => {
     currentIdx = 0;
     score = createScore();
