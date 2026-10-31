@@ -171,13 +171,12 @@ function resetTraduccionToggle() {
   toggle.textContent = t('exercise.show_translation');
 }
 
-function getRevealLines(word) {
-  const lines = [];
-  const native = getNativeWord(word);
-  if (native) lines.push(t('exercise.translation', { word: native }));
-  const targetEx = getTargetExample(word);
-  if (targetEx) lines.push(`${t('exercise.example')}: ${targetEx}`);
-  return lines;
+function getTranslationContent(word) {
+  return {
+    word: getNativeWord(word) || '',
+    example: getTargetExample(word) || '',
+    exampleTranslation: getNativeExample(word) || '',
+  };
 }
 
 function revealTranslationText(text) {
@@ -198,8 +197,45 @@ function revealTranslationText(text) {
 }
 
 function revealTranslation(word) {
-  const lines = getRevealLines(word);
-  revealTranslationText(lines.join('\n'));
+  const content = getTranslationContent(word);
+  if (!content.word && !content.example && !content.exampleTranslation) {
+    resetTraduccionToggle();
+    return;
+  }
+
+  const panel = $('translation-panel');
+  const toggle = $('btn-toggle-traduccion');
+  if (!panel || !toggle) return;
+
+  panel.innerHTML = '';
+  if (content.word) {
+    const wordLine = document.createElement('div');
+    wordLine.className = 'translation-word';
+    wordLine.textContent = t('exercise.translation', { word: content.word });
+    panel.appendChild(wordLine);
+  }
+  if (content.example) {
+    const exampleLabel = document.createElement('div');
+    exampleLabel.className = 'translation-example-label';
+    exampleLabel.textContent = t('exercise.example');
+    panel.appendChild(exampleLabel);
+
+    const example = document.createElement('div');
+    example.className = 'translation-example';
+    example.textContent = content.example;
+    panel.appendChild(example);
+    if (content.exampleTranslation) {
+      const exampleTranslation = document.createElement('div');
+      exampleTranslation.className = 'translation-example-translation';
+      exampleTranslation.textContent = content.exampleTranslation;
+      panel.appendChild(exampleTranslation);
+    }
+  }
+  panel.classList.add('visible');
+  panel.style.display = 'block';
+  toggle.style.display = 'inline-flex';
+  toggle.setAttribute('aria-expanded', 'true');
+  toggle.textContent = t('exercise.hide_translation');
 }
 
 function revealCorrectOption(correctLabel) {
@@ -289,7 +325,7 @@ function handleNoSe(word, correctLabel, extras = {}) {
   });
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className = 'respuesta-feedback wrong';
-  revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  revealTranslation(word);
   if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
   autoNext();
 }
@@ -303,7 +339,7 @@ function buildQuestionState(index, correct, word, extras = {}) {
     selectedAnswer: extras.selectedAnswer ?? null,
     correctAnswer: extras.correctAnswer ?? null,
     solutionText: extras.solutionText ?? extras.correctAnswer ?? null,
-    translationText: extras.translationText ?? getRevealLines(word).join('\n'),
+    translationText: extras.translationText ?? '',
     translationShown: extras.translationShown !== false,
     feedbackText,
     mode: answerMode,
@@ -341,7 +377,7 @@ function applyAnsweredState(state, word) {
   $('respuesta-feedback').className = `respuesta-feedback ${state.correct ? 'correct' : 'wrong'}`;
 
   if (state.translationShown) {
-    revealTranslationText(state.translationText || getRevealLines(word).join('\n'));
+    revealTranslation(word);
   }
   if (state.testDirection) renderTestDirectionToggle(state.testDirection, true);
 
@@ -742,7 +778,7 @@ function markAnswer(btn, correct, word, correctLabel, extras = {}) {
   });
   $('respuesta-feedback').textContent = answerState.feedbackText;
   $('respuesta-feedback').className   = `respuesta-feedback ${correct ? 'correct' : 'wrong'}`;
-  revealTranslationText(answerState.translationText || getRevealLines(word).join('\n'));
+  revealTranslation(word);
   if (answerState.testDirection) renderTestDirectionToggle(answerState.testDirection, true);
 }
 
