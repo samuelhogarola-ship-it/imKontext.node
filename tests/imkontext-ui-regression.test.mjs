@@ -28,3 +28,11 @@ test('choice exercises provide a no-answer path that unlocks the next question',
   assert.match(practice, /function autoNext\(\)/);
   assert.match(practice, /\$\('btn-siguiente'\)\.disabled = false/);
 });
+
+test('exercise translation reveal keeps the word separate from the example and its translation', () => {
+  assert.match(practice, /function getTranslationContent\(word\)/);
+  assert.match(practice, /example: getTargetExample\(word\)/);
+  assert.match(practice, /exampleTranslation: getNativeExample\(word\)/);
+  assert.match(practice, /translation-example-label/);
+  assert.match(practice, /translation-example-translation/);
+});
